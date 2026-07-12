@@ -1,0 +1,382 @@
+[
+  {
+    "slug": "context-block-operator-profile-absolute-rules",
+    "title": "Context Block — Operator Profile & Absolute Rules",
+    "status": "written"
+  },
+  {
+    "slug": "new-agent-onboarding-full-message",
+    "title": "New Agent Onboarding — Full Message",
+    "status": "written"
+  },
+  {
+    "slug": "lock-in-rules-1-8-accountability-letter",
+    "title": "Lock-In Rules (1–8) — Accountability Letter",
+    "status": "written"
+  },
+  {
+    "slug": "phase-1-set-up-your-workspace",
+    "title": "Phase 1 — Set Up Your Workspace",
+    "status": "written"
+  },
+  {
+    "slug": "phase-2-start-your-project",
+    "title": "Phase 2 — Start Your Project",
+    "status": "written"
+  },
+  {
+    "slug": "phase-3-connect-your-database",
+    "title": "Phase 3 — Connect Your Database",
+    "status": "written"
+  },
+  {
+    "slug": "full-key-management-system-setup",
+    "title": "Full Key Management System Setup",
+    "status": "written"
+  },
+  {
+    "slug": "step-1-initialize-claudemd",
+    "title": "Step 1 — Initialize CLAUDE.md",
+    "status": "written"
+  },
+  {
+    "slug": "step-1b-audit-generated-claudemd",
+    "title": "Step 1b — Audit generated CLAUDE.md",
+    "status": "written"
+  },
+  {
+    "slug": "phase-2-set-your-rules-file-claudemd",
+    "title": "Phase 2 — Set Your Rules File (CLAUDE.md)",
+    "status": "written"
+  },
+  {
+    "slug": "step-2-realignment-interview-fresh-session",
+    "title": "Step 2 — Realignment interview (fresh session)",
+    "status": "written"
+  },
+  {
+    "slug": "step-3-lock-the-spec-into-claudemd",
+    "title": "Step 3 — Lock the spec into CLAUDE.md",
+    "status": "written"
+  },
+  {
+    "slug": "session-opener-start-every-build-session-clean",
+    "title": "Session Opener (Start Every Build Session Clean)",
+    "status": "written"
+  },
+  {
+    "slug": "step-6-standard-session-opener-short-form",
+    "title": "Step 6 — Standard session opener (short form)",
+    "status": "written"
+  },
+  {
+    "slug": "implementation-spec-before-writing-any-code",
+    "title": "Implementation spec — before writing any code",
+    "status": "written"
+  },
+  {
+    "slug": "interview-me-instead-of-plan-mode",
+    "title": "Interview me — instead of plan mode",
+    "status": "written"
+  },
+  {
+    "slug": "action-2-demand-implementation-spec-before-code",
+    "title": "Action 2 — Demand Implementation Spec Before Code",
+    "status": "written"
+  },
+  {
+    "slug": "action-3-let-the-ai-interview-you",
+    "title": "Action 3 — Let the AI Interview You",
+    "status": "written"
+  },
+  {
+    "slug": "phase-1-write-your-spec-interview-format",
+    "title": "Phase 1 — Write Your Spec (interview format)",
+    "status": "written"
+  },
+  {
+    "slug": "step-7-single-task-prompt-template",
+    "title": "Step 7 — Single task prompt template",
+    "status": "written"
+  },
+  {
+    "slug": "sub-agents-parallel-independent-tasks",
+    "title": "Sub-agents — parallel independent tasks",
+    "status": "written"
+  },
+  {
+    "slug": "action-1-launch-multiple-workers-at-once",
+    "title": "Action 1 — Launch Multiple Workers at Once",
+    "status": "written"
+  },
+  {
+    "slug": "phase-4-build-the-core-crm-features-3-sub-agents",
+    "title": "Phase 4 — Build the Core CRM Features (3 sub-agents)",
+    "status": "written"
+  },
+  {
+    "slug": "phase-5-add-user-logins",
+    "title": "Phase 5 — Add User Logins",
+    "status": "written"
+  },
+  {
+    "slug": "full-crm-feature-build-4-step-prompt-chain",
+    "title": "Full CRM Feature Build — 4-Step Prompt Chain",
+    "status": "written"
+  },
+  {
+    "slug": "phase-5b-the-multi-model-review",
+    "title": "Phase 5B — The Multi-Model Review",
+    "status": "written"
+  },
+  {
+    "slug": "fail-proof-restart-prompt-for-a-new-thread",
+    "title": "Fail-proof restart prompt for a new thread",
+    "status": "written"
+  },
+  {
+    "slug": "big-prompt-1-antigravity-premium-student-workbook-shell",
+    "title": "Big Prompt 1 — Antigravity: premium student workbook shell",
+    "status": "written"
+  },
+  {
+    "slug": "big-prompt-2-comet-visual-qa-after-deploy",
+    "title": "Big Prompt 2 — Comet: visual QA after deploy",
+    "status": "written"
+  },
+  {
+    "slug": "big-prompt-3-expand-source-mapping-after-polish-passes",
+    "title": "Big Prompt 3 — Expand source mapping (after polish passes)",
+    "status": "written"
+  },
+  {
+    "slug": "prompt-0-image-pipeline-lock-down-runs-first",
+    "title": "Prompt 0 — Image pipeline lock-down (RUNS FIRST)",
+    "status": "written"
+  },
+  {
+    "slug": "prompt-a-wire-activities-to-real-content",
+    "title": "Prompt A — Wire activities to real content",
+    "status": "written"
+  },
+  {
+    "slug": "prompt-b-animate-gretel-end-to-end",
+    "title": "Prompt B — Animate Gretel end-to-end",
+    "status": "written"
+  },
+  {
+    "slug": "prompt-c-practicar-drawer-in-flip-book",
+    "title": "Prompt C — ¡Practicar! drawer in flip-book",
+    "status": "written"
+  },
+  {
+    "slug": "supabase-tables-rls-student-progress",
+    "title": "Supabase tables + RLS (student progress)",
+    "status": "written"
+  },
+  {
+    "slug": "prompt-1-anti-gravity-faithful-colorization",
+    "title": "Prompt 1 → Anti-Gravity (faithful colorization)",
+    "status": "written"
+  },
+  {
+    "slug": "prompt-2-anti-gravity-scan-cleanup",
+    "title": "Prompt 2 → Anti-Gravity (scan cleanup)",
+    "status": "written"
+  },
+  {
+    "slug": "prompt-3-gemini-gretel-animated-multi-pose-art",
+    "title": "Prompt 3 → Gemini (Gretel animated multi-pose art)",
+    "status": "written"
+  },
+  {
+    "slug": "gretel-quality-rule-always-applies",
+    "title": "Gretel Quality Rule (always applies)",
+    "status": "written"
+  },
+  {
+    "slug": "0a-shared-canon-header-read-first-every-game",
+    "title": "0a · Shared Canon Header (read first, every game)",
+    "status": "written"
+  },
+  {
+    "slug": "0b-shared-engine-content-contract-build-once",
+    "title": "0b · Shared Engine + Content Contract (build once)",
+    "status": "written"
+  },
+  {
+    "slug": "1-juego-mariposas",
+    "title": "1 · Juego Mariposas",
+    "status": "written"
+  },
+  {
+    "slug": "2-juego-payaso-chano",
+    "title": "2 · Juego Payaso Chano",
+    "status": "written"
+  },
+  {
+    "slug": "3-juego-vocal",
+    "title": "3 · Juego Vocal",
+    "status": "written"
+  },
+  {
+    "slug": "4-fon-tica-completar-palabras",
+    "title": "4 · Fonética — Completar palabras",
+    "status": "written"
+  },
+  {
+    "slug": "5-lectura-de-palabras-con-s-labas",
+    "title": "5 · Lectura de palabras con sílabas",
+    "status": "written"
+  },
+  {
+    "slug": "6-lectura-de-la-rima",
+    "title": "6 · Lectura de la rima",
+    "status": "written"
+  },
+  {
+    "slug": "7-cu-ntas-palabras-puedo-leer-por-minuto",
+    "title": "7 · Cuántas palabras puedo leer por minuto",
+    "status": "written"
+  },
+  {
+    "slug": "8-dibujos",
+    "title": "8 · Dibujos",
+    "status": "written"
+  },
+  {
+    "slug": "crm-integration-append-to-every-game",
+    "title": "CRM integration (append to every game)",
+    "status": "written"
+  },
+  {
+    "slug": "definition-of-done-append-to-every-game",
+    "title": "Definition of Done (append to every game)",
+    "status": "written"
+  },
+  {
+    "slug": "kids-slideshow-template-full",
+    "title": "Kids Slideshow Template — Full",
+    "status": "written"
+  },
+  {
+    "slug": "standing-instruction-nl-execution-prompt-protocol",
+    "title": "Standing instruction — NL → Execution Prompt Protocol",
+    "status": "written"
+  },
+  {
+    "slug": "director-agent-next-move-only",
+    "title": "Director → Agent: next move only",
+    "status": "written"
+  },
+  {
+    "slug": "director-agent-make-this-professional",
+    "title": "Director → Agent: make this professional",
+    "status": "written"
+  },
+  {
+    "slug": "director-agent-review-worker-output",
+    "title": "Director → Agent: review worker output",
+    "status": "written"
+  },
+  {
+    "slug": "phase-6-add-payments-stripe",
+    "title": "Phase 6 — Add Payments (Stripe)",
+    "status": "written"
+  },
+  {
+    "slug": "phase-7-10-phase-stripe-plan-review-gemini-first",
+    "title": "Phase 7 (10-Phase) — Stripe Plan Review (Gemini first)",
+    "status": "written"
+  },
+  {
+    "slug": "worker-kilo-code-tonight-scan-page-polish",
+    "title": "Worker — Kilo Code: Tonight Scan/Page Polish",
+    "status": "written"
+  },
+  {
+    "slug": "worker-kilo-code-three-day-teacher-crm-build",
+    "title": "Worker — Kilo Code: Three-Day Teacher CRM Build",
+    "status": "written"
+  },
+  {
+    "slug": "worker-kilo-code-supabase-safe-implementation",
+    "title": "Worker — Kilo Code: Supabase-Safe Implementation",
+    "status": "written"
+  },
+  {
+    "slug": "phase-7-8-phase-deploy-to-the-internet",
+    "title": "Phase 7 (8-Phase) — Deploy to the Internet",
+    "status": "written"
+  },
+  {
+    "slug": "vercel-environment-variable-checklist",
+    "title": "Vercel Environment Variable Checklist",
+    "status": "written"
+  },
+  {
+    "slug": "verification-gate-high-low-cost-of-error",
+    "title": "Verification Gate (High/Low Cost of Error)",
+    "status": "written"
+  },
+  {
+    "slug": "set-up-code-protection",
+    "title": "Set Up Code Protection",
+    "status": "written"
+  },
+  {
+    "slug": "secrets-audit-run-monthly",
+    "title": "Secrets Audit (Run Monthly)",
+    "status": "written"
+  },
+  {
+    "slug": "automated-database-backups",
+    "title": "Automated Database Backups",
+    "status": "written"
+  },
+  {
+    "slug": "local-backup-routine-for-your-pc",
+    "title": "Local Backup Routine (For Your PC)",
+    "status": "written"
+  },
+  {
+    "slug": "automated-onedrive-backup-windows-copilot-pro",
+    "title": "Automated OneDrive Backup (Windows + Copilot Pro)",
+    "status": "written"
+  },
+  {
+    "slug": "multi-destination-backup-onedrive-google-drive",
+    "title": "Multi-Destination Backup (OneDrive + Google Drive)",
+    "status": "written"
+  },
+  {
+    "slug": "full-backup-system-documentation",
+    "title": "Full Backup System Documentation",
+    "status": "written"
+  },
+  {
+    "slug": "worker-kilo-code-backup-security-gate",
+    "title": "Worker — Kilo Code: Backup / Security Gate",
+    "status": "written"
+  },
+  {
+    "slug": "diaflow-backup-gate",
+    "title": "Diaflow — Backup Gate",
+    "status": "written"
+  },
+  {
+    "slug": "generate-your-automation-file-github-actions-ci",
+    "title": "Generate Your Automation File (GitHub Actions CI)",
+    "status": "written"
+  },
+  {
+    "slug": "scheduled-weekly-security-check",
+    "title": "Scheduled Weekly Security Check",
+    "status": "written"
+  },
+  {
+    "slug": "scheduled-tasks-github-actions-daily-briefing",
+    "title": "Scheduled Tasks — GitHub Actions (daily briefing)",
+    "status": "written"
+  }
+]
