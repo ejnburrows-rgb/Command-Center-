@@ -16,7 +16,7 @@ export const READ_REPOS: RepoRef[] = [
 
 export const CONTENT_REPO: RepoRef = {
   owner: "ejnburrows-rgb",
-  repo: "command-center",
+  repo: "Command-Center-",
   label: "Command Center",
 };
 
