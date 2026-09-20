@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 // Nav links. Only Today is built in Phase 1; the rest arrive in later phases.
 const NAV = [
   { href: "/", label: "Today" },
+  { href: "/crm-core/index.html", label: "CRM Core" },
   { href: "/work", label: "Work", soon: true },
   { href: "/prompts", label: "Prompts", soon: true },
   { href: "/research", label: "Research", soon: true },
