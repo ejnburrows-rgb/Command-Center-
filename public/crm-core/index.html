@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NBO CRM Core</title>
+<style>
+:root{--bg:#f4f4f1;--panel:#fff;--panel2:#ecece7;--text:#171817;--muted:#6f736f;--line:#d9dcd7;--accent:#183d32;--accent2:#2f6a56;--danger:#a23b32;--warn:#9a6717;--side:#141816;--sideText:#f5f6f4}
+:root[data-theme="dark"]{--bg:#101210;--panel:#181b19;--panel2:#202421;--text:#f5f6f4;--muted:#a3a8a3;--line:#303630;--accent:#9bc8b4;--accent2:#c1dfd0;--side:#0b0e0c;--sideText:#f5f6f4}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}.app{min-height:100vh;display:grid;grid-template-columns:250px minmax(0,1fr)}aside{position:sticky;top:0;height:100vh;padding:22px 16px;display:flex;flex-direction:column;background:var(--side);color:var(--sideText)}.brand{display:flex;align-items:center;gap:11px;margin-bottom:22px}.mark{width:40px;height:40px;border-radius:11px;background:#f4f4f1;color:#151615;display:grid;place-items:center;font-weight:800}.brand small{display:block;opacity:.55;margin-top:2px}.nav{display:grid;gap:5px}.nav button{min-height:43px;border:1px solid transparent;border-radius:9px;padding:0 11px;background:transparent;color:inherit;text-align:left;display:flex;align-items:center;justify-content:space-between}.nav button:hover,.nav button.active{background:rgba(255,255,255,.08)}.nav b{min-width:23px;height:23px;padding:0 6px;border-radius:99px;background:#f4f4f1;color:#151615;display:grid;place-items:center;font-size:11px}.sidefoot{margin-top:auto;display:grid;gap:10px}.sidefoot label{display:grid;gap:5px;font-size:11px;opacity:.8}.sidefoot select{min-height:40px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:#202521;color:#fff;padding:0 8px}.langs{display:grid;grid-template-columns:1fr 1fr;gap:5px}.langs button{min-height:38px;border:1px solid rgba(255,255,255,.14);border-radius:8px;background:transparent;color:#fff}.langs button.active{background:#f4f4f1;color:#151615}main{min-width:0;padding:28px}.top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:24px}.eyebrow{margin:0 0 5px;text-transform:uppercase;letter-spacing:.11em;font-size:10px;font-weight:800;color:var(--muted)}h1{margin:0;font-size:clamp(27px,4vw,38px);letter-spacing:-.04em}h2{margin:0;font-size:20px;letter-spacing:-.025em}h3{margin:0 0 7px;font-size:17px}.search{position:relative;width:min(390px,45%)}.search input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);padding:0 13px}.results{position:absolute;z-index:5;top:49px;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:5px}.results button{width:100%;border:0;background:transparent;color:var(--text);padding:9px;text-align:left;display:grid}.results button:hover{background:var(--panel2)}.results span,.results small{color:var(--muted);font-size:11px}.stack{display:grid;gap:18px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric,.panel,.card{border:1px solid var(--line);background:var(--panel);border-radius:13px}.metric{padding:18px}.metric span{display:block;color:var(--muted);font-size:12px}.metric strong{display:block;margin-top:8px;font-size:25px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{padding:20px}.head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:17px}.count{min-width:30px;height:30px;border-radius:99px;background:var(--panel2);display:grid;place-items:center;font-size:12px}.attention,.task,.timeline>div,.module{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding:12px 0}.attention:first-child,.task:first-child,.timeline>div:first-child,.module:first-child{border-top:0}.attention div,.task div,.timeline>div{min-width:0}.attention strong,.task strong,.timeline strong{display:block}.attention span,.task span,.timeline span,.timeline small{font-size:11px;color:var(--muted)}.badge{font-size:10px;text-transform:uppercase;letter-spacing:.06em;padding:5px 7px;border-radius:99px;background:var(--panel2)}.urgent .badge{color:var(--danger)}.warning .badge{color:var(--warn)}.empty{padding:22px 0;color:var(--muted)}table{width:100%;border-collapse:collapse}th,td{text-align:left;border-bottom:1px solid var(--line);padding:12px 10px;vertical-align:top}th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}td small{display:block;color:var(--muted);margin-top:4px;line-height:1.45}.status{display:inline-block;padding:5px 8px;border-radius:99px;background:var(--panel2);font-size:10px;text-transform:uppercase}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.card{padding:18px}.card p{color:var(--muted);line-height:1.5}.card dl{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card dt{font-size:10px;text-transform:uppercase;color:var(--muted)}.card dd{margin:3px 0 0}.task button,.actions button{min-height:38px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);padding:0 11px}.task.done{opacity:.55}.drop{display:grid;place-items:center;text-align:center;min-height:220px;border:1px dashed var(--line);border-radius:12px;background:var(--panel2);padding:20px}.drop input{max-width:100%}.fileinfo{display:grid;gap:12px}.fileinfo div{display:grid;gap:3px}.fileinfo span{font-size:10px;text-transform:uppercase;color:var(--muted)}.position{border:1px solid var(--line);border-radius:15px;padding:28px;background:linear-gradient(135deg,var(--panel),var(--panel2))}.position h2{font-size:clamp(28px,4vw,46px);max-width:14ch}.position p{max-width:760px;color:var(--muted);line-height:1.6}.offers{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.offers ul,.checklist,.numbered{margin:12px 0 0;padding-left:19px}.offers li,.checklist li,.numbered li{margin:7px 0;color:var(--muted)}.pills{display:flex;flex-wrap:wrap;gap:8px}.pills span{border:1px solid var(--line);border-radius:99px;padding:8px 10px;font-size:11px}.field{display:grid;gap:5px;margin:12px 0}.field span{font-size:11px;color:var(--muted)}.field input,.field select{min-height:42px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);padding:0 10px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.actions .danger{color:var(--danger)}.hidden{display:none!important}.tablewrap{overflow:auto}
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{position:static;height:auto}.nav{grid-template-columns:repeat(4,1fr)}.sidefoot{margin-top:18px}.metrics{grid-template-columns:1fr 1fr}.grid2,.offers{grid-template-columns:1fr}.search{width:48%}}
+@media(max-width:600px){main{padding:18px}.top{display:grid}.search{width:100%}.nav{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:1fr}.cards{grid-template-columns:1fr}th:nth-child(3),td:nth-child(3){display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+<div class="brand"><div class="mark">N</div><div><strong>NBO</strong><small>CRM Core</small></div></div>
+<div class="nav" id="nav"></div>
+<div class="sidefoot">
+<label><span id="roleLabel">Role</span><select id="userSelect"></select></label>
+<div class="langs"><button id="enBtn" type="button">EN</button><button id="esBtn" type="button">ES</button></div>
+</div>
+</aside>
+<main>
+<header class="top"><div><p class="eyebrow" id="industry"></p><h1 id="viewTitle"></h1></div><div class="search"><input id="search" placeholder="Search records" aria-label="Search records"><div class="results hidden" id="results"></div></div></header>
+<div id="content"></div>
+</main>
+</div>
+<input id="importFile" class="hidden" type="file" accept=".json,application/json">
+<script>
+(function(){
+'use strict';
+var KEY='nbo-crm-core-v1',BACKUP='nbo-crm-core-v1-backup';
+var I18N={
+en:{today:'Today',contacts:'Contacts',work:'Work',tasks:'Tasks',intake:'Intake',growth:'Growth Center',activity:'Activity',settings:'Settings',search:'Search records',needs:'Needs attention',active:'Active work',open:'Open tasks',outstanding:'Outstanding',recent:'Recent activity',track:'Everything is on track',role:'Role',done:'Mark done',export:'Export backup',import:'Import backup',reset:'Reset demo data'},
+es:{today:'Hoy',contacts:'Contactos',work:'Trabajo',tasks:'Tareas',intake:'Entrada',growth:'Centro de Crecimiento',activity:'Actividad',settings:'Configuración',search:'Buscar registros',needs:'Necesita atención',active:'Trabajo activo',open:'Tareas abiertas',outstanding:'Pendiente',recent:'Actividad reciente',track:'Todo está en orden',role:'Función',done:'Completar',export:'Exportar copia',import:'Importar copia',reset:'Restablecer demo'}
+};
+var CAPS={
+owner:['all','contacts','work','tasks','finance','people','settings','intake','export'],
+admin:['all','contacts','work','tasks','finance','people','settings','intake','export'],
+manager:['all','contacts','work','tasks','finance','people','intake','export'],
+staff:['contacts','work','tasks','intake'],
+customer:[],
+viewer:['all']
+};
+var GROWTH={
+position:{category:'Workflow automation and operations systems',headline:'LET YOUR WORK FLOW.',promise:'NBO turns fragmented manual work into one connected operating system.'},
+offers:[
+{name:'Workflow Modernization',outcome:'Replace duplicate entry, scattered intake, manual handoffs and forgotten follow-up with one visible workflow.',items:['intake + routing','forms + files','SOPs + follow-up rules']},
+{name:'Custom CRM + Operations Hub',outcome:'A business-specific command center built around how the company actually works.',items:['contacts + work + tasks','roles + dashboards','files + reporting']},
+{name:'Bilingual Customer Operations',outcome:'English and Spanish live inside the process instead of being added as an afterthought.',items:['bilingual intake','portal + website flows','messages + internal handoffs']},
+{name:'Practical AI + Content Automation',outcome:'Use AI only for bounded work that removes labor or improves consistency.',items:['document extraction + summaries','drafting + QA','website/email/social drafts with approval']}
+],
+website:['clear category and promise','service pages tied to business outcomes','before/after workflow examples','English/Spanish parity','proof library with screenshots','one simple CTA'],
+pipeline:['capture one approved source idea or project update','produce English master copy','produce Spanish localized copy','create website, email and social drafts','save to review queue','publish only after approval'],
+competition:['show working systems, not vague AI promises','lead with operating outcomes','keep bilingual execution central','do not compete as a generic chatbot agency']
+};
+var seed={
+version:1,language:'en',currentUserId:'owner',workspace:{name:'NBO CRM Core',industry:'Business Operations',contactLabel:'Contacts',workLabel:'Work',theme:'light'},
+users:[{id:'owner',name:'Owner',role:'owner'},{id:'manager',name:'Operations Manager',role:'manager'},{id:'staff',name:'Team Member',role:'staff'}],
+contacts:[
+{id:'c1',name:'Northshore Property Group',company:'Northshore',email:'operations@example.com',phone:'(305) 555-0128',language:'en',status:'active',tags:['priority']},
+{id:'c2',name:'María Torres',company:'Torres Services',email:'maria@example.com',phone:'(786) 555-0144',language:'es',status:'active',tags:['bilingual']}
+],
+work:[
+{id:'w1',contactId:'c1',title:'Operations intake redesign',kind:'project',status:'active',priority:'high',ownerId:'manager',dueDate:'2026-09-23',value:4800,balance:2400,notes:'Waiting on final document set.'},
+{id:'w2',contactId:'c2',title:'Bilingual workflow setup',kind:'service',status:'scheduled',priority:'normal',ownerId:'staff',dueDate:'2026-09-21',value:1200,balance:0}
+],
+tasks:[
+{id:'t1',title:'Review intake documents',status:'open',assigneeId:'manager',contactId:'c1',workId:'w1',dueDate:'2026-09-20'},
+{id:'t2',title:'Prepare Spanish checklist',status:'doing',assigneeId:'staff',contactId:'c2',workId:'w2',dueDate:'2026-09-21'}
+],
+activities:[
+{id:'a1',at:'2026-09-20T12:30:00Z',actorId:'manager',type:'work',summary:'Operations intake redesign moved to active.'},
+{id:'a2',at:'2026-09-20T11:15:00Z',actorId:'staff',type:'task',summary:'Spanish checklist started.'},
+{id:'a3',at:'2026-09-19T18:45:00Z',actorId:'owner',type:'contact',summary:'Northshore contact record updated.'}
+]};
+function clone(v){return JSON.parse(JSON.stringify(v))}
+function valid(v){return v&&v.version===1&&Array.isArray(v.contacts)&&Array.isArray(v.work)&&Array.isArray(v.tasks)&&Array.isArray(v.activities)}
+function load(){for(var k of [KEY,BACKUP]){try{var r=localStorage.getItem(k);if(r){var v=JSON.parse(r);if(valid(v))return v}}catch(e){}}return clone(seed)}
+function save(){try{var prev=localStorage.getItem(KEY);if(prev)localStorage.setItem(BACKUP,prev);localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}document.documentElement.dataset.theme=state.workspace.theme||'light'}
+var state=load(),view='today',fileInfo=null;
+function user(){return state.users.find(function(x){return x.id===state.currentUserId})||state.users[0]}
+function can(cap){var c=CAPS[user().role]||[];return c.indexOf('all')>=0||c.indexOf(cap)>=0}
+function tr(k){return (I18N[state.language]||I18N.en)[k]||k}
+function money(v){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v||0)}
+function past(d){if(!d)return false;return new Date(d.length===10?d+'T23:59:59Z':d).getTime()<Date.now()}
+function attention(){
+var out=[];
+state.tasks.forEach(function(t){if(t.status!=='done'&&past(t.dueDate))out.push({id:'task-'+t.id,label:t.title,reason:'overdue task',severity:'urgent'})});
+state.work.forEach(function(w){if(w.status!=='complete'&&past(w.dueDate))out.push({id:'work-'+w.id,label:w.title,reason:'overdue work',severity:'urgent'});if(w.status==='blocked')out.push({id:'blocked-'+w.id,label:w.title,reason:'blocked work',severity:'warning'});if(w.balance>0&&past(w.dueDate))out.push({id:'balance-'+w.id,label:w.title,reason:'outstanding balance',severity:'warning'})});
+return out
+}
+function classify(name){
+var ext=(name.split('.').pop()||'').toLowerCase(),kind='unknown',route='manual-review',explain='Unsupported or unknown format. Keep it in manual review.';
+if(['xlsx','xls','csv'].indexOf(ext)>=0){kind='spreadsheet';route='structured-review';explain='Read structured cells directly, map fields, review, then confirm before saving.'}
+else if(['png','jpg','jpeg','webp','heic','tif','tiff'].indexOf(ext)>=0){kind='image';route='ocr-review';explain='Extract text for review; never save OCR output without confirmation.'}
+else if(ext==='pdf'){kind='pdf';route='ask-pdf-route';explain='PDF is ambiguous. Choose document text or plan/drawing before processing.'}
+else if(['dwg','dxf','dwf','dgn'].indexOf(ext)>=0){kind='drawing';route='drawing-review';explain='Attach to a work item and route to plan/drawing review.'}
+else if(['doc','docx','txt','md','rtf'].indexOf(ext)>=0){kind='document';route='document-review';explain='Preview and attach to the selected record.'}
+else if(['ppt','pptx'].indexOf(ext)>=0){kind='presentation';route='presentation-review';explain='Preview and attach as reference material.'}
+return{name:name,ext:ext,kind:kind,route:route,explain:explain}
+}
+function navItems(){return[
+{id:'today',key:'today'},
+{id:'contacts',key:'contacts',cap:'contacts'},
+{id:'work',key:'work',cap:'work'},
+{id:'tasks',key:'tasks',cap:'tasks'},
+{id:'intake',key:'intake',cap:'intake'},
+{id:'growth',key:'growth',cap:'settings'},
+{id:'activity',key:'activity',cap:'all'},
+{id:'settings',key:'settings',cap:'settings'}
+].filter(function(x){return !x.cap||can(x.cap)})}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
+function renderNav(){
+var a=attention(),n=document.getElementById('nav');n.innerHTML='';
+navItems().forEach(function(item){var b=document.createElement('button');b.type='button';b.className=view===item.id?'active':'';b.innerHTML='<span>'+esc(tr(item.key))+'</span>'+(item.id==='today'&&a.length?'<b>'+a.length+'</b>':'');b.onclick=function(){view=item.id;render()};n.appendChild(b)});
+var sel=document.getElementById('userSelect');sel.innerHTML=state.users.map(function(u){return'<option value="'+esc(u.id)+'">'+esc(u.name)+' · '+esc(u.role)+'</option>'}).join('');sel.value=state.currentUserId;
+document.getElementById('roleLabel').textContent=tr('role');document.getElementById('enBtn').className=state.language==='en'?'active':'';document.getElementById('esBtn').className=state.language==='es'?'active':'';
+}
+function renderToday(){
+var a=attention(),active=state.work.filter(function(x){return x.status!=='complete'}),open=state.tasks.filter(function(x){return x.status!=='done'}),due=state.work.reduce(function(s,x){return s+Math.max(0,x.balance||0)},0);
+var metrics='<div class="metrics"><div class="metric"><span>'+tr('active')+'</span><strong>'+active.length+'</strong></div><div class="metric"><span>'+tr('open')+'</span><strong>'+open.length+'</strong></div>'+(can('finance')?'<div class="metric"><span>'+tr('outstanding')+'</span><strong>'+money(due)+'</strong></div>':'')+'<div class="metric"><span>'+esc(state.workspace.contactLabel)+'</span><strong>'+state.contacts.length+'</strong></div></div>';
+var at=a.length?a.map(function(x){return'<div class="attention '+x.severity+'"><div><strong>'+esc(x.label)+'</strong><span>'+esc(x.reason)+'</span></div><span class="badge">'+esc(x.severity)+'</span></div>'}).join(''):'<div class="empty">'+tr('track')+'</div>';
+var tl=state.activities.slice(0,5).map(function(x){return'<div><div><span>'+new Date(x.at).toLocaleString()+'</span><strong>'+esc(x.summary)+'</strong></div></div>'}).join('');
+return'<div class="stack">'+metrics+'<div class="grid2"><section class="panel"><div class="head"><div><p class="eyebrow">'+tr('needs')+'</p><h2>Operational exceptions</h2></div><span class="count">'+a.length+'</span></div>'+at+'</section><section class="panel"><div class="head"><div><p class="eyebrow">'+tr('recent')+'</p><h2>Latest changes</h2></div></div><div class="timeline">'+tl+'</div></section></div></div>'
+}
+function renderContacts(){
+var rows=state.contacts.map(function(c){return'<tr><td><strong>'+esc(c.name)+'</strong><small>'+esc(c.email)+'<br>'+esc(c.phone)+'</small></td><td>'+esc(c.company||'—')+'</td><td>'+esc((c.language||'').toUpperCase())+'</td><td>'+esc((c.tags||[]).join(', ')||'—')+'</td><td><span class="status">'+esc(c.status)+'</span></td></tr>'}).join('');
+return'<section class="panel"><div class="head"><div><p class="eyebrow">Universal record layer</p><h2>'+esc(state.workspace.contactLabel)+'</h2></div><span class="count">'+state.contacts.length+'</span></div><div class="tablewrap"><table><thead><tr><th>Name</th><th>Company</th><th>Language</th><th>Tags</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>'
+}
+function renderWork(){
+var cards=state.work.map(function(w){var c=state.contacts.find(function(x){return x.id===w.contactId}),o=state.users.find(function(x){return x.id===w.ownerId});return'<article class="card"><span class="status">'+esc(w.status)+'</span><h3 style="margin-top:12px">'+esc(w.title)+'</h3><p>'+esc(c?c.name:'No contact')+'</p><dl><div><dt>Owner</dt><dd>'+esc(o?o.name:'Unassigned')+'</dd></div><div><dt>Due</dt><dd>'+esc(w.dueDate||'—')+'</dd></div>'+(can('finance')?'<div><dt>Value</dt><dd>'+money(w.value)+'</dd></div><div><dt>Balance</dt><dd>'+money(w.balance)+'</dd></div>':'')+'</dl>'+(w.notes?'<p>'+esc(w.notes)+'</p>':'')+'</article>'}).join('');
+return'<section class="panel"><div class="head"><div><p class="eyebrow">Pipeline + operations</p><h2>'+esc(state.workspace.workLabel)+'</h2></div></div><div class="cards">'+cards+'</div></section>'
+}
+function renderTasks(){
+var list=state.tasks.map(function(t){return'<div class="task '+(t.status==='done'?'done':'')+'"><div><span>'+esc(t.dueDate||'No due date')+'</span><strong>'+esc(t.title)+'</strong></div><span class="status">'+esc(t.status)+'</span>'+(t.status!=='done'?'<button type="button" data-done="'+esc(t.id)+'">'+tr('done')+'</button>':'')+'</div>'}).join('');
+return'<section class="panel"><div class="head"><div><p class="eyebrow">Execution queue</p><h2>'+tr('tasks')+'</h2></div></div>'+list+'</section>'
+}
+function renderIntake(){
+var info=fileInfo?'<div class="fileinfo"><div><span>File</span><strong>'+esc(fileInfo.name)+'</strong></div><div><span>Type</span><strong>'+esc(fileInfo.kind)+'</strong></div><div><span>Route</span><strong>'+esc(fileInfo.route)+'</strong></div><p>'+esc(fileInfo.explain)+'</p></div>':'<div class="empty">No file selected.</div>';
+return'<div class="grid2"><section class="panel"><div class="head"><div><p class="eyebrow">One front door</p><h2>Upload / Import</h2></div></div><label class="drop"><input id="intakeFile" type="file"><strong style="margin-top:10px">Choose a file to route</strong><span style="color:var(--muted);margin-top:6px">XLSX, CSV, images, PDF, CAD, Word, text, PowerPoint</span></label></section><section class="panel"><div class="head"><div><p class="eyebrow">Recommended route</p><h2>Review before save</h2></div></div>'+info+'</section></div>'
+}
+function renderGrowth(){
+var offers=GROWTH.offers.map(function(o){return'<article class="card"><p class="eyebrow">Offer</p><h3>'+esc(o.name)+'</h3><p>'+esc(o.outcome)+'</p><ul>'+o.items.map(function(i){return'<li>'+esc(i)+'</li>'}).join('')+'</ul></article>'}).join('');
+return'<div class="stack"><div class="position"><p class="eyebrow">'+esc(GROWTH.position.category)+'</p><h2>'+esc(GROWTH.position.headline)+'</h2><p>'+esc(GROWTH.position.promise)+'</p></div><div class="offers">'+offers+'</div><div class="grid2"><section class="panel"><div class="head"><div><p class="eyebrow">Website readiness</p><h2>Build proof before outreach</h2></div></div><ul class="checklist">'+GROWTH.website.map(function(x){return'<li>'+esc(x)+'</li>'}).join('')+'</ul></section><section class="panel"><div class="head"><div><p class="eyebrow">Marketing system</p><h2>One source → many channels</h2></div></div><ol class="numbered">'+GROWTH.pipeline.map(function(x){return'<li>'+esc(x)+'</li>'}).join('')+'</ol></section></div><section class="panel"><div class="head"><div><p class="eyebrow">Competitive discipline</p><h2>How NBO stays differentiated</h2></div></div><div class="pills">'+GROWTH.competition.map(function(x){return'<span>'+esc(x)+'</span>'}).join('')+'</div></section></div>'
+}
+function renderActivity(){return'<section class="panel"><div class="head"><div><p class="eyebrow">Unified timeline</p><h2>'+tr('activity')+'</h2></div></div><div class="timeline">'+state.activities.map(function(x){return'<div><div><span>'+new Date(x.at).toLocaleString()+'</span><strong>'+esc(x.summary)+'</strong><small>'+esc(x.type)+'</small></div></div>'}).join('')+'</div></section>'}
+function renderSettings(){
+var mods=['contacts','work','tasks','finance','people','intake','export','settings'].map(function(x){return'<div class="module"><strong>'+esc(x)+'</strong><span>'+ (can(x)?'Enabled':'Restricted') +'</span></div>'}).join('');
+return'<div class="grid2"><section class="panel"><div class="head"><div><p class="eyebrow">Infrastructure</p><h2>Reusable workspace</h2></div></div><label class="field"><span>Workspace name</span><input id="workspaceName" value="'+esc(state.workspace.name)+'"></label><label class="field"><span>Industry</span><input id="workspaceIndustry" value="'+esc(state.workspace.industry)+'"></label><label class="field"><span>Theme</span><select id="themeSelect"><option value="light">Light</option><option value="dark">Dark</option></select></label><div class="actions"><button id="exportBtn" type="button">'+tr('export')+'</button><button id="importBtn" type="button">'+tr('import')+'</button><button id="resetBtn" class="danger" type="button">'+tr('reset')+'</button></div></section><section class="panel"><div class="head"><div><p class="eyebrow">Role capabilities</p><h2>'+esc(user().name)+' · '+esc(user().role)+'</h2></div></div>'+mods+'</section></div>'
+}
+function bind(){
+document.querySelectorAll('[data-done]').forEach(function(b){b.onclick=function(){var id=b.getAttribute('data-done');state.tasks=state.tasks.map(function(t){if(t.id===id)t.status='done';return t});state.activities.unshift({id:'a'+Date.now(),at:new Date().toISOString(),actorId:state.currentUserId,type:'task',summary:'Task completed.'});save();render()}})
+var intake=document.getElementById('intakeFile');if(intake)intake.onchange=function(){if(intake.files&&intake.files[0])fileInfo=classify(intake.files[0].name);render()};
+var wn=document.getElementById('workspaceName');if(wn)wn.onchange=function(){state.workspace.name=wn.value;save()};
+var wi=document.getElementById('workspaceIndustry');if(wi)wi.onchange=function(){state.workspace.industry=wi.value;save();render()};
+var th=document.getElementById('themeSelect');if(th){th.value=state.workspace.theme||'light';th.onchange=function(){state.workspace.theme=th.value;save()}};
+var ex=document.getElementById('exportBtn');if(ex)ex.onclick=function(){var blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='nbo-crm-backup.json';a.click();URL.revokeObjectURL(url)};
+var im=document.getElementById('importBtn');if(im)im.onclick=function(){document.getElementById('importFile').click()};
+var re=document.getElementById('resetBtn');if(re)re.onclick=function(){state=clone(seed);save();view='today';render()}
+}
+function render(){
+save();renderNav();document.getElementById('industry').textContent=state.workspace.industry;document.getElementById('viewTitle').textContent=tr(view);var c=document.getElementById('content');
+if(view==='today')c.innerHTML=renderToday();else if(view==='contacts')c.innerHTML=renderContacts();else if(view==='work')c.innerHTML=renderWork();else if(view==='tasks')c.innerHTML=renderTasks();else if(view==='intake')c.innerHTML=renderIntake();else if(view==='growth')c.innerHTML=renderGrowth();else if(view==='activity')c.innerHTML=renderActivity();else if(view==='settings')c.innerHTML=renderSettings();bind()
+}
+document.getElementById('userSelect').onchange=function(e){state.currentUserId=e.target.value;if(!navItems().some(function(x){return x.id===view}))view='today';render()};
+document.getElementById('enBtn').onclick=function(){state.language='en';render()};document.getElementById('esBtn').onclick=function(){state.language='es';render()};
+document.getElementById('search').oninput=function(e){var q=e.target.value.trim().toLowerCase(),box=document.getElementById('results');if(!q){box.classList.add('hidden');box.innerHTML='';return}var hits=[];state.contacts.forEach(function(x){if([x.name,x.company,x.email,x.phone].some(function(v){return v&&String(v).toLowerCase().indexOf(q)>=0}))hits.push({type:'Contact',title:x.name,sub:x.company||''})});state.work.forEach(function(x){if([x.title,x.kind,x.notes].some(function(v){return v&&String(v).toLowerCase().indexOf(q)>=0}))hits.push({type:'Work',title:x.title,sub:x.status})});state.tasks.forEach(function(x){if(x.title.toLowerCase().indexOf(q)>=0)hits.push({type:'Task',title:x.title,sub:x.status})});hits=hits.slice(0,8);box.innerHTML=hits.length?hits.map(function(h){return'<button type="button"><span>'+esc(h.type)+'</span><strong>'+esc(h.title)+'</strong><small>'+esc(h.sub)+'</small></button>'}).join(''):'<div class="empty" style="padding:10px">No matches</div>';box.classList.remove('hidden')};
+document.getElementById('importFile').onchange=function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var reader=new FileReader();reader.onload=function(){try{var v=JSON.parse(String(reader.result||''));if(!valid(v))throw new Error('Invalid backup');state=v;save();view='today';render()}catch(err){alert('Invalid CRM backup.')}};reader.readAsText(f);e.target.value=''};
+render();
+})();
+</script>
+</body>
+</html>
