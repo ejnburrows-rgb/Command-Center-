@@ -1,4 +1,5 @@
 import matter from "gray-matter";
+import { Octokit } from "@octokit/rest";
 import { readClient } from "./github";
 import { CONTENT_REPO, CONTENT_BRANCH } from "./repos";
 
@@ -23,7 +24,31 @@ export type ContentItem = {
   body: string; // markdown body
 };
 
-function client() {
+const ALLOWED_KINDS = new Set<string>([
+  "prompts",
+  "research",
+  "decisions",
+  "checklists",
+  "readiness",
+]);
+
+export function isValidKind(kind: string): kind is ContentKind {
+  return ALLOWED_KINDS.has(kind);
+}
+
+export function isValidSlug(slug: string): boolean {
+  if (!slug || typeof slug !== "string") return false;
+  if (slug.includes("\\") || slug.includes("\0")) return false;
+
+  const parts = slug.split("/");
+  for (const part of parts) {
+    if (part === "" || part === "." || part === "..") return false;
+  }
+  return true;
+}
+
+function client(clientOverride?: Octokit): Octokit {
+  if (clientOverride) return clientOverride;
   // Reading the content repo needs a token that can see it. The read token has
   // it granted read-only; fall back to the write token if only that is set.
   if (process.env.GITHUB_TOKEN_READ) return readClient();
@@ -33,29 +58,69 @@ function client() {
   return writeClient();
 }
 
-export async function listContent(kind: ContentKind): Promise<ContentItem[]> {
-  const gh = client();
+async function collectMarkdownSlugs(
+  gh: Octokit,
+  kind: ContentKind,
+  dirPath: string,
+  basePath: string,
+): Promise<string[]> {
   let entries;
   try {
     const res = await gh.repos.getContent({
       owner: CONTENT_REPO.owner,
       repo: CONTENT_REPO.repo,
-      path: `content/${kind}`,
+      path: dirPath,
       ref: CONTENT_BRANCH,
     });
     entries = res.data;
   } catch (err: unknown) {
-    // Folder may not exist yet (nothing added). Treat as empty.
     if (isNotFound(err)) return [];
     throw err;
   }
 
   if (!Array.isArray(entries)) return [];
 
+  const slugs: string[] = [];
+
+  for (const entry of entries) {
+    if (entry.type === "file" && entry.name.endsWith(".md")) {
+      const relativePath = entry.path.startsWith(basePath + "/")
+        ? entry.path.slice(basePath.length + 1)
+        : entry.name;
+      const slug = relativePath.replace(/\.md$/, "");
+      if (isValidSlug(slug)) {
+        slugs.push(slug);
+      }
+    } else if (entry.type === "dir") {
+      const nestedSlugs = await collectMarkdownSlugs(
+        gh,
+        kind,
+        entry.path,
+        basePath,
+      );
+      slugs.push(...nestedSlugs);
+    }
+  }
+
+  return slugs;
+}
+
+export async function listContent(
+  kind: ContentKind,
+  clientOverride?: Octokit,
+): Promise<ContentItem[]> {
+  if (!isValidKind(kind)) {
+    throw new Error(`Invalid content kind: "${kind}"`);
+  }
+
+  const gh = client(clientOverride);
+  const basePath = `content/${kind}`;
+  const rawSlugs = await collectMarkdownSlugs(gh, kind, basePath, basePath);
+
+  const uniqueSlugs = Array.from(new Set(rawSlugs));
+
   const items = await Promise.all(
-    entries
-      .filter((e) => e.type === "file" && e.name.endsWith(".md"))
-      .map((e) => getItem(kind, e.name.replace(/\.md$/, ""))),
+    uniqueSlugs.map((slug) => getItem(kind, slug, clientOverride)),
   );
   return items.filter((i): i is ContentItem => i !== null);
 }
@@ -63,8 +128,16 @@ export async function listContent(kind: ContentKind): Promise<ContentItem[]> {
 export async function getItem(
   kind: ContentKind,
   slug: string,
+  clientOverride?: Octokit,
 ): Promise<ContentItem | null> {
-  const gh = client();
+  if (!isValidKind(kind)) {
+    throw new Error(`Invalid content kind: "${kind}"`);
+  }
+  if (!isValidSlug(slug)) {
+    throw new Error(`Invalid or unsafe slug: "${slug}"`);
+  }
+
+  const gh = client(clientOverride);
   const path = `content/${kind}/${slug}.md`;
   try {
     const res = await gh.repos.getContent({
