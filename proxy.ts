@@ -5,7 +5,7 @@ import { COOKIE_NAME, verifySessionToken } from "@/lib/auth";
 // Gate every route on the session cookie, except /login and the auth API.
 // (Next 16 renamed the "middleware" convention to "proxy".)
 export const config = {
-  matcher: ["/((?!login|api/auth|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!login(?:/|$)|api/auth(?:/|$)|_next/static(?:/|$)|_next/image(?:/|$)|favicon\\.ico$).*)"],
 };
 
 export async function proxy(req: NextRequest) {
