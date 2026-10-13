@@ -83,6 +83,15 @@ async function runTests() {
   const postResFail = await POST(postReqFail);
   assert.strictEqual(postResFail.status, 401, "POST with invalid passphrase returns 401");
 
+  console.log("Test 10b: POST /api/auth handles null JSON body correctly");
+  const postReqNull = new Request("http://localhost/api/auth", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: "null",
+  });
+  const postResNull = await POST(postReqNull);
+  assert.strictEqual(postResNull.status, 400, "POST with null body returns 400");
+
   // 10. Protection Guard via verifyRequestSession / GET /api/auth
   console.log("Test 11: verifyRequestSession and GET /api/auth enforce in-route session guard");
   // Extract token from successful set-cookie header
