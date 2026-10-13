@@ -1,24 +1,25 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { COOKIE_NAME, expectedToken } from "@/lib/auth";
+import { COOKIE_NAME, verifySessionToken } from "@/lib/auth";
 
 // Gate every route on the session cookie, except /login and the auth API.
 // (Next 16 renamed the "middleware" convention to "proxy".)
 export const config = {
-  matcher: ["/((?!login|api/auth|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!login(?:/|$)|api/auth(?:/|$)|_next/static(?:/|$)|_next/image(?:/|$)|favicon\\.ico$).*)"],
 };
 
 export async function proxy(req: NextRequest) {
-  const expected = await expectedToken();
+  const passphrase = process.env.PORTAL_PASSPHRASE;
 
   // If no passphrase is configured yet, send the user to /login which explains
   // the setup instead of hard-failing.
-  if (!expected) {
+  if (!passphrase) {
     return NextResponse.redirect(new URL("/login?setup=1", req.url));
   }
 
   const cookie = req.cookies.get(COOKIE_NAME)?.value;
-  if (cookie === expected) {
+  const isValid = await verifySessionToken(cookie);
+  if (isValid) {
     return NextResponse.next();
   }
 
