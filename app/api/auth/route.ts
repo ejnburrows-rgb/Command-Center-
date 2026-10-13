@@ -41,6 +41,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Bad request." }, { status: 400 });
   }
 
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ error: "Bad request." }, { status: 400 });
+  }
+
   if (!body.passphrase || body.passphrase !== phrase) {
     return NextResponse.json({ error: "Incorrect passphrase." }, { status: 401 });
   }
