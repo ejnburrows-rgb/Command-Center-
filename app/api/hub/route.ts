@@ -3,8 +3,7 @@ import { READ_REPOS } from "@/lib/repos";
 export const dynamic = "force-dynamic";
 type GHIssue={number:number;title:string;html_url:string;updated_at:string;labels:{name:string}[];pull_request?:unknown};
 async function get(path:string){
- const token=process.env.GITHUB_TOKEN_READ;
- const r=await fetch("https://api.github.com"+path,{headers:{Accept:"application/vnd.github+json",...(token?{Authorization:"Bearer "+token}:{})},next:{revalidate:process.env.GITHUB_TOKEN_READ?120:1800}});
+ const r=await fetch("https://api.github.com"+path,{headers:{Accept:"application/vnd.github+json"},next:{revalidate:900}});
  if(!r.ok)throw new Error("GitHub "+r.status);
  return r.json();
 }
