@@ -11,3 +11,16 @@ export async function exportBackup(){
  setTimeout(()=>URL.revokeObjectURL(url),1000);
  return documents.length;
 }
+
+export async function restoreBackup(file:File){
+ const json=JSON.parse(await file.text());
+ if(json.format!=="nbo-hub-backup-v1"||!Array.isArray(json.documents))throw Error("Invalid NBO backup");
+ if(!confirm("Restore this backup and replace saved preferences?"))return -1;
+ for(const d of json.documents){
+  if(typeof d.name!=="string"||typeof d.data!=="string"||!d.data.startsWith("data:"))continue;
+  const blob=await (await fetch(d.data)).blob();
+  if(blob.size<=10000000)await saveDoc(new File([blob],d.name,{type:blob.type}));
+ }
+ for(const k of keys){const v=json.preferences?.[k];if(typeof v==="string")localStorage.setItem(k,v)}
+ return json.documents.length;
+}
