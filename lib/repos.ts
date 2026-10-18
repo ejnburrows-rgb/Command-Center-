@@ -1,24 +1,15 @@
-// Central config. The Today/Work screens read from READ_REPOS.
-// The app only ever COMMITS to CONTENT_REPO.
-// Adding the Psychiatry repo later = one line in READ_REPOS.
-
-export type RepoRef = {
-  owner: string;
-  repo: string;
-  label: string; // friendly name shown in the UI
-};
-
-export const READ_REPOS: RepoRef[] = [
-  { owner: "ejnburrows-rgb", repo: "otto", label: "Otto Plumbing CRM" },
-  { owner: "ejnburrows-rgb", repo: "cartilla-de-gretel", label: "Gretel Hub (Cartilla)" },
-  { owner: "ejnburrows-rgb", repo: "lany-books-web", label: "Landing Books" },
+export type RepoRef={owner:string;repo:string;label:string};
+const owner="ejnburrows-rgb";
+export const READ_REPOS:RepoRef[]=[
+{owner,repo:"cartilla-de-gretel",label:"La Cartilla de Gretel"},
+{owner,repo:"otto",label:"OTTO CRM"},
+{owner,repo:"tucker-pool-crm",label:"Tucker Pool CRM"},
+{owner,repo:"client-project-starter",label:"NBO Website"},
+{owner,repo:"lany-books-web",label:"Lany Books"},
+{owner,repo:"dev-firm-compass",label:"Dev Firm Compass"},
+{owner,repo:"Command-Center-",label:"NBO Command Center"},
+{owner,repo:"otto-plumbing-site",label:"OTTO Plumbing Website"},
+{owner,repo:"dbarrera-y-mas",label:"D. Barrera y Más"}
 ];
-
-export const CONTENT_REPO: RepoRef = {
-  owner: "ejnburrows-rgb",
-  repo: "Command-Center-",
-  label: "Command Center",
-};
-
-// Default branch we read from / commit to on the content repo.
-export const CONTENT_BRANCH = "main";
+export const CONTENT_REPO={owner,repo:"Command-Center-",label:"NBO Command Center"};
+export const CONTENT_BRANCH="main";
