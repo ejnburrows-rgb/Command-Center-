@@ -23,6 +23,15 @@ else setStatus(d.error||"File not saved.");
 }catch{setStatus("Network error: file not saved.");}
 finally{setSaving(false);}
 }
+function downloadBackup(){
+const keys=["nbo-checks","nbo-custom-prompts","nbo-theme","nbo-auto"];
+const data=Object.fromEntries(keys.map(k=>[k,localStorage.getItem(k)]));
+const blob=new Blob([JSON.stringify({format:"nbo-backup-v1",created:new Date().toISOString(),data},null,2)],{type:"application/json"});
+const url=URL.createObjectURL(blob);const a=document.createElement("a");
+a.href=url;a.download="nbo-local-backup.json";a.click();
+setTimeout(()=>URL.revokeObjectURL(url),1000);
+setStatus("Browser backup downloaded.");
+}
 return <section className="panel">
 <h2>Saved documents</h2><p className="muted">Versioned files in the private NBO GitHub repository.</p>
 <p className={enabled?"green":"amber"}>{enabled?"Cloud storage connected":"GitHub storage authorization needed"}</p>
@@ -32,6 +41,7 @@ return <section className="panel">
 <button className="btn primary" disabled={!enabled||!chosen||saving} onClick={()=>void save()}>{saving?"Saving…":"Save file"}</button>
 </div>
 {files.map(f=><p key={f.url}><a target="_blank" rel="noopener noreferrer" href={f.url}>{f.name}</a></p>)}
+<div className="vault-backup"><h2>Backup personal data</h2><p className="muted">Download copies of your personal prompts, preferences and checklists. Cloud synchronization for these is not configured yet.</p><button className="btn secondary" onClick={downloadBackup}>Export browser backup</button></div>
 {status&&<p role="status">{status}</p>}
 </section>
 }
