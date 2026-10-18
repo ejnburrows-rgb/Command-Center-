@@ -8,7 +8,7 @@ export async function exportBackup(){
  const content=JSON.stringify({format:"nbo-hub-backup-v1",created:new Date().toISOString(),documents,preferences});
  const url=URL.createObjectURL(new Blob([content],{type:"application/json"}));
  const a=document.createElement("a");a.href=url;a.download="nbo-complete-backup.json";a.click();
- setTimeout(()=>URL.revokeObjectURL(url),1000);
+ setTimeout(()=>URL.revokeObjectURL(url),60000);
  return documents.length;
 }
 
