@@ -31,6 +31,6 @@ export const assets=[
 {name:"Art evidence PR",url:"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/751",cat:"Artwork"},
 {name:"Audio integration draft",url:"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/769",cat:"Audio"},
 {name:"NBO brand source",url:"https://github.com/ejnburrows-rgb/client-project-starter",cat:"Brand"},
-{name:"Existing prompt library",url:"https://github.com/ejnburrows-rgb/Command-Center-/tree/main/content/prompts",cat:"Knowledge"},
-{name:"Dev Firm Compass",url:"https://github.com/ejnburrows-rgb/dev-firm-compass",cat:"Playbook"}
+{name:"Cartilla project issues",url:"https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues",cat:"Work"},
+{name:"NBO public website",url:"https://nbo-website.vercel.app",cat:"Brand"}
 ];
