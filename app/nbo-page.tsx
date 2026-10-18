@@ -13,5 +13,5 @@ async function refresh(){setBusy(true);try{const r=await fetch("/api/hub",{cache
 useEffect(()=>{setTheme(localStorage.getItem("nbo-theme")==="teal"?"teal":"purple");setAuto(localStorage.getItem("nbo-auto")!=="off");void refresh()},[]);
 useEffect(()=>{document.documentElement.dataset.theme=theme;localStorage.setItem("nbo-theme",theme)},[theme]);
 useEffect(()=>{if(!auto)return;const id=setInterval(()=>void refresh(),120000);return()=>clearInterval(id)},[auto]);
-return <HubShell tab={tab} theme={theme} setTheme={setTheme} menu={menu} setMenu={setMenu} loading={busy} errors={feed.errors} refresh={()=>void refresh()} navigate={navigate}><HubContent tab={tab} feed={feed} project={project} onBack={()=>setProject("")} onOpen={setProject} navigate={navigate} loading={busy} error={error} refresh={refresh} theme={theme} setTheme={setTheme} auto={auto} setAuto={setAuto}/></HubShell>;
+return <HubShell tab={tab} theme={theme} setTheme={setTheme} menu={menu} setMenu={setMenu} loading={busy} errors={feed.errors} refresh={()=>void refresh()} navigate={navigate}><HubContent tab={tab} feed={feed} project={project} onBack={()=>setProject("")} onOpen={(slug)=>{setTab("Projects");setProject(slug);window.scrollTo(0,0)}} navigate={navigate} loading={busy} error={error} refresh={refresh} theme={theme} setTheme={setTheme} auto={auto} setAuto={setAuto}/></HubShell>;
 }
