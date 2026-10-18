@@ -9,7 +9,7 @@ const [notice,setNotice]=useState("");
 useEffect(()=>{void reload()},[]);
 async function reload(){try{setDocs(await listDocs())}catch{setNotice("Device storage is unavailable")}}
 async function save(){if(!chosen)return;if(chosen.size>10000000){setNotice("10 MB per file maximum");return}try{await saveDoc(chosen);setChosen(null);setNotice("Saved on this device");await reload()}catch{setNotice("Save failed")}}
-function download(d:LocalDoc){const url=URL.createObjectURL(d.file);const a=document.createElement("a");a.href=url;a.download=d.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),500)}
+function download(d:LocalDoc){const url=URL.createObjectURL(d.file);const a=document.createElement("a");a.href=url;a.download=d.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),60000)}
 async function remove(d:LocalDoc){if(!confirm("Remove this document?"))return;await removeDoc(d.id);await reload()}
 async function backup(){try{const n=await exportBackup();setNotice("Backup exported with "+n+" documents")}catch{setNotice("Backup export failed")}}
 async function restore(file:File){try{const n=await restoreBackup(file);if(n>=0){setNotice("Backup restored");await reload();window.dispatchEvent(new Event("nbo-reset"))}}catch{setNotice("This backup could not be restored")}}
