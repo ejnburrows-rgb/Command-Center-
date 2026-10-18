@@ -4,7 +4,7 @@ import {stages,prompts} from "./hub-data";
 import {Icon} from "./hub-ui";
 export default function BestPractices(){
 const [stage,setStage]=useState(0),[checks,setChecks]=useState<Record<string,boolean>>({}),[notice,setNotice]=useState("");
-useEffect(()=>{try{setChecks(JSON.parse(localStorage.getItem("nbo-checks")||"{}"))}catch{}},[]);
+useEffect(()=>{try{setChecks(JSON.parse(localStorage.getItem("nbo-checks")||"{}"));const n=Number(sessionStorage.getItem("nbo-stage")||0);if(n>=0&&n<3)setStage(n)}catch{}},[]);
 const toggle=(key:string)=>{const v={...checks,[key]:!checks[key]};setChecks(v);localStorage.setItem("nbo-checks",JSON.stringify(v))};
 const copy=async()=>{try{await navigator.clipboard.writeText(prompts[stages[stage].prompt].text);setNotice("Copied to clipboard")}catch{setNotice("Browser clipboard permission required")}};
 const current=stages[stage];
