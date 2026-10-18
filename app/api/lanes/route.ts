@@ -31,6 +31,12 @@ export async function GET(){
  const values=tasks.map((t,i)=>{if(t.status==="rejected"){errors.push(["Branches","Open pull requests","Closed pull requests","Issues"][i]+": "+String(t.reason));return []}return t.value});
  const [branches,open,closed,issues]=values as [Branch[],PR[],PR[],Issue[]];
  const partial=values.some(v=>v.length>=100)||errors.length>0;
+ const orphanBranches=branches.filter(b=>/^swarm\\/lesson[-/]/.test(b.name)&&!open.some(p=>p.head.ref===b.name));
+ const branchTimestamps=new Map<string,string>();
+ await Promise.all(orphanBranches.slice(0,15).map(async b=>{try{
+  const info=await read<{commit:{committer?:{date?:string};author?:{date?:string}}}>("commits/"+encodeURIComponent(b.commit.sha));
+  branchTimestamps.set(b.name,info.commit.committer?.date||info.commit.author?.date||"");
+ }catch{branchTimestamps.set(b.name,"")}}));
  const lanes:Lane[]=[];
  const seen=new Set<string>();
  function add(l:Lane){if(seen.has(l.id))return;seen.add(l.id);lanes.push(l)}
@@ -43,7 +49,7 @@ export async function GET(){
  for(const b of branches.filter(b=>/^swarm\/lesson[-/]/.test(b.name))){
    if(open.some(p=>p.head.ref===b.name))continue;
    add({id:"branch-"+b.name,name:words(b.name.replace(/^swarm\//,"")),status:"Open",
-      summary:"Lesson branch exists; no matching open pull request.",updatedAt:"",sourceUrl:branchLink(b.name),
+      summary:"Lesson branch exists; no matching open pull request.",updatedAt:branchTimestamps.get(b.name)||"",sourceUrl:branchLink(b.name),
       sourceType:"branch",verified:true,branch:b.name});
  }
  for(const p of closed.filter(p=>p.merged_at&&(/^swarm\/lesson[-/]/.test(p.head.ref)||/(?:lesson|lane)\s*\d+/i.test(p.title))).slice(0,18)){
