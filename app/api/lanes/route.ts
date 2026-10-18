@@ -31,7 +31,7 @@ export async function GET(){
  const values=tasks.map((t,i)=>{if(t.status==="rejected"){errors.push(["Branches","Open pull requests","Closed pull requests","Issues"][i]+": "+String(t.reason));return []}return t.value});
  const [branches,open,closed,issues]=values as [Branch[],PR[],PR[],Issue[]];
  const partial=values.some(v=>v.length>=100)||errors.length>0;
- const orphanBranches=branches.filter(b=>/^swarm\\/lesson[-/]/.test(b.name)&&!open.some(p=>p.head.ref===b.name));
+ const orphanBranches=branches.filter(b=>(b.name.startsWith("swarm/lesson-")||b.name.startsWith("swarm/lesson/"))&&!open.some(p=>p.head.ref===b.name));
  const branchTimestamps=new Map<string,string>();
  await Promise.all(orphanBranches.slice(0,15).map(async b=>{try{
   const info=await read<{commit:{committer?:{date?:string};author?:{date?:string}}}>("commits/"+encodeURIComponent(b.commit.sha));
