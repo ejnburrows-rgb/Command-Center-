@@ -39,8 +39,8 @@ test('done without proof is red-state UNVERIFIED with explicit missing evidence'
 });
 test('verified GitHub PR states retained, but claims plus screenshot never manufacture VERIFIED or LIVE',async()=>{
  const deps={pr:async()=>({html_url:prUrl,state:'open',draft:true}),artifact:async url=>url===screenshot};
- const {jobs}=await buildEvidence(body,'now',[comment(1,`JOB 1 / STATUS: LIVE / TEST: PASSED ${prUrl} ${screenshot}`)],deps);assert.equal(jobs[0].status,'PR OPEN');assert.equal(jobs[0].proofUrl,screenshot);
- const merged=await buildEvidence(body,'now',[comment(2,`JOB 2 / STATUS: DONE ${prUrl}`)],{...deps,pr:async()=>({html_url:prUrl,state:'closed',merged_at:'2026-10-19'})});assert.equal(merged.jobs[1].status,'MERGED');
+ const {jobs}=await buildEvidence(body,'now',[comment(1,`JOB 1 / STATUS: LIVE / TEST: PASSED ${prUrl} ${screenshot}`)],deps);assert.equal(jobs[0].status,'UNVERIFIED');assert.equal(jobs[0].githubState,'PR OPEN');assert.equal(jobs[0].proofUrl,screenshot);
+ const merged=await buildEvidence(body,'now',[comment(2,`JOB 2 / STATUS: DONE ${prUrl}`)],{...deps,pr:async()=>({html_url:prUrl,state:'closed',merged_at:'2026-10-19'})});assert.equal(merged.jobs[1].status,'UNVERIFIED');assert.equal(merged.jobs[1].githubState,'MERGED');assert.ok(merged.jobs[1].missingEvidence.includes('Completion claim lacks confirmed acceptance evidence'));
 });
 test('unrelated numbers, ambiguous multi-job summaries and other-repository PRs never attach',async()=>{
  const {jobs}=await buildEvidence(body,'now',[comment(1,`Lesson 3 complete ${prUrl}`),comment(2,`JOB 1 and JOB 2 complete ${prUrl}`),comment(3,'JOB 5 DONE https://github.com/another/repo/pull/123')],noEvidence);
@@ -64,3 +64,5 @@ test('artifact checks reject private/internal/foreign destinations before any ne
 });
 
 test('explicit NOT STARTED is not mistaken for started work',async()=>{const {jobs}=await buildEvidence(body,'now',[comment(1,'JOB 1 / STATUS: NOT STARTED')],noEvidence);assert.equal(jobs[0].status,'NOT STARTED');});
+
+test('genuinely ongoing reports keep PR OPEN while exposing independent GitHub state',async()=>{const result=await buildEvidence(body,'now',[comment(1,`JOB 1 / STATUS: IN PROGRESS ${prUrl}`)],{pr:async()=>({html_url:prUrl,state:'open'}),artifact:async()=>false});assert.equal(result.jobs[0].status,'PR OPEN');assert.equal(result.jobs[0].githubState,'PR OPEN');});

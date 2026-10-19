@@ -3,7 +3,7 @@ import {serverSnapshot} from './server-snapshot';
 const repo='/repos/ejnburrows-rgb/cartilla-de-gretel';
 export const jobSource='https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877';
 export type JobStatus='NOT STARTED'|'IN PROGRESS'|'PR OPEN'|'VERIFIED'|'MERGED'|'LIVE'|'UNVERIFIED';
-export type Job={id:number;title:string;status:JobStatus;sourceUrl:string;prUrl?:string;proofUrl?:string;updatedAt?:string;ownerDecision?:string;missingEvidence:string[]};
+export type Job={id:number;title:string;status:JobStatus;githubState?:'PR OPEN'|'MERGED'|'PR CLOSED';sourceUrl:string;prUrl?:string;proofUrl?:string;updatedAt?:string;ownerDecision?:string;missingEvidence:string[]};
 export type Approval={id:string;title:string;project:string;sourceUrl:string;proofUrl:string;updatedAt:string;state:string};
 export type Comment={id:number;body:string;html_url:string;updated_at:string;user?:{login:string}};
 export function canonicalJobs(body:string,updatedAt:string):Job[]{
@@ -63,11 +63,14 @@ export async function buildEvidence(body:string,updatedAt:string,comments:Commen
   const claimsDone=/\b(done|complete[d]?|verified|merged|live|finished)\b/i.test(comment.body);
   const progress=/\b(in progress|working|implementing|started)\b/i.test(comment.body);
   const notStarted=/\bNOT STARTED\b/i.test(comment.body);
-  const status:JobStatus=pr?.merged_at?'MERGED':pr?.state==='open'?'PR OPEN':notStarted?'NOT STARTED':claimsDone?'UNVERIFIED':progress?'IN PROGRESS':'UNVERIFIED';
+  const githubState=pr?.merged_at?'MERGED':pr?.state==='open'?'PR OPEN':pr?.state==='closed'?'PR CLOSED':undefined;
+  // Repository state is independent from acceptance of the canonical job. A merge
+  // proves the merge only; a completion claim still requires verified acceptance.
+  const status:JobStatus=claimsDone?'UNVERIFIED':notStarted?'NOT STARTED':githubState==='PR OPEN'?'PR OPEN':githubState==='MERGED'?'MERGED':progress?'IN PROGRESS':'UNVERIFIED';
   // A screenshot establishes a visual artifact, not all job acceptance checks. Keep
   // PR/merge states factual; never promote a comment's self-reported test claim to VERIFIED.
   const verified=false; // A comment claiming tests passed does not independently verify the job.
-  Object.assign(job,{status:verified?'VERIFIED':status,sourceUrl:comment.html_url,prUrl:pr?.html_url,proofUrl:proof,updatedAt:comment.updated_at,missingEvidence:[...(!pr?['No verified matching PR']:[]),...(!proof?['No verification artifact']:[]),...(claimsDone&&!verified&&!pr?.merged_at?['Completion claim lacks confirmed acceptance evidence']:[])]});
+  Object.assign(job,{status:verified?'VERIFIED':status,githubState,sourceUrl:comment.html_url,prUrl:pr?.html_url,proofUrl:proof,updatedAt:comment.updated_at,missingEvidence:[...(!pr?['No verified matching PR']:[]),...(!proof?['No verification artifact']:[]),...(claimsDone&&!verified?['Completion claim lacks confirmed acceptance evidence']:[])]});
   const type=approvalType(comment.body);
   if(type)job.ownerDecision=type==='pictures'?'Approve pictures going live':type==='merge'?'Approve merge to main':'Approve final voice';
   // Keep at most the latest explicit owner-decision state for each job. A newer comment
@@ -77,7 +80,7 @@ export async function buildEvidence(body:string,updatedAt:string,comments:Commen
  }
  return {jobs,approvals};
 }
-export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877',30*60*1000,async()=>{
+export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-v2',30*60*1000,async()=>{
  const {data:meta}=await github(repo);if(meta.private!==false)throw new Error('Public repository metadata unavailable');
  const {data:issue}=await github(repo+'/issues/877');
  const comments=await allPages<Comment>(repo+'/issues/877/comments');
