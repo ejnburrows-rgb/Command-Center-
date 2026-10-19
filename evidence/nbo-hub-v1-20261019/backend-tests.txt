@@ -1,0 +1,22 @@
+✔ paginates all issue/PR records and separates drafts from actual issues (5.508452ms)
+✔ partial page failure rejects whole count rather than publishing partial totals (0.738783ms)
+✔ overlapping pages cannot silently double count after concurrent GitHub changes (0.272354ms)
+✔ cache preserves source success timestamp and stale values after failure and repeated polls (0.753456ms)
+✔ 403 errors explicit; private metadata blocked; no authorization credential is sent (4.728516ms)
+✔ canonical names come only from issue body and preserve owner decision (1.025522ms)
+✔ done without proof is red-state UNVERIFIED with explicit missing evidence (1.982534ms)
+✔ verified GitHub PR states retained, but claims plus screenshot never manufacture VERIFIED or LIVE (0.822922ms)
+✔ unrelated numbers, ambiguous multi-job summaries and other-repository PRs never attach (11.639619ms)
+✔ Needs You requires explicit eligible owner approval and reachable visual proof (0.80805ms)
+✔ all history considered but only latest explicit job reports consume proof/PR requests (1.931381ms)
+✔ artifact checks reject private/internal/foreign destinations before any network call (0.980546ms)
+✔ explicit NOT STARTED is not mistaken for started work (0.177289ms)
+✔ genuinely ongoing reports keep PR OPEN while exposing independent GitHub state (0.2098ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 217.402828

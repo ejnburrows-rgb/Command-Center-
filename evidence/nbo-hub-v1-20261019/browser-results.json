@@ -1,0 +1,2411 @@
+[
+  {
+    "test": "history",
+    "active": "\u25a3Projects",
+    "steps": [
+      {
+        "step": "Work",
+        "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel/work"
+      },
+      {
+        "step": "Resources",
+        "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel/resources"
+      },
+      {
+        "step": "Back to work",
+        "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel/work"
+      },
+      {
+        "step": "Back to overview",
+        "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel"
+      },
+      {
+        "step": "Forward and reload work",
+        "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel/work"
+      }
+    ],
+    "workLinks": 130
+  },
+  {
+    "test": "req1-desktop",
+    "overflow": false,
+    "time": "2026-10-19T11:59:44.741Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel/work",
+    "width": 1440
+  },
+  {
+    "test": "req1-mobile",
+    "overflow": false,
+    "time": "2026-10-19T11:59:47.894Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel/work",
+    "width": 390
+  },
+  {
+    "test": "all-routes",
+    "freshTab": {
+      "loaded": true,
+      "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel/work"
+    },
+    "routes": [
+      {
+        "heading": "Your operations hub",
+        "overflow": false,
+        "path": "/",
+        "status": 200
+      },
+      {
+        "heading": "Projects",
+        "overflow": false,
+        "path": "/projects",
+        "status": 200
+      },
+      {
+        "heading": "La Cartilla de Gretel",
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel",
+        "status": 200
+      },
+      {
+        "heading": "La Cartilla de Gretel",
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/work",
+        "status": 200
+      },
+      {
+        "heading": "La Cartilla de Gretel",
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/jobs",
+        "status": 200
+      },
+      {
+        "heading": "La Cartilla de Gretel",
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/live",
+        "status": 200
+      },
+      {
+        "heading": "La Cartilla de Gretel",
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/resources",
+        "status": 200
+      },
+      {
+        "heading": "Best Practices",
+        "overflow": false,
+        "path": "/best-practices",
+        "status": 200
+      },
+      {
+        "heading": "Best Practices",
+        "overflow": false,
+        "path": "/best-practices/before",
+        "status": 200
+      },
+      {
+        "heading": "Best Practices",
+        "overflow": false,
+        "path": "/best-practices/during",
+        "status": 200
+      },
+      {
+        "heading": "Best Practices",
+        "overflow": false,
+        "path": "/best-practices/after",
+        "status": 200
+      },
+      {
+        "heading": "Prompts",
+        "overflow": false,
+        "path": "/prompts",
+        "status": 200
+      },
+      {
+        "heading": "Tools",
+        "overflow": false,
+        "path": "/tools",
+        "status": 200
+      },
+      {
+        "heading": "Assets",
+        "overflow": false,
+        "path": "/assets",
+        "status": 200
+      },
+      {
+        "heading": "Settings",
+        "overflow": false,
+        "path": "/settings",
+        "status": 200
+      },
+      {
+        "heading": "Page not found",
+        "path": "/projects/not-a-repo/work",
+        "status": 404
+      }
+    ]
+  },
+  {
+    "test": "history-1-work",
+    "overflow": false,
+    "time": "2026-10-19T12:00:16.511Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel/work",
+    "width": 1440
+  },
+  {
+    "test": "history-2-resources",
+    "overflow": false,
+    "time": "2026-10-19T12:00:27.794Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel/resources",
+    "width": 1440
+  },
+  {
+    "test": "history-3-back",
+    "overflow": false,
+    "time": "2026-10-19T12:00:34.218Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel/work",
+    "width": 1440
+  },
+  {
+    "test": "history-4-forward",
+    "overflow": false,
+    "time": "2026-10-19T12:00:39.100Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel/resources",
+    "width": 1440
+  },
+  {
+    "test": "req2-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:01:22.439Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel",
+    "width": 1440
+  },
+  {
+    "test": "req2-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:01:30.958Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/projects/cartilla-de-gretel",
+    "width": 390
+  },
+  {
+    "test": "github-independent-counts",
+    "checkedAt": "2026-10-19T12:01:36.570Z",
+    "drafts": 81,
+    "issues": 46,
+    "issuesPages": 2,
+    "prs": 84,
+    "urls": [
+      "https://api.github.com/repos/ejnburrows-rgb/cartilla-de-gretel/issues?state=open&per_page=100&page=1",
+      "https://api.github.com/repos/ejnburrows-rgb/cartilla-de-gretel/issues?state=open&per_page=100&page=2",
+      "https://api.github.com/repos/ejnburrows-rgb/cartilla-de-gretel/pulls?state=open&per_page=100&page=1"
+    ]
+  },
+  {
+    "test": "req3-pinned-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:01:39.701Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/",
+    "width": 1440
+  },
+  {
+    "test": "req3-pinned-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:01:42.437Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/",
+    "width": 390
+  },
+  {
+    "test": "pin-reload-theme-unpin",
+    "pinnedAfterTheme": true,
+    "pins": "[]",
+    "theme": "teal"
+  },
+  {
+    "test": "req3-unpinned-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:01:47.745Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/",
+    "width": 390
+  },
+  {
+    "test": "req3-unpinned-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:01:51.376Z",
+    "url": "https://nbo-operations-2lof4akrc-ejn.vercel.app/",
+    "width": 1440
+  },
+  {
+    "test": "live-save-reload",
+    "saved": "https://cartilla-de-gretel.vercel.app/",
+    "status": "Last check: 10/19/2026, 8:02:29 AMHTTP status: 200 \u00b7 Request succeededFinal URL: https://cartilla-de-gretel.vercel.app/HTTP Last-Modified: Thu, 15 Oct 2026 19:32:29 GMTHTTP HEAD response. Last-Modified describes the HTTP resource, not its deployment.Deployed commit: Unknown \u00b7 Deployment timestamp: Unknown"
+  },
+  {
+    "test": "req4-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:02:32.895Z",
+    "url": "https://nbo-operations-2mb9ltmj8-ejn.vercel.app/projects/cartilla-de-gretel/live",
+    "width": 1440
+  },
+  {
+    "test": "req4-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:02:38.444Z",
+    "url": "https://nbo-operations-2mb9ltmj8-ejn.vercel.app/projects/cartilla-de-gretel/live",
+    "width": 390
+  },
+  {
+    "test": "live-failure-and-ssrf",
+    "checks": [
+      {
+        "response": {
+          "buildAge": "BUILD AGE UNKNOWN",
+          "checkedAt": "2026-10-19T12:02:41.299Z",
+          "error": "getaddrinfo EBUSY nbo-unavailable-test-20261019.example.com",
+          "status": null,
+          "success": false,
+          "url": "https://nbo-unavailable-test-20261019.example.com/"
+        },
+        "url": "https://nbo-unavailable-test-20261019.example.com/"
+      },
+      {
+        "response": {
+          "buildAge": "BUILD AGE UNKNOWN",
+          "checkedAt": "2026-10-19T12:02:41.391Z",
+          "error": "Use a public HTTPS hostname on port 443.",
+          "status": null,
+          "success": false,
+          "url": "https://127.0.0.1/"
+        },
+        "url": "https://127.0.0.1/"
+      },
+      {
+        "response": {
+          "buildAge": "BUILD AGE UNKNOWN",
+          "checkedAt": "2026-10-19T12:02:41.467Z",
+          "error": "Use a public HTTPS hostname on port 443.",
+          "status": null,
+          "success": false,
+          "url": "https://localhost/"
+        },
+        "url": "https://localhost/"
+      },
+      {
+        "response": {
+          "buildAge": "BUILD AGE UNKNOWN",
+          "checkedAt": "2026-10-19T12:02:41.533Z",
+          "error": "Use a public HTTPS hostname on port 443.",
+          "status": null,
+          "success": false,
+          "url": "http://example.com"
+        },
+        "url": "http://example.com"
+      },
+      {
+        "response": {
+          "buildAge": "BUILD AGE UNKNOWN",
+          "checkedAt": "2026-10-19T12:02:41.630Z",
+          "error": "Use a public HTTPS hostname on port 443.",
+          "status": null,
+          "success": false,
+          "url": "https://example.com:444/"
+        },
+        "url": "https://example.com:444/"
+      }
+    ]
+  },
+  {
+    "test": "jobs-final",
+    "cards": 5,
+    "jobs": {
+      "approvals": [],
+      "fetchedAt": "2026-10-19T12:02:46.557Z",
+      "jobs": [
+        {
+          "id": 1,
+          "missingEvidence": [
+            "No verified matching PR",
+            "No verification artifact"
+          ],
+          "sourceUrl": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877",
+          "status": "UNVERIFIED",
+          "title": "Index card wording",
+          "updatedAt": "2026-10-19T11:13:01Z"
+        },
+        {
+          "githubState": "PR OPEN",
+          "id": 2,
+          "missingEvidence": [
+            "No verification artifact",
+            "Completion claim lacks confirmed acceptance evidence"
+          ],
+          "prUrl": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/920",
+          "sourceUrl": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877#issuecomment-6235918544",
+          "status": "UNVERIFIED",
+          "title": "Lesson 3 as the archetype",
+          "updatedAt": "2026-10-17T15:40:09Z"
+        },
+        {
+          "id": 3,
+          "missingEvidence": [
+            "No verified matching PR",
+            "No verification artifact"
+          ],
+          "sourceUrl": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877#issuecomment-6234111219",
+          "status": "UNVERIFIED",
+          "title": "Voice",
+          "updatedAt": "2026-10-17T12:53:07Z"
+        },
+        {
+          "githubState": "MERGED",
+          "id": 4,
+          "missingEvidence": [
+            "No verification artifact",
+            "Completion claim lacks confirmed acceptance evidence"
+          ],
+          "ownerDecision": "Waiting on the owner's pick. Hold until then.",
+          "prUrl": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/901",
+          "sourceUrl": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877#issuecomment-6232139530",
+          "status": "UNVERIFIED",
+          "title": "Flip chart look",
+          "updatedAt": "2026-10-17T09:11:34Z"
+        },
+        {
+          "githubState": "MERGED",
+          "id": 5,
+          "missingEvidence": [
+            "No verification artifact",
+            "Completion claim lacks confirmed acceptance evidence"
+          ],
+          "prUrl": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/902",
+          "sourceUrl": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877#issuecomment-6232110800",
+          "status": "UNVERIFIED",
+          "title": "Rollout",
+          "updatedAt": "2026-10-17T09:08:06Z"
+        }
+      ],
+      "stale": false
+    },
+    "links": [
+      "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877",
+      "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877#issuecomment-6235918544",
+      "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/920",
+      "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877#issuecomment-6234111219",
+      "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877#issuecomment-6232139530",
+      "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/901",
+      "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877#issuecomment-6232110800",
+      "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/902"
+    ],
+    "redStatuses": 5
+  },
+  {
+    "test": "req5-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:02:49.742Z",
+    "url": "https://nbo-operations-2mb9ltmj8-ejn.vercel.app/projects/cartilla-de-gretel/jobs",
+    "width": 1440
+  },
+  {
+    "test": "req5-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:02:52.833Z",
+    "url": "https://nbo-operations-2mb9ltmj8-ejn.vercel.app/projects/cartilla-de-gretel/jobs",
+    "width": 390
+  },
+  {
+    "test": "req6-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:03:19.127Z",
+    "url": "https://nbo-operations-2mb9ltmj8-ejn.vercel.app/projects/cartilla-de-gretel/resources",
+    "width": 1440
+  },
+  {
+    "test": "req6-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:03:22.731Z",
+    "url": "https://nbo-operations-2mb9ltmj8-ejn.vercel.app/projects/cartilla-de-gretel/resources",
+    "width": 390
+  },
+  {
+    "test": "quick-link-destinations",
+    "cartillaJobLinkOnOtherProject": 0,
+    "customLinkPersisted": "https://example.com/nbo-link-persistence-test",
+    "links": [
+      {
+        "destination": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877",
+        "name": "Issue #877\u2197",
+        "status": 200,
+        "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877"
+      },
+      {
+        "destination": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls",
+        "name": "Open PRs\u2197",
+        "status": 200,
+        "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls"
+      },
+      {
+        "destination": "https://cartilla-de-gretel.vercel.app/",
+        "name": "Live website\u2197",
+        "status": 200,
+        "url": "https://cartilla-de-gretel.vercel.app/"
+      },
+      {
+        "name": "Muse email \u2197",
+        "recipientCorrect": true,
+        "scheme": "mailto",
+        "url": "mailto:ejnrcgplm@gmail.com"
+      }
+    ]
+  },
+  {
+    "test": "prompts-checklists-themes",
+    "checklistPersisted": true,
+    "clipboardCopied": true,
+    "promptPersisted": true,
+    "themeAfterNavigation": "teal",
+    "themeAfterReload": "teal",
+    "themeAfterToggle": "teal"
+  },
+  {
+    "test": "approval-fixture-filter",
+    "approvalCards": 1,
+    "missingProofCaseVisible": 0
+  },
+  {
+    "test": "req7-fixture-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:05:24.476Z",
+    "url": "https://nbo-operations-2mb9ltmj8-ejn.vercel.app/",
+    "width": 1440
+  },
+  {
+    "test": "req7-fixture-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:05:27.397Z",
+    "url": "https://nbo-operations-2mb9ltmj8-ejn.vercel.app/",
+    "width": 390
+  },
+  {
+    "test": "restore-real-approval-feed",
+    "realApprovalCards": 0
+  },
+  {
+    "test": "req7-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:05:32.764Z",
+    "url": "https://nbo-operations-2mb9ltmj8-ejn.vercel.app/",
+    "width": 1440
+  },
+  {
+    "test": "req7-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:05:35.610Z",
+    "url": "https://nbo-operations-2mb9ltmj8-ejn.vercel.app/",
+    "width": 390
+  },
+  {
+    "test": "refresh-retested",
+    "autoCode": 200,
+    "cachedTimestampUnchanged": true,
+    "manualCode": 200,
+    "pollDoesNotManufactureFreshness": true
+  },
+  {
+    "test": "mobile-all-project-routes",
+    "routes": [
+      {
+        "overflow": false,
+        "path": "/",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/best-practices/before",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/best-practices/during",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/best-practices/after",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/prompts",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/tools",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/assets",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/settings",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/resources",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto/resources",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/tucker-pool-crm",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/tucker-pool-crm/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/tucker-pool-crm/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/tucker-pool-crm/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/tucker-pool-crm/resources",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/client-project-starter",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/client-project-starter/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/client-project-starter/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/client-project-starter/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/client-project-starter/resources",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto-plumbing-site",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto-plumbing-site/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto-plumbing-site/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto-plumbing-site/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto-plumbing-site/resources",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/dbarrera-y-mas",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/dbarrera-y-mas/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/dbarrera-y-mas/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/dbarrera-y-mas/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/dbarrera-y-mas/resources",
+        "status": 200
+      }
+    ],
+    "width": 390
+  },
+  {
+    "test": "security-redirect-timeout-status",
+    "checks": [
+      {
+        "elapsedMs": 327,
+        "response": {
+          "buildAge": "BUILD AGE UNKNOWN",
+          "checkedAt": "2026-10-19T12:06:28.978Z",
+          "error": "Use a public HTTPS hostname on port 443.",
+          "status": null,
+          "success": false,
+          "url": "https://httpbin.org/redirect-to?url=https%3A%2F%2F127.0.0.1"
+        },
+        "url": "https://httpbin.org/redirect-to?url=https%3A%2F%2F127.0.0.1"
+      },
+      {
+        "elapsedMs": 8065,
+        "response": {
+          "buildAge": "BUILD AGE UNKNOWN",
+          "checkedAt": "2026-10-19T12:06:37.051Z",
+          "error": "Website check timed out",
+          "status": null,
+          "success": false,
+          "url": "https://httpbin.org/delay/10"
+        },
+        "url": "https://httpbin.org/delay/10"
+      },
+      {
+        "elapsedMs": 338,
+        "response": {
+          "buildAge": "BUILD AGE UNKNOWN",
+          "checkedAt": "2026-10-19T12:06:37.385Z",
+          "deployment": null,
+          "lastModified": null,
+          "provenance": "HTTP HEAD response. Last-Modified describes the HTTP resource, not its deployment.",
+          "redirects": [],
+          "status": 404,
+          "success": false,
+          "url": "https://httpbin.org/status/404"
+        },
+        "url": "https://httpbin.org/status/404"
+      }
+    ]
+  },
+  {
+    "test": "github-reference-screen-state",
+    "draftLabel": 0,
+    "openLabel": 0,
+    "state": "- main:\n  - navigation \"Breadcrumbs\":\n    - list:\n      - listitem:\n        - link \"ejnburrows-rgb\":\n          - /url: /ejnburrows-rgb\n      - listitem:\n        - link \"cartilla-de-gretel\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel\n  - heading \"Repository navigation\" [level=2]\n  - navigation \"Repository\":\n    - list:\n      - listitem:\n        - link \"Code\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel\n      - listitem:\n        - link \"Issues (46)\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/issues\n      - listitem:\n        - link \"Pull requests (84)\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/pulls\n      - listitem:\n        - link \"Actions\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/actions\n      - listitem:\n        - link \"Projects\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/projects\n      - listitem:\n        - link \"Security and quality\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/security\n      - listitem:\n        - link \"Insights\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/pulse\n  - heading \"All pull requests\" [level=1]\n  - link \"Labels (21)\":\n    - /url: /ejnburrows-rgb/cartilla-de-gretel/labels\n  - link \"Milestones (0)\":\n    - /url: /ejnburrows-rgb/cartilla-de-gretel/milestones\n  - link \"New pull request\":\n    - /url: /ejnburrows-rgb/cartilla-de-gretel/compare\n  - search \"Pull requests\":\n    - form \"Search pull requests\":\n      - text: Search pull requests\n      - combobox \"Search pull requests\": is:pr state:open\n      - button \"Clear filter\"\n      - button \"Search\"\n  - heading \"Pull requests\" [level=2]\n  - link \"Open (84)\":\n    - /url: /ejnburrows-rgb/cartilla-de-gretel/pulls?q=is%3Apr+state%3Aopen\n  - link \"Closed (737)\":\n    - /url: /ejnburrows-rgb/cartilla-de-gretel/pulls?q=is%3Apr+state%3Aclosed\n  - toolbar \"Pull request filters\":\n    - button \"Filter by author\": Author\n    - button \"Filter by label\": Label\n    - button \"Filter by projects\": Projects\n    - button \"Filter by milestones\": Milestones\n    - button \"Filter by reviews\": Reviews\n    - button \"Filter by assignee\": Assignee\n    - button \"Sort by Newest descending\"\n  - list \"Pull requests display density\":\n    - listitem:\n      - button \"Comfortable display density\" [pressed]\n    - listitem:\n      - button \"Compact display density\"\n  - list \"Pull requests\":\n    - listitem \"More information available below.\":\n      - 'heading \"DRAFT: \ud83e\uddea Add CSV export edge-case tests (toCSV)\" [level=3]':\n        - 'link \"DRAFT: \ud83e\uddea Add CSV export edge-case tests (toCSV)\"':\n          - /url: https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/984\n      - img \"Draft pull request\"\n      - text: \"#984\"\n      - link \"Filter by author ejnburrows-rgb\":\n        - /url: /ejnburrows-rgb/cartilla-de-gretel/pulls?q=is%3Apr+state%3Aopen+author%3Aejnburrows-rgb\n        - text: ejnburrows-rgb\n      - text: opened Oct 18, 2026Oct 18, 2026 Owner 1\n    - listitem \"More information available below.\":\n      - heading \"\ud83e\uddea Missing tests for CSV export\" [level=3]:\n        - link \"\ud83e\uddea Missing tests for CSV export\":\n          - /url: https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/983\n      - img \"Draft pull request\"\n      - text: \"#983\"\n      - link \"Filter by author ejnburrows-rgb\":\n        - /url: /ejnburrows-rgb/cartilla-de-gretel/pulls?q=is%3Apr+state%3Aopen+author%3Aejnburrows-rgb\n        - text: ejnburrows-rgb\n      - text: opened Oct 18, 2026Oct 18, 2026 Owner 5\n    - listitem \"More information available bel",
+    "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls"
+  },
+  {
+    "test": "github-pr-reference",
+    "overflow": false,
+    "time": "2026-10-19T12:07:46.248Z",
+    "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls",
+    "width": 1440
+  },
+  {
+    "test": "github-issues-screen-state",
+    "state": "- main:\n  - navigation \"Breadcrumbs\":\n    - list:\n      - listitem:\n        - link \"ejnburrows-rgb\":\n          - /url: /ejnburrows-rgb\n      - listitem:\n        - link \"cartilla-de-gretel\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel\n  - heading \"Repository navigation\" [level=2]\n  - navigation \"Repository\":\n    - list:\n      - listitem:\n        - link \"Code\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel\n      - listitem:\n        - link \"Issues (46)\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/issues\n      - listitem:\n        - link \"Pull requests (84)\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/pulls\n      - listitem:\n        - link \"Actions\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/actions\n      - listitem:\n        - link \"Projects\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/projects\n      - listitem:\n        - link \"Security and quality\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/security\n      - listitem:\n        - link \"Insights\":\n          - /url: /ejnburrows-rgb/cartilla-de-gretel/pulse\n  - complementary \"Issues sidebar navigation\":\n    - navigation \"Issue filters\":\n      - list:\n        - listitem:\n          - link \"Issues\":\n            - /url: /ejnburrows-rgb/cartilla-de-gretel/issues?q=is%3Aissue+state%3Aopen\n        - listitem:\n          - link \"Assigned to me\":\n            - /url: /ejnburrows-rgb/cartilla-de-gretel/issues?q=is%3Aissue+state%3Aopen+assignee%3A%40me\n        - listitem:\n          - link \"Created by me\":\n            - /url: /ejnburrows-rgb/cartilla-de-gretel/issues?q=is%3Aissue+state%3Aopen+author%3A%40me\n        - listitem:\n          - link \"Mentioned\":\n            - /url: /ejnburrows-rgb/cartilla-de-gretel/issues?q=is%3Aissue+state%3Aopen+mentions%3A%40me\n        - listitem:\n          - link \"Recent activity\":\n            - /url: /ejnburrows-rgb/cartilla-de-gretel/issues?q=is%3Aissue+updated%3A%3E%40today-1w+sort%3Aupdated-desc\n    - separator\n    - navigation \"Pages\":\n      - list:\n        - listitem:\n          - link \"Views\":\n            - /url: /ejnburrows-rgb/cartilla-de-gretel/issues/views\n        - listitem:\n          - link \"Projects\":\n            - /url: /e",
+    "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues"
+  },
+  {
+    "test": "github-issue-reference",
+    "overflow": false,
+    "time": "2026-10-19T12:07:53.580Z",
+    "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues",
+    "width": 1440
+  },
+  {
+    "test": "client-network-stale-recovery",
+    "before": "Open issues46Last refreshed: 10/19/2026, 7:54:50 AMOpen PRs84Last refreshed: 10/19/2026, 7:54:50 AMDraft PRs81Last refreshed: 10/19/2026, 7:54:50 AM",
+    "recovered": true,
+    "stale": "Open issues46Last refreshed: 10/19/2026, 7:54:50 AM \u00b7 STALEOpen PRs84Last refreshed: 10/19/2026, 7:54:50 AM \u00b7 STALEDraft PRs81Last refreshed: 10/19/2026, 7:54:50 AM \u00b7 STALE",
+    "warning": "STALE \u2014 Failed to fetch"
+  },
+  {
+    "test": "req2-final-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:08:19.032Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel",
+    "width": 1440
+  },
+  {
+    "test": "req2-final-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:08:22.189Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel",
+    "width": 390
+  },
+  {
+    "test": "final-route-console-and-keyboard",
+    "errors": [],
+    "failed": [
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/best-practices?_rsc=5CB68i4pnAekjehf"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects?_rsc=5CB68i4pnAekjehf"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/best-practices?_rsc=tXyZJ52UQVBCVsD3"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/prompts?_rsc=tXyZJ52UQVBCVsD3"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/tools?_rsc=BTBUvYWfDKmjR-1G"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/prompts?_rsc=BTBUvYWfDKmjR-1G"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/assets?_rsc=BTBUvYWfDKmjR-1G"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/jobs?_rsc=BTBUvYWfDKmjR-1G"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/live?_rsc=BTBUvYWfDKmjR-1G"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/prompts?_rsc=Hzp4UpH58bnOXnVH"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/jobs?_rsc=IccqBOW2Oskf1xkL"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects?_rsc=IccqBOW2Oskf1xkL"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/live?_rsc=J8So2pRoMQZAN1dt"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/work?_rsc=J8So2pRoMQZAN1dt"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel?_rsc=J8So2pRoMQZAN1dt"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/live?_rsc=hicFi-Vh6JCvVAuC"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/tools?_rsc=9MgvY8FCYmUiRlj1"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/prompts?_rsc=vAkeMgDRGckvHd4t"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/best-practices?_rsc=vAkeMgDRGckvHd4t"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/best-practices/after?_rsc=vl8rkSILpqV_Unhq"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/best-practices/before?_rsc=vl8rkSILpqV_Unhq"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/settings?_rsc=vl8rkSILpqV_Unhq"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/settings?_rsc=C-T_5PNzvh1_lkBi"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/best-practices?_rsc=C-T_5PNzvh1_lkBi"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/prompts?_rsc=C-T_5PNzvh1_lkBi"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects?_rsc=URmaAGBbcAVVj1gD"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/assets?_rsc=DQxjArDrgutTG17x"
+      },
+      {
+        "error": {
+          "errorText": "net::ERR_ABORTED"
+        },
+        "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/assets?_rsc=j-_vjoKOn8bxlRO7"
+      }
+    ],
+    "focus": {
+      "outline": "solid",
+      "tag": "A",
+      "text": "NBONOVO BUSINESS ORDER"
+    },
+    "routes": [
+      {
+        "path": "/",
+        "status": 200
+      },
+      {
+        "path": "/projects",
+        "status": 200
+      },
+      {
+        "path": "/projects/cartilla-de-gretel/work",
+        "status": 200
+      },
+      {
+        "path": "/projects/cartilla-de-gretel/jobs",
+        "status": 200
+      },
+      {
+        "path": "/projects/cartilla-de-gretel/live",
+        "status": 200
+      },
+      {
+        "path": "/projects/cartilla-de-gretel/resources",
+        "status": 200
+      },
+      {
+        "path": "/prompts",
+        "status": 200
+      },
+      {
+        "path": "/best-practices/during",
+        "status": 200
+      },
+      {
+        "path": "/tools",
+        "status": 200
+      },
+      {
+        "path": "/assets",
+        "status": 200
+      },
+      {
+        "path": "/settings",
+        "status": 200
+      }
+    ]
+  },
+  {
+    "test": "github-draft-screen",
+    "openLabel": 1,
+    "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls?q=is%3Apr+is%3Aopen+draft%3Atrue"
+  },
+  {
+    "test": "github-drafts-reference",
+    "overflow": false,
+    "time": "2026-10-19T12:08:36.199Z",
+    "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls?q=is%3Apr+is%3Aopen+draft%3Atrue",
+    "width": 1440
+  },
+  {
+    "test": "desktop-all-project-routes",
+    "count": 30,
+    "routes": [
+      {
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/cartilla-de-gretel/resources",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto/resources",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/tucker-pool-crm",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/tucker-pool-crm/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/tucker-pool-crm/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/tucker-pool-crm/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/tucker-pool-crm/resources",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/client-project-starter",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/client-project-starter/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/client-project-starter/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/client-project-starter/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/client-project-starter/resources",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto-plumbing-site",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto-plumbing-site/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto-plumbing-site/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto-plumbing-site/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/otto-plumbing-site/resources",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/dbarrera-y-mas",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/dbarrera-y-mas/work",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/dbarrera-y-mas/jobs",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/dbarrera-y-mas/live",
+        "status": 200
+      },
+      {
+        "overflow": false,
+        "path": "/projects/dbarrera-y-mas/resources",
+        "status": 200
+      }
+    ]
+  },
+  {
+    "test": "req4-failure-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:09:40.036Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/live",
+    "width": 390
+  },
+  {
+    "test": "live-restore",
+    "restored": true
+  },
+  {
+    "test": "final-count-reference",
+    "checkedAt": "2026-10-19T12:09:46.786Z",
+    "clientPoll": "2026-10-19T12:09:46.212Z",
+    "hub": {
+      "accessible": true,
+      "description": "La Cartilla de Gretel \u2014 digital classroom edition and interactive reading platform.",
+      "drafts": 81,
+      "fetchedAt": "2026-10-19T11:54:50.221Z",
+      "issues": 46,
+      "items": [
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 388,
+          "title": "High: children's data is kept forever and the notes field has no limits",
+          "updatedAt": "2026-10-14T17:29:41Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/388"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 389,
+          "title": "[QUEUE 03] Make one-command cloud release verification reliable (no GitHub Actions)",
+          "updatedAt": "2026-10-14T17:29:33Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/389"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 387,
+          "title": "Blocker: live classes use guessable dictionary join codes (GRETEL, NOVO26)",
+          "updatedAt": "2026-10-14T17:29:35Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/387"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 390,
+          "title": "High: every new signup instantly becomes a teacher \u2014 no approval or license gate",
+          "updatedAt": "2026-10-14T17:29:38Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/390"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 458,
+          "title": "[QUEUE 12] Final assembled-product proof and authorized release",
+          "updatedAt": "2026-10-14T18:59:21Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/458"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 496,
+          "title": "[DESIGN] Golden Workbook page 1 \u2014 clean digital canvas",
+          "updatedAt": "2026-10-14T17:29:14Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/496"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "jules",
+            "controller:ready"
+          ],
+          "number": 587,
+          "title": "[PRE-FINAL] Current-main clean release verification baseline",
+          "updatedAt": "2026-10-16T09:45:38Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/587"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "controller:ready",
+            "owner-gated"
+          ],
+          "number": 588,
+          "title": "[OWNER-GATED FINISH] Integrate final supplied foreground art drop",
+          "updatedAt": "2026-10-14T17:29:02Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/588"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "controller:ready",
+            "owner-gated"
+          ],
+          "number": 589,
+          "title": "[OWNER-GATED FINISH] Install final owner-approved premium Gretel voice",
+          "updatedAt": "2026-10-14T22:29:11Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/589"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "jules"
+          ],
+          "number": 665,
+          "title": "[TARGETED FIX] Prevent stale PianoPronunciation completion and keyboard-inaccessible keys",
+          "updatedAt": "2026-10-14T17:28:58Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/665"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 715,
+          "title": "[P1 Teacher Flip Chart] Restore book reading order on tilted syllable rows",
+          "updatedAt": "2026-10-16T08:45:34Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/715"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "test-stability"
+          ],
+          "number": 857,
+          "title": "[STALE DOC] production-art-audit test: committed audit JSON no longer matches script output",
+          "updatedAt": "2026-10-16T08:48:45Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/857"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 863,
+          "title": "[FIX] CRM notes save failure falsely completes editing",
+          "updatedAt": "2026-10-16T11:19:34Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/863"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 864,
+          "title": "[FIX] TaskList reports no assignments when fetch fails",
+          "updatedAt": "2026-10-16T10:31:12Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/864"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 865,
+          "title": "[FIX] ClassRoster discards edited name after failed rename",
+          "updatedAt": "2026-10-16T10:31:13Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/865"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 871,
+          "title": "[FIX] Lesson 2 word matching cannot complete (duplicate 'oso' vs Set<string>)",
+          "updatedAt": "2026-10-16T12:03:49Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/871"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 872,
+          "title": "[FIX] Armar Palabras emits success feedback for rejected drops on occupied slots",
+          "updatedAt": "2026-10-16T12:03:55Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/872"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 877,
+          "title": "JOB BOARD",
+          "updatedAt": "2026-10-19T11:13:01Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 878,
+          "title": "TEST: Muse to Instinct communication check (please ignore / close after reply)",
+          "updatedAt": "2026-10-16T16:06:26Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/878"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 885,
+          "title": "Flip chart proof-pages lane: 3rd consecutive provider-infra failure \u2014 retry or drop?",
+          "updatedAt": "2026-10-16T19:20:55Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/885"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 887,
+          "title": "Teacher section: color-coded binder shelf (owner-approved spec)",
+          "updatedAt": "2026-10-16T19:24:22Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/887"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 905,
+          "title": "LANE 1 - Finish Lesson 3 (archetype) - Jules lane",
+          "updatedAt": "2026-10-17T13:46:42Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/905"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 907,
+          "title": "LANE 3 - Marking-rule doc finish - Jules lane",
+          "updatedAt": "2026-10-17T13:46:43Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/907"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 906,
+          "title": "LANE 2 - Finish Lesson 24 (redesign + phone fit) - Jules lane",
+          "updatedAt": "2026-10-17T22:43:42Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/906"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 909,
+          "title": "LANE 5 - Marking rule rollout (BLOCKED: needs lane 4 kernel + Lesson 3 approval)",
+          "updatedAt": "2026-10-17T13:46:44Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/909"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 908,
+          "title": "LANE 4 - Marking rule in shared pencil kernel - Jules lane",
+          "updatedAt": "2026-10-17T13:46:44Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/908"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 910,
+          "title": "LANE 6 - Recover Gretel's real voice (BLOCKED: owner master recording)",
+          "updatedAt": "2026-10-17T13:46:48Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/910"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 912,
+          "title": "LANE 8 - Wire the 37 silent flip-chart pictures - Jules lane",
+          "updatedAt": "2026-10-17T13:46:49Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/912"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 911,
+          "title": "LANE 7 - Lesson narration player - Jules lane",
+          "updatedAt": "2026-10-17T13:46:49Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/911"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 914,
+          "title": "LANE 10 - Flip Chart art optimization - Jules lane",
+          "updatedAt": "2026-10-17T13:46:50Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/914"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 913,
+          "title": "LANE 9 - Workbook art optimization - Jules lane",
+          "updatedAt": "2026-10-17T13:46:50Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/913"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 915,
+          "title": "LANE 11 - Workbook motion, rebuilt from original art - Jules lane",
+          "updatedAt": "2026-10-17T13:46:53Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/915"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 916,
+          "title": "LANE 12 - Flip Chart motion for the rest (BLOCKED: lane 10 art per lesson)",
+          "updatedAt": "2026-10-17T13:46:54Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/916"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 918,
+          "title": "LANE 14 - Teacher and test-debt sweep - Jules lane",
+          "updatedAt": "2026-10-17T13:46:55Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/918"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 917,
+          "title": "LANE 13 - Student bug sweep - Jules lane",
+          "updatedAt": "2026-10-17T13:46:55Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/917"
+        },
+        {
+          "kind": "issue",
+          "labels": [],
+          "number": 919,
+          "title": "LANE 15 - Teacher features, #904 redo, release baseline - Jules lane",
+          "updatedAt": "2026-10-17T13:46:56Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/919"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "landscape",
+            "owner-order"
+          ],
+          "number": 986,
+          "title": "Landscape bottom-cutoff fix in #965 + proof screenshots",
+          "updatedAt": "2026-10-19T00:36:57Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/986"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "owner-order"
+          ],
+          "number": 987,
+          "title": "L23 p85-86 overflow fix (PR #939)",
+          "updatedAt": "2026-10-19T00:36:58Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/987"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "owner-order"
+          ],
+          "number": 988,
+          "title": "L16 page-number diamond fix - reposition inward (PR #937)",
+          "updatedAt": "2026-10-19T00:36:59Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/988"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "owner-order"
+          ],
+          "number": 989,
+          "title": "L17 page-number diamond fix - reposition inward (PR #938)",
+          "updatedAt": "2026-10-19T00:37:00Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/989"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "owner-order"
+          ],
+          "number": 990,
+          "title": "L20 page-number diamond fix - reposition inward (PR #933)",
+          "updatedAt": "2026-10-19T00:37:02Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/990"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "owner-order"
+          ],
+          "number": 991,
+          "title": "Rebuild cow game to owner's images + motion spec, no Gretel (PR #974)",
+          "updatedAt": "2026-10-19T00:37:03Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/991"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "owner-order"
+          ],
+          "number": 992,
+          "title": "Rebuild Rima game to owner's images + motion spec, no Gretel (PR #979)",
+          "updatedAt": "2026-10-19T00:37:04Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/992"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "owner-order"
+          ],
+          "number": 993,
+          "title": "Rebuild Palabras game to owner's images + motion spec, no Gretel (PR #980)",
+          "updatedAt": "2026-10-19T00:37:05Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/993"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "owner-order"
+          ],
+          "number": 994,
+          "title": "Remove Gretel mascot from LetterPicker activity pages (PR #970)",
+          "updatedAt": "2026-10-19T00:37:07Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/994"
+        },
+        {
+          "kind": "issue",
+          "labels": [
+            "owner-order"
+          ],
+          "number": 995,
+          "title": "Remove Gretel mascot from CompletarPalabras activity pages (PR #973)",
+          "updatedAt": "2026-10-19T00:37:08Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/995"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 741,
+          "title": "feat(flipchart): living-book finish from owner reference guides (#715 F15)",
+          "updatedAt": "2026-10-16T12:16:35Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/741"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 751,
+          "title": "Classify artwork availability and release 108 missing-original references",
+          "updatedAt": "2026-10-15T09:00:23Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/751"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 764,
+          "title": "feat(workbook): approved motion on real pencil-card pictures; hold whole-picture motion still (continues #735)",
+          "updatedAt": "2026-10-14T15:25:29Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/764"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 767,
+          "title": "fix(workbook): leave drawing space between letters and pictures",
+          "updatedAt": "2026-10-14T15:26:17Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/767"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 769,
+          "title": "Gretel \u2014 rejected mixed clips quarantined; original source segments recovered, alignment pending",
+          "updatedAt": "2026-10-15T13:04:12Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/769"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 781,
+          "title": "No changes made",
+          "updatedAt": "2026-10-15T08:26:47Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/781"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 787,
+          "title": "fix(flipchart): prevent global keyboard shortcuts from hijacking focused controls",
+          "updatedAt": "2026-10-16T12:16:30Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/787"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 866,
+          "title": "Lesson 3 only: source-mapped artwork, calm background, readable phone header",
+          "updatedAt": "2026-10-17T23:48:00Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/866"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 870,
+          "title": "chore: secure dependencies and resolve audit findings",
+          "updatedAt": "2026-10-16T11:37:06Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/870"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 882,
+          "title": "docs: JOBS.md board \u2014 lane 3 killed-stalled, lane 2 voice answer #2 + resumed",
+          "updatedAt": "2026-10-16T19:30:26Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/882"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 884,
+          "title": "DRAFT: Lesson 24 Zz \u2014 CSS repairs and browser evidence; phone fit pending",
+          "updatedAt": "2026-10-17T07:53:10Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/884"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 886,
+          "title": "DRAFT: Lesson 3 owner-voice only \u2014 TTS reverted, all 5 lines silent (recordings needed)",
+          "updatedAt": "2026-10-16T19:23:59Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/886"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 888,
+          "title": "Art: Lesson 3 final pictures (31 files)",
+          "updatedAt": "2026-10-18T06:23:54Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/888"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 890,
+          "title": "Original-art Lesson 3 fan, bee and airplane motion [DRAFT \u2014 original art; do not merge]",
+          "updatedAt": "2026-10-17T23:11:11Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/890"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 891,
+          "title": "Original-art Lesson 3 bear, sheep and pot motion [DRAFT \u2014 original art; do not merge]",
+          "updatedAt": "2026-10-17T23:11:22Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/891"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 892,
+          "title": "Original-art Lesson 3 elephant and magnet motion [DRAFT \u2014 original art; do not merge]",
+          "updatedAt": "2026-10-17T23:10:48Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/892"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 896,
+          "title": "Original-art remaining Lesson 3 picture motion [DRAFT \u2014 original art; do not merge]",
+          "updatedAt": "2026-10-17T23:11:07Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/896"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 897,
+          "title": "Original-art car wheel and broom motion [DRAFT \u2014 original art; do not merge]",
+          "updatedAt": "2026-10-17T23:11:14Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/897"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 898,
+          "title": "Original-art unicorn ear motion [DRAFT \u2014 original art; do not merge]",
+          "updatedAt": "2026-10-17T23:10:52Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/898"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 899,
+          "title": "Original-art Flip Chart soup motion [DRAFT \u2014 original art; do not merge]",
+          "updatedAt": "2026-10-17T23:11:41Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/899"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 900,
+          "title": "Original-art Flip Chart Lala motion [DRAFT \u2014 original art; do not merge]",
+          "updatedAt": "2026-10-17T23:11:47Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/900"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 903,
+          "title": "Docs: answer marking \u2014 ash pencil start, green/red resolve (owner 2026-10-17)",
+          "updatedAt": "2026-10-17T10:56:09Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/903"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 904,
+          "title": "chore: script to screenshot all lesson pages",
+          "updatedAt": "2026-10-17T13:53:43Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/904"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 920,
+          "title": "chore: regenerate 384/768 delivery art from current source art",
+          "updatedAt": "2026-10-18T09:42:05Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/920"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 921,
+          "title": "Original-art integration: assembled motion stack, im\u00e1n correction, recovered audit repair [DRAFT \u2014 do not merge]",
+          "updatedAt": "2026-10-17T23:12:23Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/921"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 922,
+          "title": "Original-art Lane D: registry lint + estrella twinkle + Flip Chart L6 unicornio [DRAFT \u2014 owner approval pending]",
+          "updatedAt": "2026-10-17T23:12:13Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/922"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 923,
+          "title": "docs: finalize marking-rule docs (lane 3)",
+          "updatedAt": "2026-10-18T01:18:40Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/923"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 924,
+          "title": "Fix Teacher and test-debt sweep lane 14",
+          "updatedAt": "2026-10-18T01:18:42Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/924"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 927,
+          "title": "DRAFT: Lesson 21 Jj \u2014 wide-screen design (swarm back-to-front)",
+          "updatedAt": "2026-10-18T15:42:16Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/927"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 928,
+          "title": "fix: resolve WordMatch tracking and DragBuildWord drops",
+          "updatedAt": "2026-10-18T02:10:16Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/928"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 929,
+          "title": "chore: optimize lane-9 assets and update artwork classification maps",
+          "updatedAt": "2026-10-18T02:10:19Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/929"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 930,
+          "title": "feat: implement owner's pencil feedback rules (#908)",
+          "updatedAt": "2026-10-19T10:33:22Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/930"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 931,
+          "title": "DRAFT: Lane 8 (#912) - wire 37 silent flip-chart pictures (controller recovery)",
+          "updatedAt": "2026-10-18T18:17:05Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/931"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 932,
+          "title": "DRAFT: Lesson 22 Cc \u2014 wide-screen design (swarm)",
+          "updatedAt": "2026-10-18T16:14:53Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/932"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 933,
+          "title": "DRAFT: Lesson 20 Ff \u2014 wide-screen design (swarm)",
+          "updatedAt": "2026-10-18T15:41:10Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/933"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 934,
+          "title": "DRAFT: Lesson 18 rr \u2014 wide-screen design (swarm)",
+          "updatedAt": "2026-10-18T14:49:06Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/934"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 935,
+          "title": "DRAFT: Lesson 19 Gg \u2014 wide-screen design (swarm)",
+          "updatedAt": "2026-10-18T03:55:28Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/935"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 936,
+          "title": "DRAFT: Lesson 15 b \u2014 wide-screen design (swarm)",
+          "updatedAt": "2026-10-18T16:46:54Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/936"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 937,
+          "title": "DRAFT: Lesson 16 v \u2014 wide-screen design (swarm)",
+          "updatedAt": "2026-10-19T06:13:01Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/937"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 938,
+          "title": "DRAFT: Lesson 17 r \u2014 wide-screen design (swarm)",
+          "updatedAt": "2026-10-18T15:01:11Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/938"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 939,
+          "title": "DRAFT: Lesson 23 Yy \u2014 wide-screen design (swarm)",
+          "updatedAt": "2026-10-18T16:45:05Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/939"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 940,
+          "title": "Combine Lesson 3 drafts and fixes",
+          "updatedAt": "2026-10-18T09:27:02Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/940"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 941,
+          "title": "Kill device robot voice (owner order)",
+          "updatedAt": "2026-10-18T05:56:44Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/941"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 943,
+          "title": "chore: Recover and integrate batch D optimized artwork",
+          "updatedAt": "2026-10-18T18:18:43Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/943"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 945,
+          "title": "DRAFT: Lesson narration player + lesson-view wiring (#911 recovery 2)",
+          "updatedAt": "2026-10-18T08:46:04Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/945"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 946,
+          "title": "DRAFT: Lesson 24 (Zz) \u2014 owner-approved wide cream-paper redesign (pages 88\u201390)",
+          "updatedAt": "2026-10-18T09:55:14Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/946"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 947,
+          "title": "Revert PR #944 (Payaso Chano)",
+          "updatedAt": "2026-10-18T12:48:43Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/947"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 948,
+          "title": "Finish Payaso Chano input, responsive controls and optional original music",
+          "updatedAt": "2026-10-18T10:46:11Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/948"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 949,
+          "title": "feat: wide cream-paper design for Lesson 14 (\u00d1\u00f1, pages 47-50)",
+          "updatedAt": "2026-10-18T12:57:37Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/949"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 950,
+          "title": "DRAFT: Lesson 10 \u2014 wide-screen design",
+          "updatedAt": "2026-10-18T10:48:36Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/950"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 951,
+          "title": "DRAFT: Lesson 6 \u2014 wide-screen design",
+          "updatedAt": "2026-10-18T10:50:13Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/951"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 952,
+          "title": "DRAFT: Lesson 1 \u2014 wide-screen design",
+          "updatedAt": "2026-10-18T10:50:03Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/952"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 953,
+          "title": "DRAFT: Lesson 5 \u2014 wide-screen design",
+          "updatedAt": "2026-10-18T10:53:01Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/953"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 954,
+          "title": "DRAFT: Lesson 7 \u2014 wide-screen design",
+          "updatedAt": "2026-10-18T14:47:39Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/954"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 955,
+          "title": "DRAFT: Lesson 4 \u2014 wide-screen design",
+          "updatedAt": "2026-10-18T10:56:26Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/955"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 956,
+          "title": "DRAFT: Lesson 8 \u2014 wide-screen design",
+          "updatedAt": "2026-10-18T10:57:48Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/956"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 957,
+          "title": "DRAFT: Lesson 2 \u2014 wide-screen design",
+          "updatedAt": "2026-10-18T10:59:29Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/957"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 958,
+          "title": "DRAFT: Lesson 9 \u2014 wide-screen design",
+          "updatedAt": "2026-10-18T11:02:24Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/958"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 959,
+          "title": "Lane 906: Lesson 24 phone-fit CSS + wide redesign proofs (draft)",
+          "updatedAt": "2026-10-18T13:51:35Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/959"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 960,
+          "title": "DRAFT: Mariposas Mm game prototype",
+          "updatedAt": "2026-10-18T14:21:55Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/960"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 961,
+          "title": "DRAFT: Lesson 13 (Nn) - wide-screen design (cream paper, teal spine, garden letters)",
+          "updatedAt": "2026-10-18T13:54:15Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/961"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 962,
+          "title": "Shared fix: 844x390 landscape tile collapse (DRAFT)",
+          "updatedAt": "2026-10-18T14:00:03Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/962"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 963,
+          "title": "DRAFT: Lesson 11 (Dd) \u2014 wide-screen design",
+          "updatedAt": "2026-10-18T14:03:59Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/963"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 964,
+          "title": "DRAFT: Lesson 12 (Ll) \u2014 wide-screen design",
+          "updatedAt": "2026-10-18T14:13:51Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/964"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 965,
+          "title": "DRAFT: Shared 844x390 landscape grid-collapse fix",
+          "updatedAt": "2026-10-18T14:32:59Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/965"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 966,
+          "title": "\ud83e\uddea Add missing test coverage for date helpers",
+          "updatedAt": "2026-10-18T19:15:04Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/966"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 967,
+          "title": "fix: parse naive date strings as local midnight",
+          "updatedAt": "2026-10-18T19:15:05Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/967"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 968,
+          "title": "\ud83e\uddea Add tests for random-with-seed utilities",
+          "updatedAt": "2026-10-18T19:15:06Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/968"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 969,
+          "title": "DRAFT: Lessons 15 (Bb), 19 (Gg), 22 (Cc) \u2014 wide+phone design at the 16/17/21 quality bar",
+          "updatedAt": "2026-10-18T15:41:37Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/969"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 970,
+          "title": "Task 12 \u2014 Shared LetterPickerHub activity entrance (Mm first, others locked)",
+          "updatedAt": "2026-10-19T03:06:00Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/970"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 971,
+          "title": "TASK 13 \u2014 Fit sweep Lessons 1\u20136: rendered portrait+landscape proof, no cutoffs/overflow (0 code changes)",
+          "updatedAt": "2026-10-18T15:48:08Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/971"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 972,
+          "title": "\u26a1 Optimize CATALOG access patterns from O(N) to O(1)",
+          "updatedAt": "2026-10-18T19:15:07Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/972"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 973,
+          "title": "feat: Completar palabras activity (Mm) \u2014 entrance + pendiente blank mapping (TASK 10)",
+          "updatedAt": "2026-10-19T03:05:20Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/973"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 974,
+          "title": "DRAFT: Cow game (juego de la vaca) \u2014 Mm syllable matching",
+          "updatedAt": "2026-10-18T16:03:08Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/974"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 975,
+          "title": "Shared landscape fix: every lesson page fits phone portrait, landscape and tablet (stacked on #962)",
+          "updatedAt": "2026-10-18T15:56:04Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/975"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 976,
+          "title": "DRAFT: TASK 2 \u2014 lesson cutoffs (L11/L12/L16/L18/L23) fit phone portrait + landscape",
+          "updatedAt": "2026-10-18T15:56:53Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/976"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 977,
+          "title": "fix(fit): Task 14 \u2014 keep page-number diamond inside the page on wide landscape screens (Lessons 8/9/10/14 sweep)",
+          "updatedAt": "2026-10-18T15:56:45Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/977"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 978,
+          "title": "DRAFT: Lesson 24 finish \u2014 #946 redesign + Lecci\u00f3n 24 pill + desktop scale",
+          "updatedAt": "2026-10-18T16:13:38Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/978"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 979,
+          "title": "DRAFT: Vamos a rimar (Mm) game prototype",
+          "updatedAt": "2026-10-18T16:17:46Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/979"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 980,
+          "title": "DRAFT: Palabras por minuto \u2014 Mm cork-board game",
+          "updatedAt": "2026-10-18T16:20:08Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/980"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 981,
+          "title": "DRAFT: Lesson 13 + 21 polish \u2014 verify L13, fix L21 text color",
+          "updatedAt": "2026-10-18T16:30:31Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/981"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 982,
+          "title": "\u26a1 Optimize O(N*M) loop in assignment completion tracking",
+          "updatedAt": "2026-10-18T19:15:09Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/982"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 983,
+          "title": "\ud83e\uddea Missing tests for CSV export",
+          "updatedAt": "2026-10-18T19:15:10Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/983"
+        },
+        {
+          "kind": "pr",
+          "labels": [],
+          "number": 984,
+          "title": "DRAFT: \ud83e\uddea Add CSV export edge-case tests (toCSV)",
+          "updatedAt": "2026-10-18T18:19:33Z",
+          "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/984"
+        }
+      ],
+      "language": "TypeScript",
+      "limited": false,
+      "name": "La Cartilla de Gretel",
+      "prs": 84,
+      "slug": "cartilla-de-gretel",
+      "stale": false,
+      "updatedAt": "2026-10-19T11:12:46Z",
+      "url": "https://github.com/ejnburrows-rgb/cartilla-de-gretel",
+      "visibility": "Public"
+    },
+    "reference": {
+      "drafts": 81,
+      "issuePageLengths": [
+        100,
+        30
+      ],
+      "issues": 46,
+      "prs": 84
+    }
+  },
+  {
+    "test": "review-req1-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:11:08.695Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/work",
+    "width": 1440
+  },
+  {
+    "test": "review-req1-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:11:12.002Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/work",
+    "width": 390
+  },
+  {
+    "test": "review-req2-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:11:15.554Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel",
+    "width": 1440
+  },
+  {
+    "test": "review-req2-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:11:18.193Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel",
+    "width": 390
+  },
+  {
+    "test": "review-req3-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:11:22.138Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/",
+    "width": 1440
+  },
+  {
+    "test": "review-req3-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:11:25.151Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/",
+    "width": 390
+  },
+  {
+    "test": "review-req4-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:11:30.309Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/live",
+    "width": 1440
+  },
+  {
+    "test": "review-req4-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:11:32.996Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/live",
+    "width": 390
+  },
+  {
+    "test": "review-req5-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:11:35.773Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/jobs",
+    "width": 1440
+  },
+  {
+    "test": "review-req5-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:11:38.563Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/jobs",
+    "width": 390
+  },
+  {
+    "test": "review-req6-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:11:42.234Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/resources",
+    "width": 1440
+  },
+  {
+    "test": "review-req6-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:11:45.278Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/projects/cartilla-de-gretel/resources",
+    "width": 390
+  },
+  {
+    "test": "review-req7-desktop",
+    "overflow": false,
+    "time": "2026-10-19T12:11:47.883Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/",
+    "width": 1440
+  },
+  {
+    "test": "review-req7-mobile",
+    "overflow": false,
+    "time": "2026-10-19T12:11:50.326Z",
+    "url": "https://nbo-operations-bb65v1whi-ejn.vercel.app/",
+    "width": 390
+  }
+]
