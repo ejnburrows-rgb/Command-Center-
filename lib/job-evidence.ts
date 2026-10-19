@@ -62,7 +62,8 @@ export async function buildEvidence(body:string,updatedAt:string,comments:Commen
   if(prLink){const number=Number(prLink.match(/\/pull\/(\d+)/)![1]);try{if(!prCache.has(number))prCache.set(number,dependencies.pr(number));pr=await prCache.get(number);}catch{/* A claimed PR is not verified when GitHub cannot establish it. */}}
   const claimsDone=/\b(done|complete[d]?|verified|merged|live|finished)\b/i.test(comment.body);
   const progress=/\b(in progress|working|implementing|started)\b/i.test(comment.body);
-  const status:JobStatus=pr?.merged_at?'MERGED':pr?.state==='open'?'PR OPEN':claimsDone?'UNVERIFIED':progress?'IN PROGRESS':'UNVERIFIED';
+  const notStarted=/\bNOT STARTED\b/i.test(comment.body);
+  const status:JobStatus=pr?.merged_at?'MERGED':pr?.state==='open'?'PR OPEN':notStarted?'NOT STARTED':claimsDone?'UNVERIFIED':progress?'IN PROGRESS':'UNVERIFIED';
   // A screenshot establishes a visual artifact, not all job acceptance checks. Keep
   // PR/merge states factual; never promote a comment's self-reported test claim to VERIFIED.
   const verified=false; // A comment claiming tests passed does not independently verify the job.
@@ -72,7 +73,7 @@ export async function buildEvidence(body:string,updatedAt:string,comments:Commen
   // Keep at most the latest explicit owner-decision state for each job. A newer comment
   // with no owner request removes an older request, preventing resolved cards resurfacing.
   for(let i=approvals.length-1;i>=0;i--)if(approvals[i].id.startsWith(`job-${job.id}-`))approvals.splice(i,1);
-  const approval=eligibleApproval(comment,proof);if(approval)approvals.push({...approval,id:`job-${job.id}-${comment.id}`});
+  const approval=eligibleApproval(comment,proof);if(approval&&(type!=='merge'||pr?.state==='open'))approvals.push({...approval,id:`job-${job.id}-${comment.id}`});
  }
  return {jobs,approvals};
 }

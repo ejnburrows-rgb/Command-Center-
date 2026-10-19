@@ -2,7 +2,7 @@
 import {useEffect,useState} from "react";
 export function useStored<T>(key:string,initial:T){
 const [value,setValue]=useState<T>(initial),[ready,setReady]=useState(false),[error,setError]=useState("");
-useEffect(()=>{try{const raw=localStorage.getItem(key);if(raw!==null)setValue(JSON.parse(raw))}catch{setError("Saved preferences could not be read.")}setReady(true)},[key]);
+useEffect(()=>{try{const raw=localStorage.getItem(key);setValue(raw!==null?JSON.parse(raw):initial)}catch{setError("Saved preferences could not be read.")}setReady(true)},[key]);
 function save(next:T){try{localStorage.setItem(key,JSON.stringify(next));setValue(next);setError("")}catch{setError("Could not save on this device.")}}
 return {value,save,ready,error};
 }

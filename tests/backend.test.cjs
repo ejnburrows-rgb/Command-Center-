@@ -62,3 +62,5 @@ test('artifact checks reject private/internal/foreign destinations before any ne
  assert.equal(calls,0);assert.equal(await visualArtifact(screenshot),true);assert.equal(calls,1);
  }finally{global.fetch=original;}
 });
+
+test('explicit NOT STARTED is not mistaken for started work',async()=>{const {jobs}=await buildEvidence(body,'now',[comment(1,'JOB 1 / STATUS: NOT STARTED')],noEvidence);assert.equal(jobs[0].status,'NOT STARTED');});
