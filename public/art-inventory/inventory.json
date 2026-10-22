@@ -1,7 +1,7 @@
 {
- "commit": "0084ec6ec1fb4e07043b03fe57890b34f557d6f6",
- "branch": "art-inventory-page-2",
- "built": "2026-10-22 06:16 UTC",
+ "commit": "c6ec2f6e92b5897ed586a77017ff75073cbcede8",
+ "branch": "art-inventory-page-3",
+ "built": "2026-10-22 06:19 UTC",
  "total": 327,
  "by_book": {
   "Flip Chart": 167,
@@ -3828,7 +3828,7 @@
    "live": "public/cartilla/art/faithful/vocal-i/igual.webp",
    "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "Was: CROP LINE: thin line across bottom edge, not in print",
+   "note": "Redone from the book's measured bars, thin dark gray.",
    "how": "audited crop",
    "live_exists": true
   },
@@ -3906,7 +3906,7 @@
    "live": "public/cartilla/art/faithful/vocal-i/igual.webp",
    "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "Was: CROP LINE: thin line across bottom edge, not in print",
+   "note": "Redone from the book's measured bars, thin dark gray.",
    "how": "audited crop",
    "live_exists": true
   },

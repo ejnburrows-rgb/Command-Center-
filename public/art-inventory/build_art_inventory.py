@@ -39,7 +39,12 @@ def orig_thumb(x):
         if c and os.path.isfile(c["source_crop_path"]): return enc(Image.open(c["source_crop_path"])), "audited crop"
         return enc(Image.open(x["scan_source"])), "WHOLE BOOK PAGE (no crop on file)"
     except Exception as e: return None, "no original image"
-still=json.load(open("docs/art-inventory/still-flagged.json"))["still_flagged"]
+_sf=json.load(open("docs/art-inventory/still-flagged.json")); still=_sf["still_flagged"]; cnotes=_sf.get("cleaned_notes",{})
+def note_for(x, how):
+    sid=x["slot_id"]
+    if sid in still: return still[sid]
+    if x["status"]=="flagged": return cnotes.get(sid) or ("Was: "+x["flag_reason"])
+    return x["flag_reason"] or ("" if how in ("crop from book scan","audited crop") else how)
 slots=[]
 for x in slots_in:
     live=x["live_picture"]; ok=os.path.isfile(live)
@@ -48,7 +53,7 @@ for x in slots_in:
     else: st="OK"
     o,how=orig_thumb(x)
     slots.append(dict(id=x["slot_id"], book="Flip Chart" if x["book"]=="flip_chart" else "Workbook", page=f'page {x["page"]}', item=x["role"],
-        label=x["object"], live=live, status=st, installed_by_him=x["installed_by_him"], note=(("Was: "+x["flag_reason"]) if x["status"]=="flagged" and x["slot_id"] not in still else (still.get(x["slot_id"]) or x["flag_reason"])) or ("" if how=="crop from book scan" or how=="audited crop" else how),
+        label=x["object"], live=live, status=st, installed_by_him=x["installed_by_him"], note=note_for(x, how),
         how=how, live_exists=ok, o=o, l=live_thumb(live) if ok else None))
 tot = collections.Counter(s["status"] for s in slots)
 by_book = collections.Counter(s["book"] for s in slots)
