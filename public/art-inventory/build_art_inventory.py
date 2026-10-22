@@ -39,15 +39,16 @@ def orig_thumb(x):
         if c and os.path.isfile(c["source_crop_path"]): return enc(Image.open(c["source_crop_path"])), "audited crop"
         return enc(Image.open(x["scan_source"])), "WHOLE BOOK PAGE (no crop on file)"
     except Exception as e: return None, "no original image"
+still=json.load(open("docs/art-inventory/still-flagged.json"))["still_flagged"]
 slots=[]
 for x in slots_in:
     live=x["live_picture"]; ok=os.path.isfile(live)
-    if x["status"]=="flagged": st="FLAGGED"
+    if x["status"]=="flagged": st="FLAGGED" if x["slot_id"] in still else "CLEANED (was flagged)"
     elif x["installed_by_him"]=="yes": st="HIS NEW PICTURE"
     else: st="OK"
     o,how=orig_thumb(x)
     slots.append(dict(id=x["slot_id"], book="Flip Chart" if x["book"]=="flip_chart" else "Workbook", page=f'page {x["page"]}', item=x["role"],
-        label=x["object"], live=live, status=st, installed_by_him=x["installed_by_him"], note=x["flag_reason"] or ("" if how=="crop from book scan" or how=="audited crop" else how),
+        label=x["object"], live=live, status=st, installed_by_him=x["installed_by_him"], note=(("Was: "+x["flag_reason"]) if x["status"]=="flagged" and x["slot_id"] not in still else (still.get(x["slot_id"]) or x["flag_reason"])) or ("" if how=="crop from book scan" or how=="audited crop" else how),
         how=how, live_exists=ok, o=o, l=live_thumb(live) if ok else None))
 tot = collections.Counter(s["status"] for s in slots)
 by_book = collections.Counter(s["book"] for s in slots)
@@ -80,10 +81,12 @@ figure{{margin:0;text-align:center}}figure img{{width:100%;height:170px;object-f
 figcaption{{font-size:13px;font-weight:700;letter-spacing:.05em;margin-top:4px}}
 .none div{{height:170px;display:grid;place-items:center;border:2px dashed #b33;color:#b33;border-radius:8px}}
 .lab{{margin:2px 0;color:#4a4536;font-size:15px}}.st{{margin:4px 0;font-weight:700}}.nt{{margin:0;font-size:15px}}
+@page{{size:4.6in 9.2in;margin:.15in}}
+@media print{{body{{-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:15px}}header{{position:static}}.chips{{display:none}}article{{break-inside:avoid;margin:8px 0}}figure img{{height:150px}}.none div{{height:150px}}}}
 </style></head><body>
 <header><h1>Cartilla art inventory</h1><div>Built from commit <code>{sha[:10]}</code> on {when}</div></header>
-<section class="tot"><big id="n">{len(slots)}</big> slots &nbsp;|&nbsp; Flip Chart {by_book["Flip Chart"]} &nbsp;|&nbsp; Workbook {by_book["Workbook"]}<br>OK {tot["OK"]} &nbsp;|&nbsp; His new pictures {tot["HIS NEW PICTURE"]} &nbsp;|&nbsp; Flagged {tot["FLAGGED"]}
-<p class="how">Every number is counted by the script, one row per slot, from the slot list in the repo. Flip Chart + Workbook = All; OK + His new + Flagged = All (the script stops if not). Same commit gives the same numbers. Rebuild only changes numbers when the repo changes. Showing: <span id="shown">{len(slots)}</span>.</p></section>
+<section class="tot"><big id="n">{len(slots)}</big> slots &nbsp;|&nbsp; Flip Chart {by_book["Flip Chart"]} &nbsp;|&nbsp; Workbook {by_book["Workbook"]}<br>OK {tot["OK"]} &nbsp;|&nbsp; His new pictures {tot["HIS NEW PICTURE"]} &nbsp;|&nbsp; Cleaned {tot["CLEANED (was flagged)"]} &nbsp;|&nbsp; Flagged {tot["FLAGGED"]}
+<p class="how">Every number is counted by the script, one row per slot, from the slot list in the repo. Flip Chart + Workbook = All; OK + His new + Cleaned + Flagged = All (the script stops if not). Same commit gives the same numbers. Rebuild only changes numbers when the repo changes. Showing: <span id="shown">{len(slots)}</span>.</p></section>
 <div class="chips"><button class="on" data-f="">All <b>{len(slots)}</b></button>{chips}</div>
 <main>{"".join(cards)}</main>
 <script>

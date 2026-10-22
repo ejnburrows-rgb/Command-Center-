@@ -1,7 +1,7 @@
 {
- "commit": "032d9554741806819be4c3c0f14cbfd424550254",
- "branch": "art-inventory-page",
- "built": "2026-10-22 06:08 UTC",
+ "commit": "0084ec6ec1fb4e07043b03fe57890b34f557d6f6",
+ "branch": "art-inventory-page-2",
+ "built": "2026-10-22 06:16 UTC",
  "total": 327,
  "by_book": {
   "Flip Chart": 167,
@@ -9,16 +9,18 @@
  },
  "by_status": {
   "OK": 269,
-  "FLAGGED": 16,
-  "HIS NEW PICTURE": 42
+  "CLEANED (was flagged)": 15,
+  "HIS NEW PICTURE": 42,
+  "FLAGGED": 1
  },
  "by_book_status": {
   "Flip Chart / OK": 146,
-  "Flip Chart / FLAGGED": 8,
+  "Flip Chart / CLEANED (was flagged)": 8,
   "Flip Chart / HIS NEW PICTURE": 13,
   "Workbook / HIS NEW PICTURE": 29,
   "Workbook / OK": 123,
-  "Workbook / FLAGGED": 8
+  "Workbook / FLAGGED": 1,
+  "Workbook / CLEANED (was flagged)": 7
  },
  "slots": [
   {
@@ -80,9 +82,9 @@
    "item": "vocab",
    "label": "olla",
    "live": "public/cartilla/art/optimized/flipchart-native/p003-olla.png",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "CUT-OFF TEXT: baked caption \"olla\" sliced",
+   "note": "Was: CUT-OFF TEXT: baked caption \"olla\" sliced",
    "how": "crop from book scan",
    "live_exists": true
   },
@@ -93,9 +95,9 @@
    "item": "vocab",
    "label": "uña",
    "live": "public/cartilla/art/optimized/flipchart-native/p003-una.png",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "CUT-OFF TEXT: baked caption \"uña\" sliced (nail art itself kept)",
+   "note": "Was: CUT-OFF TEXT: baked caption \"uña\" sliced (nail art itself kept)",
    "how": "crop from book scan",
    "live_exists": true
   },
@@ -574,9 +576,9 @@
    "item": "vocab",
    "label": "mamá",
    "live": "public/cartilla/art/optimized/flipchart-native/p009-mama.png",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "CUT-OFF TEXT: sliced caption letters at bottom edge",
+   "note": "Was: CUT-OFF TEXT: sliced caption letters at bottom edge",
    "how": "crop from book scan",
    "live_exists": true
   },
@@ -665,9 +667,9 @@
    "item": "vocab",
    "label": "papá",
    "live": "public/cartilla/art/optimized/flipchart-native/p012-papa.png",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "SCAN NOISE: black speck bottom-right (minor)",
+   "note": "Was: SCAN NOISE: black speck bottom-right (minor)",
    "how": "crop from book scan",
    "live_exists": true
   },
@@ -951,9 +953,9 @@
    "item": "vocab",
    "label": "dados",
    "live": "public/cartilla/art/optimized/flipchart-native/p021-dados.webp",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "CUT-OFF TEXT: baked caption \"dados\" sliced",
+   "note": "Was: CUT-OFF TEXT: baked caption \"dados\" sliced",
    "how": "crop from book scan",
    "live_exists": true
   },
@@ -990,9 +992,9 @@
    "item": "vocab",
    "label": "Dunia",
    "live": "public/cartilla/art/optimized/flipchart-native/p021-dunia.webp",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "CUT-OFF TEXT: baked caption \"Dunia\" sliced",
+   "note": "Was: CUT-OFF TEXT: baked caption \"Dunia\" sliced",
    "how": "crop from book scan",
    "live_exists": true
   },
@@ -1328,9 +1330,9 @@
    "item": "vocab",
    "label": "bate",
    "live": "public/cartilla/art/optimized/flipchart-native/p033-bate.png",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "RAW CROP: bat tip cut off (print is complete)",
+   "note": "Was: RAW CROP: bat tip cut off (print is complete)",
    "how": "crop from book scan",
    "live_exists": true
   },
@@ -1445,9 +1447,9 @@
    "item": "vocab",
    "label": "Vuli",
    "live": "public/cartilla/art/optimized/flipchart-native/p036-vuli.png",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "RAW CROP: rabbit cut at bottom edge, neighbor fragment at left",
+   "note": "Was: RAW CROP: rabbit cut at bottom edge, neighbor fragment at left",
    "how": "crop from book scan",
    "live_exists": true
   },
@@ -2578,7 +2580,7 @@
    "live": "public/cartilla/art/faithful/leccion-1/pajaro.webp",
    "status": "FLAGGED",
    "installed_by_him": "no",
-   "note": "CROP LINE: horizontal line across top, not in print",
+   "note": "Bird (pajaro): still missing legs, tail and branch from the book.",
    "how": "audited crop",
    "live_exists": true
   },
@@ -2602,9 +2604,9 @@
    "item": "cell",
    "label": "carro",
    "live": "public/cartilla/art/faithful/leccion-1/carro.webp",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "RAW CROP: car cut at left edge, green stipple artifact right",
+   "note": "Was: RAW CROP: car cut at left edge, green stipple artifact right",
    "how": "audited crop",
    "live_exists": true
   },
@@ -2758,9 +2760,9 @@
    "item": "cell",
    "label": "maíz",
    "live": "public/cartilla/art/faithful/leccion-1/maiz.webp",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "RAW CROP: vertical cut line at left edge, husk sliced",
+   "note": "Was: RAW CROP: vertical cut line at left edge, husk sliced",
    "how": "audited crop",
    "live_exists": true
   },
@@ -3304,9 +3306,9 @@
    "item": "cell",
    "label": "maíz",
    "live": "public/cartilla/art/faithful/leccion-1/maiz.webp",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "RAW CROP: vertical cut line at left edge, husk sliced",
+   "note": "Was: RAW CROP: vertical cut line at left edge, husk sliced",
    "how": "audited crop",
    "live_exists": true
   },
@@ -3369,9 +3371,9 @@
    "item": "cell",
    "label": "maíz",
    "live": "public/cartilla/art/faithful/leccion-1/maiz.webp",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "RAW CROP: vertical cut line at left edge, husk sliced",
+   "note": "Was: RAW CROP: vertical cut line at left edge, husk sliced",
    "how": "audited crop",
    "live_exists": true
   },
@@ -3603,9 +3605,9 @@
    "item": "cell",
    "label": "maíz",
    "live": "public/cartilla/art/faithful/leccion-1/maiz.webp",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "RAW CROP: vertical cut line at left edge, husk sliced",
+   "note": "Was: RAW CROP: vertical cut line at left edge, husk sliced",
    "how": "audited crop",
    "live_exists": true
   },
@@ -3824,9 +3826,9 @@
    "item": "cell",
    "label": "igual",
    "live": "public/cartilla/art/faithful/vocal-i/igual.webp",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "CROP LINE: thin line across bottom edge, not in print",
+   "note": "Was: CROP LINE: thin line across bottom edge, not in print",
    "how": "audited crop",
    "live_exists": true
   },
@@ -3902,9 +3904,9 @@
    "item": "cell",
    "label": "igual",
    "live": "public/cartilla/art/faithful/vocal-i/igual.webp",
-   "status": "FLAGGED",
+   "status": "CLEANED (was flagged)",
    "installed_by_him": "no",
-   "note": "CROP LINE: thin line across bottom edge, not in print",
+   "note": "Was: CROP LINE: thin line across bottom edge, not in print",
    "how": "audited crop",
    "live_exists": true
   },
