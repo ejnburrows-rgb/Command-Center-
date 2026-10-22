@@ -59,7 +59,7 @@ export default function GithubPanel({projects}:{projects:Project[]}){
  const [pending,setPending]=useState(false);
  const [error,setError]=useState("");
  const [filter,setFilter]=useState<Filter>("all");
- const [expanded,setExpanded]=useState(false);
+ const [visibleLimit,setVisibleLimit]=useState(7);
  const [credits,setCredits]=useState<Record<string,string>>({});
  const [detail,setDetail]=useState<Detail|null>(null);
  const [detailPending,setDetailPending]=useState(false);
@@ -85,7 +85,7 @@ export default function GithubPanel({projects}:{projects:Project[]}){
   }catch(e){if(seq===generation.current&&!signal?.aborted)setError(e instanceof Error?e.message:"GitHub data unavailable")}
   finally{if(seq===generation.current&&!signal?.aborted)setPending(false)}
  },[]);
- useEffect(()=>{if(!repo)return;const controller=new AbortController();setHistory(null);setSelected(null);setFilter("all");setExpanded(false);setShowAllHistory(false);setDetail(null);setDetailError("");fileGeneration.current++;void load(repo,controller.signal);return()=>{controller.abort();generation.current++;fileGeneration.current++}},[repo,load]);
+ useEffect(()=>{if(!repo)return;const controller=new AbortController();setHistory(null);setSelected(null);setFilter("all");setVisibleLimit(7);setShowAllHistory(false);setDetail(null);setDetailError("");fileGeneration.current++;void load(repo,controller.signal);return()=>{controller.abort();generation.current++;fileGeneration.current++}},[repo,load]);
  const allWork=useMemo(()=>[...(selected?.items||[])].sort(sortWork),[selected]);
  const filtered=useMemo(()=>allWork.filter(w=>filter==="all"||w.kind===filter),[allWork,filter]);
  const issues=allWork.filter(w=>w.kind==="issue");
@@ -144,14 +144,14 @@ export default function GithubPanel({projects}:{projects:Project[]}){
      <span className="gh-tally">{hasFreshWork?allWork.length:"—"} open</span>
     </header>
     <div className="gh-filters" role="group" aria-label="Filter work">
-     {([["all","All work"],["issue","Issues"],["pr","Pull requests"]] as const).map(([key,label])=><button type="button" key={key} onClick={()=>{setFilter(key);setExpanded(false)}} aria-pressed={filter===key}>{label}</button>)}
+     {([["all","All work"],["issue","Issues"],["pr","Pull requests"]] as const).map(([key,label])=><button type="button" key={key} onClick={()=>{setFilter(key);setVisibleLimit(7)}} aria-pressed={filter===key}>{label}</button>)}
     </div>
     {pending?<div className="gh-empty" role="status">Loading open work…</div>:!hasFreshWork?<div className="gh-empty">Open work is not currently verified. Refresh to retry.</div>:filtered.length===0?<div className="gh-empty">No open {filter==="all"?"work":filter==="issue"?"issues":"pull requests"} reported.</div>:
-    <div className="gh-work-list">{filtered.slice(0,expanded?40:7).map(w=><article className="gh-work-item" key={w.kind+":"+w.number}>
+    <div className="gh-work-list">{filtered.slice(0,visibleLimit).map(w=><article className="gh-work-item" key={w.kind+":"+w.number}>
       <div className="gh-row-main"><span className={"gh-severity "+(w.kind==="issue"&&score(w)===3?"urgent":w.draft?"draft":"ordinary")}>{w.kind==="issue"&&score(w)===3?"HIGH":w.draft?"DRAFT":w.kind==="pr"?"PR":"ISSUE"}</span>
       <div className="gh-work-copy"><External href={w.url}>{w.title}</External><p>#{w.number} <span>·</span> {groupForWork(w)==="Uncategorized work"?w.kind==="pr"?"Pull request":"Issue":groupForWork(w)} <span>·</span> {formatShort(w.updatedAt)}</p></div></div>
      </article>)}</div>}
-    {hasFreshWork&&filtered.length>7&&<button className="gh-more" type="button" onClick={()=>setExpanded(x=>!x)}>{expanded?"Show fewer":("View more work ("+filtered.length+")")} <span aria-hidden="true">→</span></button>}
+    {hasFreshWork&&filtered.length>7&&<button className="gh-more" type="button" onClick={()=>setVisibleLimit(x=>x>=filtered.length?7:Math.min(filtered.length,x+20))}>{visibleLimit>=filtered.length?"Show fewer":("Show more work ("+Math.max(0,filtered.length-visibleLimit)+" remaining)")} <span aria-hidden="true">→</span></button>}
    </section>
    <div className="gh-right-col">
     <section className="gh-surface gh-activity">
