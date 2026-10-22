@@ -1,4 +1,4 @@
-export type Work={number:number;title:string;url:string;updatedAt:string;kind:string;labels:string[]};
+export type Work={number:number;title:string;url:string;updatedAt:string;kind:string;labels:string[];draft?:boolean};
 export type Project={slug:string;name:string;url:string;description:string;visibility:string;language:string;updatedAt:string;issues:number|null;prs:number|null;drafts:number|null;fetchedAt:string;stale:boolean;error?:string;items:Work[];accessible:boolean;limited:boolean};
 export type Feed={updatedAt:string;projects:Project[];errors:number};
 export type Section="Hub"|"Projects"|"GitHub"|"Best Practices"|"Prompts"|"Tools"|"Assets"|"Settings";
