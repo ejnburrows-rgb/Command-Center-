@@ -18,12 +18,38 @@ function Orig({ s, base }: { s: Slot; base: string }) {
 const img: React.CSSProperties = { width: "100%", height: 170, objectFit: "contain", background: CREAM, border: "1px solid #d8cfae", borderRadius: 8, display: "block" };
 const none: React.CSSProperties = { height: 170, display: "grid", placeItems: "center", border: "2px dashed #b33", color: "#b33", borderRadius: 8 };
 const cap: React.CSSProperties = { fontSize: 13, fontWeight: 700, letterSpacing: ".05em", marginTop: 4, textAlign: "center" };
-export default function InventoryView({ inv }: { inv: Inventory }) {
+function Viewer({ s, inv, onClose }: { s: Slot; inv: Inventory; onClose: () => void }) {
+  const pageUrl = inv.base + s.book_page.src, liveUrl = inv.base + s.live;
+  const [pw, ph] = s.book_page.size; const c = s.book_page.circle;
+  const pad = Math.min(pw, ph) / 60;
+  const link: React.CSSProperties = { display: "inline-block", margin: "6px 8px 0 0", padding: "10px 12px", border: "2px solid #1c1a14", borderRadius: 10, color: "#1c1a14", background: "#fff", font: "16px system-ui", textDecoration: "none" };
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, background: CREAM, overflowY: "auto", padding: 12 }}>
+      <button onClick={onClose} style={{ ...link, position: "sticky", top: 0, background: "#1c1a14", color: CREAM }}>Close</button>
+      <h2 style={{ margin: "8px 0 0", fontSize: 22 }}>{s.id} <small style={{ fontWeight: 400 }}>{s.label}</small></h2>
+      <p style={{ margin: "2px 0 8px", fontWeight: 700 }}>{s.status}{s.note ? ": " + s.note : ""}</p>
+      <h3 style={{ margin: "10px 0 4px" }}>1. REAL BOOK PAGE{c ? " (this picture circled)" : " (circle not available for this slot)"}</h3>
+      {!s.book_page.src ? <p>Book page not available at this commit.</p> : <div style={{ position: "relative", width: "100%", maxWidth: 700, aspectRatio: `${pw}/${ph}`, border: "1px solid #d8cfae", background: "#fff" }}>
+        <img src={pageUrl} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
+        {c && <div style={{ position: "absolute", left: `${((c.box[0] - pad) / pw) * 100}%`, top: `${((c.box[1] - pad) / ph) * 100}%`, width: `${((c.box[2] + 2 * pad) / pw) * 100}%`, height: `${((c.box[3] + 2 * pad) / ph) * 100}%`, border: "4px solid #dc143c", borderRadius: "50%", boxSizing: "border-box" }} />}
+      </div>}
+      {s.book_page.src && <a style={link} href={pageUrl} target="_blank" rel="noreferrer">Open book page image</a>}
+      <h3 style={{ margin: "14px 0 4px" }}>2. CURRENT PICTURE IN THE REPO</h3>
+      <div style={{ maxWidth: 700, background: "#fff", border: "1px solid #d8cfae", padding: 8 }}><img src={liveUrl} alt="" style={{ width: "100%", maxHeight: 520, objectFit: "contain", display: "block", background: CREAM }} /></div>
+      <a style={link} href={liveUrl} target="_blank" rel="noreferrer">Open current repo image</a>
+      <p style={{ fontSize: 14, color: "#4a4536" }}>Read live from commit {inv.sha.slice(0, 10)} on {inv.ref}. The book page is the real scan the picture comes from.</p>
+    </div>
+  );
+}
+export default function InventoryView({ inv, openSlot }: { inv: Inventory; openSlot?: string }) {
   const [f, setF] = useState("");
+  const [open, setOpen] = useState<string | null>(openSlot && inv.slots.some((x) => x.id === openSlot) ? openSlot : null);
+  const cur = open ? inv.slots.find((x) => x.id === open) : null;
   const shown = inv.slots.filter((s) => !f || s.status === f);
   const t = inv.totals;
   return (
     <div style={{ background: CREAM, color: "#1c1a14", font: "18px/1.35 system-ui,sans-serif", minHeight: "100vh" }}>
+      {cur && <Viewer s={cur} inv={inv} onClose={() => setOpen(null)} />}
       <header style={{ padding: 16, background: "#1c1a14", color: CREAM }}>
         <h1 style={{ margin: "0 0 4px", fontSize: 26 }}>Cartilla art inventory</h1>
         <div>LIVE from the repo. Commit <code>{inv.sha.slice(0, 10)}</code> on <code>{inv.ref}</code>, committed {inv.committedAt.replace("T", " ").slice(0, 16)} UTC. Read {inv.fetchedAt.replace("T", " ").slice(0, 16)} UTC.</div>
@@ -49,6 +75,10 @@ export default function InventoryView({ inv }: { inv: Inventory }) {
             </div>
             <p style={{ margin: "4px 0", fontWeight: 700 }}>{s.status}</p>
             {s.note && <p style={{ margin: 0, fontSize: 15 }}>{s.note}</p>}
+            <div>
+              <button onClick={() => setOpen(s.id)} style={{ margin: "8px 8px 0 0", padding: "10px 14px", border: "2px solid #1c1a14", borderRadius: 10, background: "#1c1a14", color: CREAM, font: "16px system-ui" }}>Book page vs repo</button>
+              <a href={`?ref=${encodeURIComponent(inv.ref)}&slot=${encodeURIComponent(s.id)}`} style={{ display: "inline-block", margin: "8px 8px 0 0", padding: "10px 12px", border: "2px solid #1c1a14", borderRadius: 10, color: "#1c1a14", font: "16px system-ui", textDecoration: "none" }}>Link to this slot</a>
+            </div>
           </article>
         ))}
       </main>
