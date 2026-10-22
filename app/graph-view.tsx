@@ -18,8 +18,8 @@ export default function WebGraph({projects,onOpenProject,onSection}:{projects:Pr
   return {id:p.slug,label:p.slug==="cartilla-de-gretel"?"La Cartilla":p.name,sub:(open[p.slug]?"open":"closed")+" · "+leaves.length+" inside",leaves};
  });
  branches.push({id:"library",label:"Library",sub:(open["library"]?"open":"closed")+" · 2 inside",leaves:[
-  {id:"lib-prompts",label:"Prompt library",sub:"copy-ready",action:()=>onSection("Library")},
-  {id:"lib-guides",label:"Guides",sub:"playbooks",action:()=>onSection("Library")}
+  {id:"lib-prompts",label:"Prompt library",sub:"copy-ready",action:()=>onSection("Prompts")},
+  {id:"lib-guides",label:"Playbook",sub:"workflow",action:()=>onSection("Playbook")}
  ]});
  const m=branches.length;
  const xs=(i:number)=>m===1?W/2:m===2?[95,265][i]:[66,183,300][Math.min(i,2)];
