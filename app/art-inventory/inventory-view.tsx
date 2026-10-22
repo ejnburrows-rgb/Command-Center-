@@ -18,6 +18,17 @@ function Orig({ s, base }: { s: Slot; base: string }) {
 const img: React.CSSProperties = { width: "100%", height: 170, objectFit: "contain", background: CREAM, border: "1px solid #d8cfae", borderRadius: 8, display: "block" };
 const none: React.CSSProperties = { height: 170, display: "grid", placeItems: "center", border: "2px dashed #b33", color: "#b33", borderRadius: 8 };
 const cap: React.CSSProperties = { fontSize: 13, fontWeight: 700, letterSpacing: ".05em", marginTop: 4, textAlign: "center" };
+function PageThumb({ s, base }: { s: Slot; base: string }) {
+  const [pw, ph] = s.book_page.size; const c = s.book_page.circle;
+  if (!s.book_page.src) return <div style={none}>no page</div>;
+  const pad = Math.min(pw, ph) / 60;
+  return (
+    <div style={{ position: "relative", width: "100%", aspectRatio: `${pw}/${ph}`, maxHeight: 340, border: "1px solid #d8cfae", background: "#fff", borderRadius: 8, overflow: "hidden" }}>
+      <img loading="lazy" alt="" src={base + s.book_page.src} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
+      {c && <div style={{ position: "absolute", left: `${((c.box[0] - pad) / pw) * 100}%`, top: `${((c.box[1] - pad) / ph) * 100}%`, width: `${((c.box[2] + 2 * pad) / pw) * 100}%`, height: `${((c.box[3] + 2 * pad) / ph) * 100}%`, border: "3px solid #dc143c", borderRadius: "50%", boxSizing: "border-box" }} />}
+    </div>
+  );
+}
 function Viewer({ s, inv, onClose }: { s: Slot; inv: Inventory; onClose: () => void }) {
   const pageUrl = inv.base + s.book_page.src, liveUrl = inv.base + s.live;
   const [pw, ph] = s.book_page.size; const c = s.book_page.circle;
@@ -43,6 +54,7 @@ function Viewer({ s, inv, onClose }: { s: Slot; inv: Inventory; onClose: () => v
 }
 export default function InventoryView({ inv, openSlot }: { inv: Inventory; openSlot?: string }) {
   const [f, setF] = useState("");
+  const [mode, setMode] = useState<"crop" | "page">("page");
   const [open, setOpen] = useState<string | null>(openSlot && inv.slots.some((x) => x.id === openSlot) ? openSlot : null);
   const cur = open ? inv.slots.find((x) => x.id === open) : null;
   const shown = inv.slots.filter((s) => !f || s.status === f);
@@ -59,6 +71,11 @@ export default function InventoryView({ inv, openSlot }: { inv: Inventory; openS
         OK {t.byStatus["OK"] || 0} | His new pictures {t.byStatus["HIS NEW PICTURE"] || 0} | Cleaned {t.byStatus["CLEANED (was flagged)"] || 0} | Flagged {t.byStatus["FLAGGED"] || 0}
         <p style={{ fontSize: 15, color: "#4a4536" }}>Counted by the page code from the slot list in the repo at the commit above, one row per slot. It reloads from the repo on every visit, so it cannot drift. Showing: {shown.length}.</p>
       </section>
+      <div style={{ padding: "10px 12px 0", display: "flex", gap: 8 }}>
+        {([["page", "Real book page vs repo"], ["crop", "Close-up crop vs repo"]] as const).map(([k, l]) => (
+          <button key={k} onClick={() => setMode(k)} style={{ font: "16px system-ui", padding: "10px 12px", border: "2px solid #1c1a14", borderRadius: 10, background: mode === k ? "#1c1a14" : "#fff", color: mode === k ? CREAM : "#1c1a14" }}>{l}</button>
+        ))}
+      </div>
       <div style={{ padding: "10px 12px", display: "flex", flexWrap: "wrap", gap: 8 }}>
         {[["", "All", t.all], ...Object.entries(t.byStatus).map(([k, v]) => [k, k, v])].map(([k, l, n]) => (
           <button key={String(k)} onClick={() => setF(String(k))} style={{ font: "16px system-ui", padding: "10px 12px", border: "2px solid #1c1a14", borderRadius: 10, background: f === k ? "#1c1a14" : "#fff", color: f === k ? CREAM : "#1c1a14" }}>{l} <b>{n}</b></button>
@@ -67,10 +84,10 @@ export default function InventoryView({ inv, openSlot }: { inv: Inventory; openS
       <main>
         {shown.map((s) => (
           <article key={s.id} style={{ margin: 12, padding: 12, background: "#fff", border: "2px solid #d8cfae", borderRadius: 14 }}>
-            <h3 style={{ margin: 0, fontSize: 20 }}>{s.id} <small style={{ fontWeight: 400, color: "#6b6450" }}>{s.book}, page {s.page}</small></h3>
+            <h3 style={{ margin: 0, fontSize: 20 }}>{s.id} <small style={{ fontWeight: 400, color: "#6b6450" }}>{s.book}, book page {s.page}</small></h3>
             <p style={{ margin: "2px 0", color: "#4a4536", fontSize: 15 }}>{s.label}</p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, margin: "8px 0" }}>
-              <figure style={{ margin: 0 }}><Orig s={s} base={inv.base} /><figcaption style={cap}>ORIGINAL BOOK</figcaption></figure>
+              <figure style={{ margin: 0 }}>{mode === "page" ? <PageThumb s={s} base={inv.base} /> : <Orig s={s} base={inv.base} />}<figcaption style={cap}>{mode === "page" ? `REAL BOOK PAGE (circled)` : "ORIGINAL BOOK"}</figcaption></figure>
               <figure style={{ margin: 0 }}><img loading="lazy" alt="" src={inv.base + s.live} style={img} /><figcaption style={cap}>APP NOW</figcaption></figure>
             </div>
             <p style={{ margin: "4px 0", fontWeight: 700 }}>{s.status}</p>
