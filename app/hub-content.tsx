@@ -13,7 +13,7 @@ export default function HubContent({tab,feed,project,onBack,onOpen,navigate,load
 const current=feed.projects.find(p=>p.slug===project);
 if(current)return <ProjectView project={current} onBack={onBack}/>;
 return <><div className="page-title"><div><p className="eyebrow">NBO · OPERATIONS CONTROL</p><h1>{tab==="Home"?"Your operations hub":tab}</h1><p>{sub[tab]}</p></div></div>
-{(error||feed.errors>0)&&<div className="warning">GitHub status {error?"unavailable: "+error:"limited for "+feed.errors+" repositories"}. <button onClick={refresh}>Retry</button></div>}
+{(error||feed.errors>0)&&<div className="warning">{error?"GitHub unavailable: "+error:"GitHub limited for "+feed.projects.filter(p=>!p.accessible).map(p=>p.name).join(", ")+" (private repo - add GITHUB_TOKEN_READ in Vercel to make it live)"}. <button onClick={refresh}>Retry</button></div>}
 {tab==="Home"&&<Home projects={feed.projects} busy={loading} onOpen={onOpen} onSection={navigate}/>}
 {tab==="Lanes"&&<section className="panel"><div className="panel-head"><div><h2>Web Graph</h2><p>Live from GitHub. Tap a lane to open or close it; tap a leaf to go there.</p></div></div><WebGraph projects={feed.projects} onOpenProject={onOpen} onSection={navigate}/></section>}
 {tab==="Projects"&&<Projects projects={feed.projects} busy={loading} onOpen={onOpen} refresh={refresh}/>}
