@@ -13,6 +13,7 @@ export type Orig =
 export type Slot = {
   id: string; artwork_id: string; book: string; page: number; label: string; role: string; live: string;
   his: boolean; was_flagged: boolean; flag_reason: string; orig: Orig;
+  book_page: { src: string; size: [number, number]; circle: { box: [number, number, number, number]; method: string; score: number | null } | null };
   status: "OK" | "HIS NEW PICTURE" | "CLEANED (was flagged)" | "FLAGGED"; note: string;
 };
 export type Inventory = {
@@ -43,7 +44,7 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
   const slots: Slot[] = render.map((x: any) => {
     const status = x.was_flagged ? (x.id in still ? "FLAGGED" : "CLEANED (was flagged)") : x.his ? "HIS NEW PICTURE" : "OK";
     const note = x.id in still ? still[x.id] : x.was_flagged ? cnotes[x.id] || `Was: ${x.flag_reason}` : x.flag_reason || (x.orig?.whole_page ? "WHOLE BOOK PAGE (no crop on file)" : "");
-    return { ...x, status, note, book: x.book === "flip_chart" ? "Flip Chart" : "Workbook" };
+    return { ...x, book_page: x.book_page ?? { src: "", size: [0, 0], circle: null }, status, note, book: x.book === "flip_chart" ? "Flip Chart" : "Workbook" };
   });
   const byBook: Record<string, number> = {}, byStatus: Record<string, number> = {};
   for (const s of slots) { byBook[s.book] = (byBook[s.book] || 0) + 1; byStatus[s.status] = (byStatus[s.status] || 0) + 1; }
