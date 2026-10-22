@@ -2,8 +2,14 @@ import { NextResponse } from "next/server";
 import { READ_REPOS } from "@/lib/repos";
 export const dynamic = "force-dynamic";
 type GHIssue={number:number;title:string;html_url:string;updated_at:string;labels:{name:string}[];pull_request?:unknown};
+function headers():Record<string,string>{
+ const h:Record<string,string>={Accept:"application/vnd.github+json","User-Agent":"nbo-operations-hub"};
+ // Private repos (lany-books-web) read through the read-only token when the server has one.
+ if(process.env.GITHUB_TOKEN_READ)h.Authorization="Bearer "+process.env.GITHUB_TOKEN_READ;
+ return h;
+}
 async function get(path:string){
- const r=await fetch("https://api.github.com"+path,{headers:{Accept:"application/vnd.github+json"},next:{revalidate:900}});
+ const r=await fetch("https://api.github.com"+path,{headers:headers(),next:{revalidate:900}});
  if(!r.ok)throw new Error("GitHub "+r.status);
  return r.json();
 }

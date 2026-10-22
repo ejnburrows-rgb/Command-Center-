@@ -1,8 +1,8 @@
 export type Work={number:number;title:string;url:string;updatedAt:string;kind:string;labels:string[]};
 export type Project={slug:string;name:string;url:string;description:string;visibility:string;language:string;updatedAt:string;issues:number;prs:number;items:Work[];accessible:boolean;limited:boolean};
 export type Feed={updatedAt:string;projects:Project[];errors:number};
-export type Section="Hub"|"Projects"|"Best Practices"|"Prompts"|"Tools"|"Assets"|"Settings";
-export const sections:Section[]=["Hub","Projects","Best Practices","Prompts","Tools","Assets","Settings"];
+export type Section="Home"|"Graph"|"Projects"|"Library"|"Settings";
+export const sections:Section[]=["Home","Graph","Projects","Library"];
 export const prompts=[
 {name:"Project kickoff",cat:"Planning",desc:"Define scope, risk and the visible result.",text:"Inspect existing files, current behavior and instructions. Define the exact outcome, boundaries, risks and acceptance checks. Reuse working code. Choose one simplest plan and ask only for genuinely missing decisions."},
 {name:"Execute the work",cat:"Development",desc:"Complete the smallest reliable change.",text:"Read the current source and project instructions. Fix the root cause or implement one bounded improvement. Preserve other features. Verify the original request and key regressions. Provide evidence and actual remaining blockers."},

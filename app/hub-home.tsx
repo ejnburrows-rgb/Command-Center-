@@ -1,11 +1,29 @@
 "use client";
-import {stages,prompts,tools} from "./hub-data";
 import type {Project,Section} from "./hub-data";
-import {External,Stat} from "./hub-ui";
+import WebGraph from "./graph-view";
 export default function Home({projects,busy,onOpen,onSection}:{projects:Project[];busy:boolean;onOpen:(s:string)=>void;onSection:(s:Section)=>void}){
-const active=projects.filter(p=>p.accessible);
-return <><div className="stats"><Stat label="Projects tracked" value={projects.length||"…"} /><Stat label="Open issues shown" value={busy?"…":active.reduce((a,b)=>a+b.issues,0)}/><Stat label="Open PRs shown" value={busy?"…":active.reduce((a,b)=>a+b.prs,0)}/><Stat label="Repositories readable" value={busy?"…":active.length}/></div>
-<div className="dash-grid"><section className="panel"><div className="panel-head"><div><h2>Active projects</h2><p>Tap a repository to open its workspace.</p></div><button className="linkbtn" onClick={()=>onSection("Projects")}>View all →</button></div><div className="mini-grid">{active.slice(0,4).map(p=><button key={p.slug} className="mini-card" onClick={()=>onOpen(p.slug)}><span className="tile-icon">▣</span><b>{p.name}</b><small>{p.description||"GitHub repository"}</small><span>{p.issues} issues · {p.prs} PRs →</span></button>)}{!active.length&&<p className="muted">{busy?"Loading GitHub…":"No readable repositories."}</p>}</div></section><section className="panel"><h2>Next actions</h2><p className="muted">A repeatable delivery routine.</p>{stages.map((s,i)=><button className="next" key={s.key} onClick={()=>{sessionStorage.setItem("nbo-stage",String(i));onSection("Best Practices")}}><span className="round">{i+1}</span><span><b>{s.name}</b><small>{s.steps[0]}</small></span>→</button>)}</section></div>
-<section className="panel"><div className="panel-head"><div><h2>Best practices</h2><p>Before, during and after each project.</p></div><button className="linkbtn" onClick={()=>onSection("Best Practices")}>Open playbook →</button></div><div className="phases">{stages.map((s,i)=><button key={s.key} onClick={()=>onSection("Best Practices")}><span className="round">{i+1}</span><b>{s.name}</b><small>{s.steps.slice(0,3).join(" · ")}</small><span>→</span></button>)}</div></section>
-<div className="dash-grid"><section className="panel"><div className="panel-head"><h2>Prompt library</h2><button className="linkbtn" onClick={()=>onSection("Prompts")}>Browse all →</button></div><div className="quick-prompts">{prompts.slice(0,4).map(p=><button key={p.name} onClick={()=>onSection("Prompts")}><b>{p.name}</b><small>{p.desc}</small><span>Open library →</span></button>)}</div></section><section className="panel"><div className="panel-head"><h2>Tool stack</h2><button className="linkbtn" onClick={()=>onSection("Tools")}>View all →</button></div><div className="quick-tools">{tools.slice(0,6).map(t=><External href={t.url} key={t.name}>{t.name}</External>)}</div></section></div></>;
+const items=projects.reduce((a,b)=>a+(b.accessible?b.issues+b.prs:0),0);
+return <>
+<section className="summary-card">
+ <h2>{busy?"Reading GitHub…":projects.length+" projects on the board, all in one place."}</h2>
+ <p>Only Lany Books and La Cartilla de Gretel live here now. Everything below is read live from GitHub.</p>
+ <div className="chips">
+  <span className="chip">{busy?"…":projects.length+" projects"}</span>
+  <span className="chip">{busy?"…":items+" open items"}</span>
+  <span className="chip">Art inventory live</span>
+ </div>
+</section>
+<section className="sect"><h3>WEB GRAPH <span>tap a node to open or close it</span></h3>
+<WebGraph projects={projects} onOpenProject={onOpen} onSection={onSection}/>
+</section>
+<section className="sect"><h3>PROJECTS <span>only these two, nothing else</span></h3>
+{projects.map(p=><button key={p.slug} className="gcard" onClick={()=>onOpen(p.slug)}>
+ <span className={"badge "+(p.accessible?"green":"amber")}>{p.accessible?"CONNECTED":"RESTRICTED"}</span>
+ <h4><span className={"dot"+(p.slug==="cartilla-de-gretel"?" green":"")}></span>{p.name}</h4>
+ <p>{p.description||"GitHub source repository"}</p>
+ <div className="row"><span><b>{p.accessible?p.issues:"—"}</b> issues · <b>{p.accessible?p.prs:"—"}</b> PRs</span><span>Open →</span></div>
+</button>)}
+{!projects.length&&<p className="muted">{busy?"Loading GitHub…":"No readable repositories."}</p>}
+</section>
+</>;
 }

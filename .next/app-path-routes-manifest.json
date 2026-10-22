@@ -1,0 +1,10 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/auth/route": "/api/auth",
+  "/api/hub/route": "/api/hub",
+  "/api/library/route": "/api/library",
+  "/art-inventory/page": "/art-inventory",
+  "/login/page": "/login",
+  "/page": "/"
+}
