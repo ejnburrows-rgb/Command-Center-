@@ -14,7 +14,7 @@ export async function GET(request:NextRequest){
     const [issues,pulls]=await Promise.all([allPages<GitHubRecord>(base+'/issues?state=open&sort=created&direction=asc'),allPages<GitHubRecord>(base+'/pulls?state=open&sort=created&direction=asc')]);
     const counts=summarize(issues,pulls);
     if(typeof meta.open_issues_count==='number'&&counts.issues+counts.prs!==meta.open_issues_count)throw new Error('GitHub totals changed during pagination; preserving last successful counts');
-    const items=[...issues.filter(i=>!i.pull_request).map(i=>({...i,kind:'issue'})),...pulls.map(i=>({...i,kind:'pr'}))].map(i=>({number:i.number,title:i.title,url:i.html_url,updatedAt:i.updated_at,kind:i.kind,labels:(i.labels||[]).map(l=>typeof l==='string'?l:l.name||'')}));
+    const items=[...issues.filter(i=>!i.pull_request).map(i=>({...i,kind:'issue'})),...pulls.map(i=>({...i,kind:'pr'}))].map(i=>({number:i.number,title:i.title,url:i.html_url,updatedAt:i.updated_at,kind:i.kind,draft:i.kind==='pr'?Boolean(i.draft):undefined,labels:(i.labels||[]).map(l=>typeof l==='string'?l:l.name||'')}));
     items.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt));
     return {slug,name:ref.label,url:meta.html_url,description:meta.description||'',visibility:'Public',language:meta.language||'',updatedAt:meta.updated_at,...counts,items,accessible:true,limited:false};
    });
