@@ -3,7 +3,6 @@ import {useEffect,useRef,useState,type ReactNode} from "react";
 import Link from "next/link";
 import {sectionPaths,projectPath} from "./route-paths";
 import type {Section,Project} from "./hub-data";
-import {sections} from "./hub-data";
 import {usePins} from "./project-preferences";
 import {usePremium,workspaceLabels,paletteLabels,type Palette,type Appearance,type WorkspaceMode} from "./premium-preferences";
 import {Icon,External} from "./hub-ui";

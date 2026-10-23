@@ -4,10 +4,11 @@ import {sectionPaths,projectPath} from "./route-paths";
 import {useEffect,useState,useRef} from "react";
 import HubShell from "./hub-shell";
 import HubContent from "./hub-content";
-import {PremiumProvider,usePremium} from "./premium-preferences";
+import {PremiumProvider,usePremium,isPalette} from "./premium-preferences";
 import type {Feed,Section} from "./hub-data";
 function NBOPageCore(){
-const {palette:theme,setPalette:setTheme}=usePremium();
+const {palette:theme,setPalette}=usePremium();
+const setTheme=(value:string)=>{if(isPalette(value))setPalette(value)};
 const pathname=usePathname(),router=useRouter();
 const segments=pathname.split("/").filter(Boolean);
 const tab:Section=segments[0]==="projects"?"Projects":(Object.keys(sectionPaths) as Section[]).find(s=>sectionPaths[s]==="/"+segments[0])||"Hub";

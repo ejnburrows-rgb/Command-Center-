@@ -22,6 +22,7 @@ export function PremiumProvider({children}:{children:ReactNode}){
  const [palette,setPalette]=useState<Palette>("blue");
  const [appearance,setAppearance]=useState<Appearance>("dark");
  const [workspace,setWorkspace]=useState<WorkspaceMode>("overview");
+ const [hydrated,setHydrated]=useState(false);
  useEffect(()=>{
   try{
    const storedPalette=localStorage.getItem("nbo-palette")||localStorage.getItem("nbo-theme")||"blue";
@@ -31,10 +32,11 @@ export function PremiumProvider({children}:{children:ReactNode}){
    setAppearance(isAppearance(storedAppearance)?storedAppearance:"dark");
    setWorkspace(isWorkspaceMode(storedWorkspace)?storedWorkspace:"overview");
   }catch{/* Protected storage may be unavailable; retain functional in-memory defaults. */}
+ setHydrated(true);
  },[]);
- useEffect(()=>{document.documentElement.dataset.theme=palette;try{localStorage.setItem("nbo-palette",palette)}catch{}},[palette]);
- useEffect(()=>{document.documentElement.dataset.appearance=appearance;document.documentElement.style.colorScheme=appearance;try{localStorage.setItem("nbo-appearance",appearance)}catch{}},[appearance]);
- useEffect(()=>{document.documentElement.dataset.workspace=workspace;try{localStorage.setItem("nbo-workspace",workspace)}catch{}},[workspace]);
+ useEffect(()=>{if(!hydrated)return;document.documentElement.dataset.theme=palette;try{localStorage.setItem("nbo-palette",palette)}catch{}},[palette,hydrated]);
+ useEffect(()=>{if(!hydrated)return;document.documentElement.dataset.appearance=appearance;document.documentElement.style.colorScheme=appearance;try{localStorage.setItem("nbo-appearance",appearance)}catch{}},[appearance,hydrated]);
+ useEffect(()=>{if(!hydrated)return;document.documentElement.dataset.workspace=workspace;try{localStorage.setItem("nbo-workspace",workspace)}catch{}},[workspace,hydrated]);
  return <Context.Provider value={{palette,setPalette,appearance,setAppearance,workspace,setWorkspace}}>{children}</Context.Provider>;
 }
 export function usePremium(){const ctx=useContext(Context);if(!ctx)throw new Error("PremiumProvider missing");return ctx}
