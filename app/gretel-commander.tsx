@@ -33,7 +33,6 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
  async function copy(value:string){try{await navigator.clipboard.writeText(value);setFeedback("Copied — ready to paste");}catch{setFeedback("Clipboard unavailable. Select and copy the text instead.");}}
  const current=Boolean(project&&project.accessible&&!project.stale&&!project.limited&&project.prs!==null);
  const proposed=useMemo(()=>current?(project?.items||[]).filter(item=>item.kind==="pr"):[],[current,project]);
- const recent=useMemo(()=>proposed.slice().sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)).slice(0,3),[proposed]);
  const evidenceOk=!loading&&!stale;
  const verified=evidenceOk?jobs.filter(job=>job.status === "VERIFIED" && !(job.missingEvidence||[]).length):[];
  const gaps=evidenceOk?jobs.filter(job=>job.status!=="VERIFIED"||(job.missingEvidence||[]).length):[];
