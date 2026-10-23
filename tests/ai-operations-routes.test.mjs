@@ -22,3 +22,9 @@ test("anonymous knowledge page does not query private GitHub content",()=>{
  assert.match(ui,/never fetches private documents/);
  assert.doesNotMatch(ui,/GITHUB_TOKEN_WRITE|process\.env\.PORTAL_PASSPHRASE/);
 });
+
+test("knowledge links survive feature-branch cleanup after main merge",()=>{
+ const ui=read("app/ai-operations.tsx");
+ assert.doesNotMatch(ui,/feature\/nbo-ai-ops-cockpit-20261023\/knowledge/);
+ assert.match(ui,/\/blob\/main\/knowledge\/AGENT\.md/);
+});
