@@ -18,7 +18,7 @@ export async function GET(request:NextRequest){
     items.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt));
     return {slug,name:ref.label,url:meta.html_url,description:meta.description||'',visibility:'Public',language:meta.language||'',updatedAt:meta.updated_at,...counts,items,accessible:true,limited:false};
    });
-   return {...result.value,items:selected===slug?result.value.items:[],fetchedAt:result.fetchedAt,stale:result.stale,error:result.error};
+   return {...result.value,items:!selected||selected===slug?result.value.items:[],fetchedAt:result.fetchedAt,stale:result.stale,error:result.error};
   }catch(e){return {slug,name:ref.label,url,description:'',visibility:'Unavailable',language:'',updatedAt:'',issues:null,prs:null,drafts:null,items:[],accessible:false,limited:true,fetchedAt:'',stale:true,error:errorText(e)};}
  }));
  return NextResponse.json({projects,updatedAt:new Date().toISOString(),errors:projects.filter(p=>p.stale).length},{headers:{'Cache-Control':'private, no-store'}});
