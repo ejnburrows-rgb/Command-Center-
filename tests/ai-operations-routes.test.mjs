@@ -60,3 +60,15 @@ test("mobile task inspection is an actual dismissible overlay",()=>{
  assert.match(css,/\.mission-inspector\.mission-inspector-open/);
  assert.match(css,/max-height:min\(84dvh,720px\)/);
 });
+
+test("unscoped GitHub feed includes issue and PR records for the cockpit",()=>{
+ const route=read("app/api/hub/route.ts");
+ const expression=route.match(/items:([^\\n]+),fetchedAt:result\\.fetchedAt/);
+ assert.ok(expression,"Live work-scoping expression must be present");
+ const scope=new Function("selected","slug","result","return ("+expression[1]+");");
+ const records=[{kind:"issue",number:77},{kind:"pr",number:12,draft:true}];
+ const result={value:{items:records}};
+ assert.deepEqual(scope(null,"cartilla-de-gretel",result),records,"Unscoped home must receive all public work");
+ assert.deepEqual(scope("cartilla-de-gretel","cartilla-de-gretel",result),records,"Project-specific work must be retained");
+ assert.deepEqual(scope("otto","cartilla-de-gretel",result),[],"Other repositories must remain excluded from a scoped request");
+});
