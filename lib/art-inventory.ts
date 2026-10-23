@@ -6,7 +6,10 @@ const REPO = "cartilla-de-gretel";
 export const DEFAULT_REF = process.env.ART_INVENTORY_REF || "art-inventory-live";
 const BASE = "docs/art-inventory";
 // Branch holding the pictures the app really loads (the draft). Images are read from its latest commit.
-export const IMAGE_REF = process.env.ART_INVENTORY_IMAGE_REF || "art/owner-arco-elefante-2026-10-22";
+// The draft branch art/owner-arco-elefante-2026-10-22 was merged into main and deleted
+// (verified 2026-10-23: 240/241 app-loaded files byte-identical on main, 1 updated, 0 missing),
+// so main is now the exact app-loaded source. Override with ART_INVENTORY_IMAGE_REF if the app moves.
+export const IMAGE_REF = process.env.ART_INVENTORY_IMAGE_REF || "main";
 
 export type Orig =
   | { kind: "scan"; src: string; sw: number; box: [number, number, number, number] }
