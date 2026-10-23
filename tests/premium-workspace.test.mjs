@@ -26,3 +26,20 @@ test("legacy palette storage is migrated without losing owner preferences",()=>{
  assert.match(pref,/getItem\("nbo-theme"\)/);
  assert.match(pref,/getItem\("nbo-palette"\)/);
 });
+
+test("phone mode switch stays visible above content, outside filtered containing-block bug",()=>{
+ const css=read("app/nbo-premium.css");
+ assert.match(css,/top:64px;bottom:auto/);
+ assert.match(css,/\.premium-shell \.topbar \.mode-switch/);
+ assert.match(css,/\.premium-shell \.topbar.*height:120px/);
+});
+test("focus mode can advance to a different real task",()=>{
+ const home=read("app/mission-home.tsx");
+ assert.match(home,/className="focus-next"/);
+ assert.match(home,/visible\[\(index\+1\)%visible\.length\]/);
+});
+test("settings provide designed, accessible controls instead of bare options",()=>{
+ const css=read("app/nbo-premium.css"),settings=read("app/settings-view.tsx");
+ assert.match(css,/\.workspace-options button\[aria-pressed="true"\]/);
+ assert.match(settings,/role="group" aria-label="Workspace mode"/);
+});

@@ -113,7 +113,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
       {!visible.length&&<p className="mission-empty">{busy||jobs.loading?"Loading source records…":"No records match these filters."}</p>}
     </div>
     {visible.length>40&&<p className="mission-footnote">Showing first 40 matching entries. Use search or project filters to narrow the queue.</p>}
-    <div className="mission-panel-bottom"><span>Open PRs and draft changes are not completed releases.</span><Link href="/github">Explore GitHub Intelligence ↗</Link></div>
+    <div className="mission-panel-bottom"><span>Open PRs and draft changes are not completed releases.</span>{workspace==="focus"&&visible.length>1&&<button className="focus-next" type="button" onClick={()=>{const index=visible.findIndex(x=>x.id===selectedItem?.id);setSelected(visible[(index+1)%visible.length].id);setPanel("inspector");setMobileInspect(true)}}>Next task →</button>}<Link href="/github">Explore GitHub Intelligence ↗</Link></div>
    </section>
    <div className="mission-lower">
     <section className="mission-panel mission-projects"><div className="mission-panel-head"><div><p className="mission-eyebrow">02 / ACTIVE REPOSITORIES</p><h2>Your projects</h2></div><Link href="/projects">View all ↗</Link></div>

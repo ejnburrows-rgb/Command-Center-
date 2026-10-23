@@ -196,3 +196,50 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,te
 @media(max-width:620px){.topbar{padding:0 11px;gap:6px}.top-left{gap:5px}.top-left span{white-space:nowrap}.top-right{gap:6px}.mode-switch{order:3;position:fixed;bottom:65px;left:8px;right:8px;justify-content:space-around;background:var(--ui-panel);box-shadow:var(--ui-shadow);z-index:40;border:1px solid var(--ui-border)}.mode-switch button{flex:1;min-height:39px;padding:8px 5px;font-size:11px}.mode-switch button span{display:inline}.topbar .live-status{display:none}.topbar .avatar{display:none}.appearance-popover{width:min(292px,calc(100vw - 20px));right:-44px}.topbar .mode{height:39px}.mission-center{padding:22px 14px 22px}.mission-heading h1{font-size:27px}.mission-heading .mission-description{font-size:12px}.mission-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.mission-metric{min-height:116px;padding:15px 13px}.mission-metric strong{font-size:30px}.mission-panel-head{padding:19px 16px}.mission-panel-head h2{font-size:18px}.mission-worktools{flex-direction:column;padding:12px 14px}.mission-worktools select{max-width:none}.mission-task{grid-template-columns:minmax(0,1fr) 105px}.mission-task-project,.mission-task-time{display:none}.mission-tablehead{grid-template-columns:minmax(0,1fr) 100px}.mission-tablehead span:nth-child(2),.mission-tablehead span:nth-child(4){display:none}.mission-inspector{margin:0 12px 20px}.mission-inspector.mission-inspector-open{display:flex;position:fixed;inset:auto 0 0;margin:0;max-height:min(85dvh,750px);height:auto;border-radius:18px 18px 0 0;z-index:81;overflow-y:auto}.mission-inspector.mission-inspector-open .mission-inspector-content{padding:20px 17px}.mission-mobile-dock{position:sticky;bottom:0;padding-bottom:calc(58px + env(safe-area-inset-bottom));background:var(--ui-panel);border-color:var(--ui-border)}.mission-mobile-dock a{min-height:44px}.mission-rail-close{color:var(--ui-text);background:var(--ui-raised);border-color:var(--ui-border)}.mission-filterbar{gap:4px;padding:0 12px 14px}.mission-filterbar button{padding:8px 7px;font-size:11px}.workspace-banner{align-items:flex-start;flex-direction:column;padding:13px}.mission-lower{grid-template-columns:1fr}.mission-shell .main>footer{margin:0 15px}}
 @media(max-width:400px){.mission-metric{padding:13px 11px}.mission-metric>span{font-size:9px}.mission-worktools select{font-size:12px}.mission-home{overflow-x:clip}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+
+/* Settings are first-class, not browser-default options. */
+.premium-settings{gap:18px;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+.premium-settings .panel{min-width:0}
+.premium-settings .panel>h2{font-size:20px;letter-spacing:-.025em}
+.premium-settings .panel>p.muted{font-size:13px;line-height:1.7;margin:7px 0 22px}
+.setting-choice-group{margin:0 0 23px}
+.setting-mini-label{display:block;color:var(--ui-subtle);font-size:10px;font-weight:800;letter-spacing:.1em;margin:0 0 12px}
+.premium-settings .appearance-options{max-width:390px}
+.premium-settings .appearance-options button,.premium-settings .palette-options button{min-height:49px;font-size:13px}
+.premium-settings .palette-options{max-width:490px}
+.workspace-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.workspace-options button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:8px;border-radius:12px;border:1px solid var(--ui-border);background:var(--ui-raised);color:var(--ui-text);padding:16px;min-height:104px}
+.workspace-options button:hover,.premium-settings button:hover{border-color:var(--ui-accent)}
+.workspace-options button[aria-pressed="true"]{background:var(--ui-accent-soft);border-color:var(--ui-accent)}
+.workspace-options button b{font-size:14px;font-weight:750}
+.workspace-options button small{font-size:12px;color:var(--ui-muted);line-height:1.5}
+.premium-settings .setting-row{background:transparent;border-color:var(--ui-border);min-height:53px}
+.premium-settings .setting-row span{font-size:13px;color:var(--ui-muted)}
+/* Functional focus navigation. */
+.focus-next{display:inline-flex;align-items:center;gap:8px;margin-left:auto;background:var(--ui-accent-soft);color:var(--ui-accent);border:1px solid var(--ui-border);padding:9px 13px;border-radius:9px;font-size:12px;font-weight:750;min-height:42px}
+.focus-next:hover{border-color:var(--ui-accent)}
+/* Critical: backdrop-filter on sticky topbar creates a containing block for fixed children.
+   Mobile mode switch belongs to the topbar in a dedicated visible row. */
+@media(max-width:850px){.premium-shell .topbar{height:64px}}
+@media(max-width:620px){
+ .premium-shell .topbar,.mission-shell.premium-shell .topbar{height:120px;padding:9px 12px 60px;align-items:center;overflow:visible;position:sticky;top:0}
+ .premium-shell .topbar .mode-switch{position:absolute;left:12px;right:12px;top:64px;bottom:auto;width:auto;display:flex;align-items:center;justify-content:space-around;background:var(--ui-raised);border:1px solid var(--ui-border);box-shadow:none;border-radius:12px;padding:4px;z-index:35}
+ .premium-shell .mode-switch button{flex:1;font-size:12px;padding:9px 5px;min-height:38px}
+ .premium-shell .topbar .appearance-trigger{min-width:42px;width:42px;padding:0 10px;gap:5px}
+ .premium-shell .topbar .appearance-trigger>span:not(.palette-dot){display:none}
+ .premium-shell .topbar .appearance-trigger .glyph{font-size:15px}
+ .premium-shell .topbar .top-left{flex:1;min-width:0}
+ .premium-shell .topbar .top-right{gap:6px}
+ .premium-shell .main>.page-title{padding-top:0}
+ .premium-settings{grid-template-columns:minmax(0,1fr);gap:12px}
+ .premium-settings .panel{padding:19px}
+ .workspace-options{gap:8px}
+ .workspace-options button{padding:13px;min-height:116px}
+ .workspace-options button b{font-size:12px}
+ .workspace-options button small{font-size:11px}
+}
+@media(max-width:370px){
+ .premium-shell .topbar .appearance-trigger .palette-dot{display:none}
+ .workspace-options{grid-template-columns:1fr}
+}
