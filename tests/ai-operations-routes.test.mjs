@@ -51,3 +51,12 @@ test("cockpit sources real repository and canonical job data, not design-demo fi
  assert.match(ui,/navigator\.clipboard\.writeText/);
  assert.doesNotMatch(ui,/NBO_TASKS|NBO_PROJECTS|MOCK_TASKS|simulateSync|fakeAgent|mockAgent/);
 });
+
+test("mobile task inspection is an actual dismissible overlay",()=>{
+ const ui=read("app/mission-home.tsx"),css=read("app/mission-home.css");
+ assert.match(ui,/setMobileInspect\(true\)/);
+ assert.match(ui,/setMobileInspect\(false\)/);
+ assert.match(ui,/aria-label="Close task inspector"/);
+ assert.match(css,/\.mission-inspector\.mission-inspector-open/);
+ assert.match(css,/max-height:min\(84dvh,720px\)/);
+});

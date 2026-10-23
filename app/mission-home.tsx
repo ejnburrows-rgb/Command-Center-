@@ -36,6 +36,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
  const [panel,setPanel]=useState<Panel>("inspector");
  const [selected,setSelected]=useState("");
  const [copied,setCopied]=useState<"yes"|"error"|"">("");
+ const [mobileInspect,setMobileInspect]=useState(false);
  const available=projects.filter(p=>p.accessible&&!p.stale&&!p.limited&&p.prs!==null&&p.issues!==null&&p.drafts!==null);
  const fullyLoaded=!busy&&projects.length>0&&available.length===projects.length;
  const dataValid=!jobs.loading&&!jobs.error&&!jobs.stale;
@@ -100,7 +101,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
     </div>
     <div className="mission-tablehead"><span>WORK ITEM</span><span>PROJECT</span><span>STATE</span><span>UPDATED</span></div>
     <div className="mission-tasklist">
-      {visible.slice(0,40).map(item=><button key={item.id} type="button" className={"mission-task"+(selectedItem?.id===item.id?" selected":"")} onClick={()=>{setSelected(item.id);setPanel("inspector");setCopied("")}} aria-pressed={selectedItem?.id===item.id}>
+      {visible.slice(0,40).map(item=><button key={item.id} type="button" className={"mission-task"+(selectedItem?.id===item.id?" selected":"")} onClick={()=>{setSelected(item.id);setPanel("inspector");setCopied("");setMobileInspect(true)}} aria-pressed={selectedItem?.id===item.id}>
        <span className="mission-task-title"><b>{item.title}</b><small>{item.kind} · {item.id}</small></span>
        <span className="mission-task-project">{item.project}</span>
        <span className={"mission-status mission-tone-"+color[item.state]}>{label[item.state]}</span>
@@ -122,7 +123,9 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
     </section>
    </div>
   </div>
-  <aside className="mission-inspector" aria-label="Intelligence and task inspector">
+  {mobileInspect&&<button type="button" className="mission-rail-shade" aria-label="Close inspector" onClick={()=>setMobileInspect(false)}/>}
+  <aside className={"mission-inspector"+(mobileInspect?" mission-inspector-open":"")} aria-label="Intelligence and task inspector">
+    <button className="mission-rail-close" type="button" onClick={()=>setMobileInspect(false)} aria-label="Close task inspector">×</button>
     <div className="mission-inspector-tabs" role="group" aria-label="Inspector sections">
       {tabs.map(t=><button type="button" key={t.key} onClick={()=>{setPanel(t.key);setCopied("")}} aria-pressed={panel===t.key}>{t.label}</button>)}
     </div>
@@ -138,8 +141,8 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
        <p className="mission-inspector-note">Source evidence only. No merge, deployment or AI task is launched by this panel.</p>
       </>:<p className="mission-empty">Choose a work item to inspect verified source records.</p>}
     </div>}
-    {panel==="decisions"&&<div className="mission-inspector-content"><p className="mission-eyebrow">OWNER CHECKPOINT</p><h2>Needs your decision</h2>{!dataValid?<p className="mission-empty">Approval source unavailable or refreshing.</p>:decisions.length?decisions.map(d=><button key={d.id} className="mission-minirow" onClick={()=>{setSelected(d.id);setPanel("inspector")}}>{d.title}<small>{d.project} · Review proof</small></button>):<p className="mission-empty">No decisions with qualified evidence are waiting.</p>}<p className="mission-inspector-note">Draft or unverified jobs do not qualify for owner approval.</p></div>}
-    {panel==="blocked"&&<div className="mission-inspector-content"><p className="mission-eyebrow">EVIDENCE GAPS</p><h2>Blocked or unverified</h2>{!dataValid?<p className="mission-empty">Job evidence unavailable or refreshing.</p>:blocked.length?blocked.map(x=><button key={x.id} className="mission-minirow" onClick={()=>{setSelected(x.id);setPanel("inspector")}}>{x.title}<small>{alertText(x.missing.length)} · {x.project}</small></button>):<p className="mission-empty">No unverified job reports in the source feed.</p>}<Link href="/evidence" className="mission-inspector-cta">Open all evidence →</Link></div>}
+    {panel==="decisions"&&<div className="mission-inspector-content"><p className="mission-eyebrow">OWNER CHECKPOINT</p><h2>Needs your decision</h2>{!dataValid?<p className="mission-empty">Approval source unavailable or refreshing.</p>:decisions.length?decisions.map(d=><button key={d.id} className="mission-minirow" onClick={()=>{setSelected(d.id);setPanel("inspector");setMobileInspect(true)}}>{d.title}<small>{d.project} · Review proof</small></button>):<p className="mission-empty">No decisions with qualified evidence are waiting.</p>}<p className="mission-inspector-note">Draft or unverified jobs do not qualify for owner approval.</p></div>}
+    {panel==="blocked"&&<div className="mission-inspector-content"><p className="mission-eyebrow">EVIDENCE GAPS</p><h2>Blocked or unverified</h2>{!dataValid?<p className="mission-empty">Job evidence unavailable or refreshing.</p>:blocked.length?blocked.map(x=><button key={x.id} className="mission-minirow" onClick={()=>{setSelected(x.id);setPanel("inspector");setMobileInspect(true)}}>{x.title}<small>{alertText(x.missing.length)} · {x.project}</small></button>):<p className="mission-empty">No unverified job reports in the source feed.</p>}<Link href="/evidence" className="mission-inspector-cta">Open all evidence →</Link></div>}
     {panel==="memory"&&<div className="mission-inspector-content"><p className="mission-eyebrow">OBSIDIAN-STYLE KNOWLEDGE</p><h2>Human authority. Machine findings.</h2><p className="mission-inspector-meta">The owner decides. AI agents document evidence.</p><div className="mission-memory-links"><Link href="/knowledge">▤ Knowledge & Memory →</Link><External href="https://github.com/ejnburrows-rgb/Command-Center-/blob/main/knowledge/AGENT.md">↳ AGENT.md source</External><External href="https://github.com/ejnburrows-rgb/Command-Center-/tree/main/knowledge/Machine">↳ Verified findings</External></div><p className="mission-inspector-note">Private documents require your GitHub sign-in; they are not leaked to anonymous viewers.</p></div>}
     <div className="mission-inspector-bottom"><span className="mission-datalight"/><div><strong>GITHUB-BACKED SOURCES</strong><small>{fullyLoaded?"All six sources current":"Source may be limited"} · {dataValid?"Evidence fetched":"Evidence status unknown"}</small></div></div>
   </aside>
