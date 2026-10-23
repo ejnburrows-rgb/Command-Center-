@@ -72,3 +72,5 @@ export default function AIOperations({projects,view}:{projects:Project[];view:"o
    </aside>
   </div>}
  </div>;
+
+}
