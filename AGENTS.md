@@ -54,3 +54,16 @@ Do not enable automatic merging. Do not depend on GitHub Actions or paid GitHub 
 If something goes wrong after "Push it", diagnose the cause, repair it if clearly within the approved task, verify the repair, and show the result without making EJN perform Git operations.
 
 Normal workflow: EJN asks → agent builds safely → agent tests → agent shows proof → EJN says "Push it" → agent puts finished work in `main` → agent confirms it.
+
+---
+
+## AI-FIRST DELIVERY EVIDENCE GATE
+
+Before touching project knowledge, read `knowledge/AGENT.md` and the relevant scoped workflow `findings.md`. Owner-written decisions are authoritative and must not be overwritten by AI.
+
+- A claimed completion, draft PR, green-looking card, or test count is not proof of deployment or working behavior.
+- Show a real source, exact Git ref, tested behavior, screenshots for visual changes, and an honest missing-evidence list.
+- Do not substitute demo fixture data or simulated agent presence for GitHub/API evidence.
+- Use one coherent change and minimize redundant builds. Vercel may build every commit even on preview branches; avoid sequential one-file commits when possible.
+- For GitHub-backed private knowledge, require real server authorization before displaying it in an anonymous dashboard. Do not put secrets or private owner notes into client bundles.
+- Never claim a build is ready until the final HEAD deployment is green. Fix failed builds before requesting approval.
