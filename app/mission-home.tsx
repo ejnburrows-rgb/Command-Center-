@@ -6,6 +6,7 @@ import {useJobs} from "./evidence-panels";
 import {usePins} from "./project-preferences";
 import {External} from "./hub-ui";
 import {projectPath} from "./route-paths";
+import {usePremium,visibleInWorkspace,workspaceLabels} from "./premium-preferences";
 
 type State="owner"|"proof"|"draft"|"verified"|"active";
 type Filter="all"|State;
@@ -30,6 +31,7 @@ function fromWork(p:Project,w:Work):RecordItem{
 export default function MissionHome({projects,busy}:{projects:Project[];busy:boolean;onOpen:(s:string)=>void;onSection:(s:Section)=>void}){
  const jobs=useJobs();
  const pins=usePins();
+ const {workspace}=usePremium();
  const [filter,setFilter]=useState<Filter>("all");
  const [query,setQuery]=useState("");
  const [scope,setScope]=useState("all");
@@ -56,8 +58,8 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
   const priority:Record<State,number>={owner:5,proof:4,draft:3,active:2,verified:1};
   return [...approvals,...reports,...work].sort((a,b)=>priority[b.state]-priority[a.state]||String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")));
  },[projects,jobs.jobs,jobs.approvals]);
- const visible=all.filter(item=>(filter==="all"||item.state===filter)&&(scope==="all"||item.slug===scope)&&[item.title,item.project,item.kind,item.id].join(" ").toLowerCase().includes(query.toLowerCase().trim()));
- const selectedItem=all.find(x=>x.id===selected)||visible[0]||null;
+ const visible=all.filter(item=>visibleInWorkspace(workspace,item.state)&&(filter==="all"||item.state===filter)&&(scope==="all"||item.slug===scope)&&[item.title,item.project,item.kind,item.id].join(" ").toLowerCase().includes(query.toLowerCase().trim()));
+ const selectedItem=visible.find(x=>x.id===selected)||visible[0]||null;
  const blocked=all.filter(x=>x.state==="proof");
  const decisions=all.filter(x=>x.state==="owner");
  const drafts=fullyLoaded?projects.reduce((sum,p)=>sum+(p.drafts||0),0):null;
@@ -74,14 +76,15 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
   const prompt=["Review and complete this AI software development task using the project's AGENTS.md and applicable findings.md.","Project: "+item.project,"Task: "+item.title,"Canonical source: "+item.source,"Current state: "+label[item.state],"Observed: "+item.summary,"Required next action: "+item.next,...item.missing.map(s=>"Missing evidence: "+s),"Do not call it complete without actual tests, proof links, screenshots where visual, and a clear READY TO PUSH assessment."].join("\n");
   try{await navigator.clipboard.writeText(prompt);setCopied("yes")}catch{setCopied("error")}
  }
- return <div className="mission-home" data-visual-reference="uploaded-nbo-three-zone-cockpit">
+ return <div className="mission-home" data-workspace={workspace} data-visual-reference="nbo-premium-workspace">
   <div className="mission-center">
    <header className="mission-heading">
     <div><p className="mission-eyebrow"><span className="mission-pulse"/> NBO / SOFTWARE OPERATIONS</p>
-    <h1>AI Development <span>Mission Control</span></h1>
-    <p className="mission-description">Your projects, AI work, decisions and evidence. One operational view—not another coding terminal.</p></div>
+    <h1>{workspace==="overview"?"Your development":workspace==="coding"?"Build and":workspace==="review"?"Review before":"One task."} <span>{workspace==="overview"?"workspace":workspace==="coding"?"ship":workspace==="review"?"release":"Full focus."}</span></h1>
+    <p className="mission-description">{workspace==="overview"?"Your projects and AI work, clearly organized in one place.":workspace==="coding"?"Track the actual issues and pull requests being built.":workspace==="review"?"Inspect evidence gaps and decisions before approving results.":"See one task at a time, with its context and next action."}</p></div>
     <div className="mission-fresh"><span className="mission-datalight"/><span>{busy?"Checking GitHub…":fullyLoaded?"GITHUB LIVE":"PARTIAL GITHUB DATA"}</span><small>{available.length} of {projects.length} complete · {fmt(jobs.fetchedAt)}</small></div>
    </header>
+   {workspace!=="overview"&&<div className="workspace-banner"><strong>{workspaceLabels[workspace]} workspace</strong><span>{workspace==="coding"?"Showing only open issues and code changes.":workspace==="review"?"Only work awaiting proof or owner decisions.":"Select the next task and examine its evidence without distracting metrics."}</span></div>}
    <div className="mission-metrics" aria-label="Actionable delivery statistics">
     {tiles.map(t=><button key={t.key} type="button" className={"mission-metric mission-tone-"+t.tone+(filter===t.key?" chosen":"")} onClick={()=>choose(t.key)} aria-pressed={filter===t.key}>
      <span>{t.name}</span><strong>{t.value===null?"—":t.value}</strong><small>{t.value===null?"Source incomplete":t.desc}</small>
@@ -90,7 +93,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
    <section className="mission-panel mission-work" id="mission-work">
     <div className="mission-panel-head">
       <div><p className="mission-eyebrow">01 / OPERATIONS QUEUE</p><h2>What still needs work</h2><p>Select a task to inspect what happened and what to do next.</p></div>
-      <span className="mission-panel-count">{dataValid&&fullyLoaded?all.length+" source records":"Partial source"}</span>
+      <span className="mission-panel-count">{dataValid&&fullyLoaded?visible.length+" matching items":"Partial source"}</span>
     </div>
     <div className="mission-filterbar" role="group" aria-label="Filter work queue">
      {([{key:"all",name:"All work"},{key:"owner",name:"Needs You"},{key:"proof",name:"Missing proof"},{key:"draft",name:"Draft PRs"},{key:"verified",name:"Verified"}] as {key:Filter;name:string}[]).map(f=><button key={f.key} type="button" onClick={()=>setFilter(f.key)} aria-pressed={filter===f.key} className={filter===f.key?"active":""}>{f.name}</button>)}
@@ -110,7 +113,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
       {!visible.length&&<p className="mission-empty">{busy||jobs.loading?"Loading source records…":"No records match these filters."}</p>}
     </div>
     {visible.length>40&&<p className="mission-footnote">Showing first 40 matching entries. Use search or project filters to narrow the queue.</p>}
-    <div className="mission-panel-bottom"><span>Open PRs and draft changes are not completed releases.</span><Link href="/github">Explore GitHub Intelligence ↗</Link></div>
+    <div className="mission-panel-bottom"><span>Open PRs and draft changes are not completed releases.</span>{workspace==="focus"&&visible.length>1&&<button className="focus-next" type="button" onClick={()=>{const index=visible.findIndex(x=>x.id===selectedItem?.id);setSelected(visible[(index+1)%visible.length].id);setPanel("inspector");setMobileInspect(true)}}>Next task →</button>}<Link href="/github">Explore GitHub Intelligence ↗</Link></div>
    </section>
    <div className="mission-lower">
     <section className="mission-panel mission-projects"><div className="mission-panel-head"><div><p className="mission-eyebrow">02 / ACTIVE REPOSITORIES</p><h2>Your projects</h2></div><Link href="/projects">View all ↗</Link></div>
