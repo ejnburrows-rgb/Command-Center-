@@ -1,17 +1,57 @@
-.gretel-owner{min-width:0;max-width:100%;margin:0 0 20px;padding:18px;border:1px solid var(--ui-border);border-radius:15px;background:var(--ui-panel);color:var(--ui-text);font-size:12px;line-height:1.5}
-.gretel-owner *{box-sizing:border-box;min-width:0}.gretel-owner h2,.gretel-owner h3,.gretel-owner p{margin:0}
-.gretel-head,.gretel-inbox-title{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
-.gretel-eyebrow{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--ui-accent)}.gretel-head h2{font-size:20px;font-weight:800;letter-spacing:-.04em}.gretel-head p:not(.gretel-eyebrow),.gretel-inbox-title p{color:var(--ui-muted);font-size:11px}
-.gretel-head a{color:var(--ui-accent);text-decoration:none;font-size:11px;white-space:nowrap;padding:8px 10px;border:1px solid var(--ui-border);border-radius:8px}
-.gretel-goal{margin-top:15px;padding:14px;display:flex;justify-content:space-between;gap:18px;align-items:center;background:var(--ui-raised);border:1px solid var(--ui-border);border-radius:11px}
-.gretel-goal>div{display:flex;flex-direction:column;gap:4px}.gretel-goal small{color:var(--ui-accent);letter-spacing:.08em;font-size:9px;font-weight:800}.gretel-goal strong{font-size:13px;color:var(--ui-text)}.gretel-goal span{font-size:11px;color:var(--ui-muted)}
-.gretel-deadline{flex:0 0 180px;text-align:right}.gretel-deadline strong{font-size:19px}.gretel-timeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin:17px 0 12px}
-.gretel-step{position:relative;padding-top:13px;display:grid;gap:3px;overflow-wrap:anywhere}.gretel-step:before{content:"";position:absolute;top:0;left:0;right:0;height:7px;border-radius:5px;background:var(--ui-border)}.gretel-step.gretel-blue:before{background:#3b82f6}.gretel-step.gretel-green:before{background:#16a34a}.gretel-step.gretel-amber:before{background:#e4a43d}.gretel-step b{font-size:10px}.gretel-step span{font-size:10px;color:var(--ui-muted)}
-.gretel-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}.gretel-metrics>div{background:var(--ui-raised);border:1px solid var(--ui-border);border-radius:9px;padding:9px 11px;display:flex;gap:9px;align-items:center}.gretel-metrics strong{font-size:21px;font-variant-numeric:tabular-nums}.gretel-metrics span{font-size:10px;color:var(--ui-muted)}
-.gretel-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.gretel-section{background:var(--ui-raised);border:1px solid var(--ui-border);border-radius:10px;padding:12px}.gretel-section h3,.gretel-inbox h3{font-size:13px;font-weight:760}.gretel-caption,.gretel-note,.gretel-key{font-size:10px;color:var(--ui-muted);line-height:1.6}.gretel-caption{margin:4px 0 8px!important}
-.gretel-agent{display:flex;align-items:center;gap:8px;border-top:1px solid var(--ui-border);padding:9px 0}.gretel-agent>div{flex:1;display:grid;gap:1px}.gretel-agent b{font-size:11px}.gretel-agent small{color:var(--ui-muted);font-size:10px}.gretel-agent em{font-style:normal;font-size:9px;color:var(--ui-subtle);text-align:right;max-width:95px}.gretel-dot{width:8px;min-width:8px;height:8px;border-radius:50%;background:var(--ui-subtle)}
-.gretel-blue-dot{background:#3b82f6}.gretel-amber-dot{background:#e4a43d}.gretel-next{display:flex;align-items:flex-start;gap:7px;padding:10px 0!important;border-top:1px solid var(--ui-border);font-size:11px}.gretel-next i{display:inline-block;width:7px;min-width:7px;height:7px;margin-top:5px;border-radius:50%}
-.gretel-note{border-top:1px solid var(--ui-border);padding-top:8px!important}.gretel-recent{border-top:1px solid var(--ui-border);padding-top:8px;display:grid;gap:5px}.gretel-recent b{font-size:9px;color:var(--ui-subtle)}.gretel-recent a{font-size:10px;color:var(--ui-accent);overflow-wrap:anywhere}
-.gretel-inbox{margin-top:12px;background:var(--ui-raised);padding:13px;border-radius:10px;border:1px solid var(--ui-border)}.gretel-inbox-title{align-items:center}.gretel-owner button{background:var(--ui-panel);color:var(--ui-text);border:1px solid var(--ui-border);border-radius:8px;padding:8px 12px;font-size:11px;min-height:38px;cursor:pointer;font-weight:700}.gretel-owner button:disabled{opacity:.45;cursor:not-allowed}.gretel-owner button:hover:not(:disabled){background:var(--ui-hover)}
-.gretel-inbox-content{margin-top:12px}.gretel-copy-muse{display:block;width:100%;background:var(--ui-accent)!important;color:var(--ui-accent-contrast)!important;border:0!important}.gretel-prompt{padding:10px 0;border-top:1px solid var(--ui-border)}.gretel-prompt-head{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.gretel-prompt-head span{flex:1;color:var(--ui-muted);font-size:10px}.gretel-editor{margin-top:10px;display:grid;gap:7px}.gretel-editor label{font-size:11px}.gretel-editor textarea{width:100%;max-width:100%;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-panel);color:var(--ui-text);padding:10px;resize:vertical;font-size:12px}.gretel-editor>div{display:flex;gap:8px}.gretel-feedback{font-size:11px;color:var(--ui-success)}.gretel-key{margin-top:11px!important}
-@media(max-width:850px){.gretel-columns{grid-template-columns:minmax(0,1fr)}}@media(max-width:620px){.gretel-owner{padding:12px}.gretel-head h2{font-size:17px}.gretel-head a{font-size:10px;padding:6px}.gretel-goal{display:block}.gretel-deadline{text-align:left;margin-top:11px}.gretel-deadline strong{font-size:16px}.gretel-timeline{gap:4px;grid-template-columns:repeat(5,minmax(0,1fr))}.gretel-step b,.gretel-step span{font-size:9px}.gretel-metrics{gap:5px}.gretel-metrics>div{display:grid;padding:7px;gap:2px}.gretel-metrics strong{font-size:18px}.gretel-metrics span{font-size:9px}.gretel-inbox-title{align-items:flex-start}}
+/* Gretel Mission — native part of the NBO canvas, not an inset widget. */
+.gretel-owner{width:100%;min-width:0;margin:0 0 35px;padding:0 0 25px;border:0;border-bottom:1px solid var(--ui-border);background:transparent;color:var(--ui-text);font-family:inherit}
+.gretel-owner *{box-sizing:border-box;min-width:0}
+.gretel-owner button,.gretel-owner a{cursor:pointer}
+.gretel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;padding-top:7px}
+.gretel-eyebrow{font-size:11px;letter-spacing:.12em;font-weight:800;color:var(--ui-accent);margin:0 0 11px}
+.gretel-head h2{font-size:clamp(26px,3.5vw,46px);line-height:1.09;letter-spacing:-.065em;font-weight:800;margin:0;max-width:16ch}
+.gretel-head h2 span{color:var(--ui-accent)}
+.gretel-headline>p:last-child{font-size:clamp(13px,1.2vw,16px);color:var(--ui-muted);margin:12px 0 0;line-height:1.5}
+.gretel-source{flex:none;font-size:12px;color:var(--ui-accent);text-decoration:none;padding:11px 0;font-weight:700}
+.gretel-source:hover{text-decoration:underline}
+.gretel-progress{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:28px 0 23px}
+.gretel-progress-item{display:flex;flex-direction:column;gap:3px}
+.gretel-progress-track{height:11px;width:100%;border-radius:999px;background:var(--ui-border);margin-bottom:11px}
+.gretel-progress-item.gretel-blue .gretel-progress-track{background:#3b82f6}
+.gretel-progress-item.gretel-green .gretel-progress-track{background:#16a34a}
+.gretel-progress-item.gretel-amber .gretel-progress-track{background:#e7a337}
+.gretel-progress-item strong{font-size:13px;line-height:1.25}
+.gretel-progress-item small{font-size:11px;color:var(--ui-muted);line-height:1.35}
+.gretel-snapshot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid var(--ui-border);border-bottom:1px solid var(--ui-border);padding:16px 0;margin:0 0 26px}
+.gretel-snapshot>div{display:grid;gap:4px;padding:0 clamp(10px,2vw,25px);border-left:1px solid var(--ui-border)}
+.gretel-snapshot>div:first-child{border-left:0;padding-left:0}
+.gretel-stat-label{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--ui-muted)}
+.gretel-snapshot strong{font-size:clamp(30px,3vw,44px);line-height:1.05;font-weight:790;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
+.gretel-snapshot small{font-size:11px;color:var(--ui-muted)}
+.gretel-nextmove{display:flex;gap:20px;align-items:center;justify-content:space-between}
+.gretel-nextmove h3{font-size:clamp(19px,2.3vw,27px);font-weight:760;letter-spacing:-.04em;margin:6px 0}
+.gretel-nextmove p{font-size:12px;line-height:1.5;color:var(--ui-muted);margin:0;max-width:54ch}
+.gretel-main-action{border:0!important;background:var(--ui-accent)!important;color:var(--ui-accent-contrast)!important;border-radius:12px;padding:14px 18px;min-height:49px;white-space:nowrap;font-size:13px;font-weight:750;display:flex;align-items:center;gap:18px;box-shadow:0 8px 25px rgba(var(--ui-accent-rgb),.15)}
+.gretel-main-action:hover{transform:translateY(-1px);filter:brightness(1.03)}
+.gretel-footerline{display:flex;gap:9px 20px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin:24px 0 13px;color:var(--ui-muted);font-size:11px;line-height:1.5}
+.gretel-fresh:before{content:"";display:inline-block;width:7px;height:7px;margin-right:8px;border-radius:50%;background:#d59b31}
+.gretel-finish{max-width:57ch}
+.gretel-inbox{border-top:1px solid var(--ui-border);padding-top:9px}
+.gretel-inbox-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:10px 0;text-align:left;color:var(--ui-text);background:none;border:0;cursor:pointer}
+.gretel-inbox-toggle>span:first-child{display:grid;gap:3px}
+.gretel-inbox-toggle strong{font-size:14px}
+.gretel-inbox-toggle small{font-size:11px;color:var(--ui-muted)}
+.gretel-inbox-toggle>span:last-child{font-size:25px;color:var(--ui-accent)}
+.gretel-inbox-content{padding:13px 0 7px}
+.gretel-inbox-instructions{font-size:12px;color:var(--ui-muted);line-height:1.5;margin:0 0 12px}
+.gretel-prompt{border-top:1px solid var(--ui-border);padding:12px 0}
+.gretel-prompt-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.gretel-prompt-head>div{flex:1;display:grid;gap:3px}
+.gretel-prompt-head b{font-size:13px}
+.gretel-prompt-head small{font-size:11px;color:var(--ui-muted)}
+.gretel-prompt button,.gretel-editor button{border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-panel);color:var(--ui-text);padding:9px 12px;min-height:41px;font-size:12px;font-weight:700}
+.gretel-prompt button:disabled{opacity:.45;cursor:not-allowed}
+.gretel-prompt button:hover:not(:disabled){border-color:var(--ui-accent)}
+.gretel-editor{margin:12px 0 0;display:grid;gap:9px}
+.gretel-editor label{font-size:12px;font-weight:700}
+.gretel-editor textarea{width:100%;min-height:145px;resize:none;border:1px solid var(--ui-border);border-radius:12px;padding:12px;background:var(--ui-panel);color:var(--ui-text);font-size:13px;line-height:1.5}
+.gretel-editor>div{display:flex;gap:8px}
+.gretel-feedback{font-size:12px;color:var(--ui-success);margin:12px 0}
+@media(max-width:760px){.gretel-owner{margin-bottom:27px}.gretel-head{gap:12px}.gretel-source{font-size:11px}.gretel-progress{margin-top:25px}.gretel-nextmove{align-items:flex-start;flex-direction:column;gap:14px}.gretel-main-action{width:100%;justify-content:space-between}.gretel-footerline{display:grid;gap:6px}}
+@media(max-width:430px){.gretel-eyebrow{font-size:9px}.gretel-head h2{font-size:30px}.gretel-headline>p:last-child{font-size:12px}.gretel-source{font-size:10px}.gretel-progress-item strong{font-size:10px}.gretel-progress-item small{font-size:9px}.gretel-progress{gap:4px}.gretel-progress-track{height:8px}.gretel-snapshot>div{padding:0 10px}.gretel-stat-label{font-size:9px;letter-spacing:.03em}.gretel-snapshot strong{font-size:30px}.gretel-snapshot small{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.gretel-main-action:hover{transform:none}}

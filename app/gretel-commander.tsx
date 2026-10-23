@@ -40,38 +40,52 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
  const decisions=evidenceOk?approvals.length:0;
  const checked=fetchedAt&&!Number.isNaN(new Date(fetchedAt).valueOf())?new Date(fetchedAt).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"Time unknown";
  const steps=[
-  {title:"Plan",detail:"Source rules",tone:"neutral"},
-  {title:"Build",detail:current?proposed.length+" open PRs":"No current source",tone:current&&proposed.length?"blue":"neutral"},
-  {title:"Verify",detail:evidenceOk?verified.length+" proven jobs":"Evidence unavailable",tone:verified.length?"green":gaps.length?"amber":"neutral"},
-  {title:"Decision",detail:evidenceOk?decisions+" verified requests":"Unknown",tone:decisions?"amber":"neutral"},
-  {title:"Release",detail:"Not confirmed live",tone:"neutral"}];
+  {name:"Plan",detail:"Source checked",tone:"neutral"},
+  {name:"Build",detail:current?proposed.length+" proposed":"Source unavailable",tone:current&&proposed.length?"blue":"neutral"},
+  {name:"Verify",detail:evidenceOk?verified.length+" confirmed":"Not checked",tone:verified.length?"green":gaps.length?"amber":"neutral"},
+  {name:"Approve",detail:evidenceOk?decisions+" requests":"Unknown",tone:decisions?"amber":"neutral"},
+  {name:"Release",detail:"Not confirmed",tone:"neutral"}];
+ const savedCount=names.filter(agent=>ready&&handoffs[agent.id].trim()).length;
  return <section className="gretel-owner" aria-labelledby="gretel-title">
-  <header className="gretel-head"><div><p className="gretel-eyebrow">YOUR GRETEL MISSION</p><h2 id="gretel-title">La Cartilla de Gretel</h2><p>Plain-English progress, actual proof, and your remaining prompts.</p></div><a href="https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877" target="_blank" rel="noopener noreferrer">View source ↗</a></header>
-  <div className="gretel-goal"><div><small>END GOAL</small><strong>Student book · Teacher tools · Four games · Approved audio</strong><span>Works on phone, checked independently, released only with your approval.</span></div><div className="gretel-deadline"><small>PLAN TARGET</small><strong>4:54 PM ET</strong><span>October 23, 2026 · original target only</span></div></div>
-  <div className="gretel-timeline" aria-label="Five delivery stages">{steps.map((step,i)=><div className={"gretel-step gretel-"+step.tone} key={step.title}><b>{i+1}. {step.title}</b><span>{step.detail}</span></div>)}</div>
-  <div className="gretel-metrics" aria-label="Current GitHub evidence"><div><strong>{current?proposed.length:"—"}</strong><span>Open code changes</span></div><div><strong>{evidenceOk?verified.length:"—"}</strong><span>Verified job reports</span></div><div><strong>{evidenceOk?gaps.length:"—"}</strong><span>Jobs missing proof</span></div></div>
-  <div className="gretel-columns">
-   <section className="gretel-section"><h3>Agent status</h3><p className="gretel-caption">No agent session is assumed from a PR.</p>
-    <div className="gretel-agent"><span className="gretel-dot gretel-blue-dot"/><div><b>Muse → Jules</b><small>Jules is handled directly by Muse</small></div><em>Controller-managed</em></div>
-    {names.map(agent=><div className="gretel-agent" key={agent.id}><span className="gretel-dot"/><div><b>{agent.name}</b><small>{agent.role}</small></div><em>{ready&&handoffs[agent.id].trim()?"Prompt saved":"Dispatch unconfirmed"}</em></div>)}
-    <p className="gretel-note">A saved prompt is not a live agent connection or proof of work.</p>
+   <header className="gretel-head">
+     <div className="gretel-headline"><p className="gretel-eyebrow">LA CARTILLA DE GRETEL / MISSION VIEW</p><h2 id="gretel-title">One clear path <span>to launch.</span></h2>
+       <p>See what is moving, what needs proof, and what needs you.</p></div>
+     <a className="gretel-source" href="https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877" target="_blank" rel="noopener noreferrer">Project evidence ↗</a>
+   </header>
+   <div className="gretel-progress" aria-label="Release journey">{steps.map((step,i)=><div key={step.name} className={"gretel-progress-item gretel-"+step.tone}>
+      <div className="gretel-progress-track" aria-hidden="true"/><strong>{step.name}</strong><small>{step.detail}</small></div>)}</div>
+   <div className="gretel-snapshot">
+     <div><span className="gretel-stat-label">CODE CHANGES</span><strong>{current?proposed.length:"—"}</strong><small>Open, not released</small></div>
+     <div><span className="gretel-stat-label">NEED PROOF</span><strong>{evidenceOk?gaps.length:"—"}</strong><small>Unverified jobs</small></div>
+     <div><span className="gretel-stat-label">NEED YOUR YES</span><strong>{evidenceOk?decisions:"—"}</strong><small>Evidence-backed decisions</small></div>
+   </div>
+   <div className="gretel-nextmove">
+     <div><span className="gretel-stat-label">YOUR NEXT MOVE</span><h3>Ask Muse for your handouts.</h3><p>Muse manages Jules. You only copy the remaining prompts for agents that need you.</p></div>
+     <button className="gretel-main-action" type="button" onClick={()=>void copy(museRequest)}>Copy Muse request <span aria-hidden="true">↗</span></button>
+   </div>
+   <div className="gretel-footerline">
+    <span className="gretel-fresh">{evidenceOk?"Evidence checked "+checked:"Evidence source unavailable — status unconfirmed"}</span>
+    <span className="gretel-finish">End goal: student book + teacher tools + games + approved audio. Release only with your permission.</span>
+   </div>
+   <section className="gretel-inbox" aria-label="Your remaining handoffs">
+      <button type="button" className="gretel-inbox-toggle" onClick={()=>setInboxOpen(v=>!v)} aria-expanded={inboxOpen}>
+       <span><strong>My prompt inbox</strong><small>{savedCount} saved handouts · ChatGPT / Antigravity / Opus</small></span><span aria-hidden="true">{inboxOpen?"−":"+"}</span>
+      </button>
+      {inboxOpen&&<div className="gretel-inbox-content">
+       <p className="gretel-inbox-instructions">Copy only the handouts Muse gives you. Jules stays with Muse. Prompts saved here remain on this device.</p>
+       {names.map(agent=><div className="gretel-prompt" key={agent.id}>
+         <div className="gretel-prompt-head"><div><b>{agent.name}</b><small>{ready&&handoffs[agent.id].trim()?"Saved on this device":"No handout saved"}</small></div>
+          <button type="button" onClick={()=>setEditing(editing===agent.id?null:agent.id)} aria-expanded={editing===agent.id}>{editing===agent.id?"Close":"Add / edit"}</button>
+          <button type="button" disabled={!handoffs[agent.id].trim()} onClick={()=>void copy(handoffs[agent.id])}>Copy</button>
+         </div>
+         {editing===agent.id&&<div className="gretel-editor">
+           <label htmlFor={"gretel-"+agent.id}>Prompt for {agent.name}</label>
+           <textarea id={"gretel-"+agent.id} rows={6} value={handoffs[agent.id]} placeholder="Paste Muse's handout here" onChange={e=>setHandoffs(prev=>({...prev,[agent.id]:e.target.value}))}/>
+           <div><button type="button" onClick={()=>save(agent.id,handoffs[agent.id])}>Save on this device</button><button type="button" onClick={()=>save(agent.id,"")}>Clear</button></div>
+         </div>}
+       </div>)}
+       {feedback&&<p className="gretel-feedback" role="status">{feedback}</p>}
+      </div>}
    </section>
-   <section className="gretel-section"><h3>What happens next</h3><p className="gretel-caption">{evidenceOk?"Evidence source checked "+checked:"Evidence source unavailable"}</p>
-    <p className="gretel-next"><i className="gretel-amber-dot"/> {evidenceOk?gaps.length+" jobs require acceptance proof.":"Recheck the source job board."}</p>
-    <p className="gretel-next"><i className="gretel-blue-dot"/> {current?proposed.length+" proposed changes still need reconciliation.":"Current PRs unavailable."}</p>
-    <p className="gretel-next"><i className="gretel-amber-dot"/> {evidenceOk?decisions+" source-qualified decisions await you.":"Owner decisions unknown."}</p>
-    {recent.length>0&&<div className="gretel-recent"><b>RECENT PROPOSED CHANGES</b>{recent.map(item=><a key={item.url} href={item.url} target="_blank" rel="noopener noreferrer">{item.title} ↗</a>)}</div>}
-   </section>
-  </div>
-  <section className="gretel-inbox"><div className="gretel-inbox-title"><div><h3>Your copy-and-paste inbox</h3><p>Muse handles Jules. Keep only your other handouts here.</p></div><button type="button" onClick={()=>setInboxOpen(v=>!v)} aria-expanded={inboxOpen}>{inboxOpen?"Close inbox":"Open inbox"}</button></div>
-   {inboxOpen&&<div className="gretel-inbox-content"><button className="gretel-copy-muse" type="button" onClick={()=>void copy(museRequest)}>Copy request for Muse →</button>
-    <p className="gretel-caption">Paste the complete prompts Muse sends. <b>This browser only:</b> your saved handouts are not sent to the website server or GitHub.</p>
-    {names.map(agent=><div className="gretel-prompt" key={agent.id}><div className="gretel-prompt-head"><b>{agent.name}</b><span>{ready&&handoffs[agent.id].trim()?"Saved here":"No handout saved"}</span><button type="button" onClick={()=>setEditing(editing===agent.id?null:agent.id)} aria-expanded={editing===agent.id}>{editing===agent.id?"Close":"Edit"}</button><button type="button" disabled={!handoffs[agent.id].trim()} onClick={()=>void copy(handoffs[agent.id])}>Copy</button></div>
-     {editing===agent.id&&<div className="gretel-editor"><label htmlFor={"gretel-"+agent.id}>Muse's complete prompt for {agent.name}</label><textarea id={"gretel-"+agent.id} value={handoffs[agent.id]} rows={5} placeholder="Paste the complete Muse handout" onChange={e=>setHandoffs(prev=>({...prev,[agent.id]:e.target.value}))}/><div><button type="button" onClick={()=>save(agent.id,handoffs[agent.id])}>Save handoff</button><button type="button" onClick={()=>save(agent.id,"")}>Clear</button></div></div>}
-    </div>)}
-    {feedback&&<p role="status" className="gretel-feedback">{feedback}</p>}
-   </div>}
-  </section>
-  <p className="gretel-key">Green = proof verified · Blue = open proposal · Amber = needs evidence or decision · Gray = unconfirmed. Open PRs are not completed releases.</p>
  </section>;
 }
