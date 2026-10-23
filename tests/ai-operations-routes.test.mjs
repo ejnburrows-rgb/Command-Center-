@@ -63,7 +63,7 @@ test("mobile task inspection is an actual dismissible overlay",()=>{
 
 test("unscoped GitHub feed includes issue and PR records for the cockpit",()=>{
  const route=read("app/api/hub/route.ts");
- const expression=route.match(/items:([^\\n]+),fetchedAt:result\\.fetchedAt/);
+ const expression=route.includes(",fetchedAt:result.fetchedAt") ? [null,route.split("items:")[1].split(",fetchedAt:")[0]] : null;
  assert.ok(expression,"Live work-scoping expression must be present");
  const scope=new Function("selected","slug","result","return ("+expression[1]+");");
  const records=[{kind:"issue",number:77},{kind:"pr",number:12,draft:true}];
