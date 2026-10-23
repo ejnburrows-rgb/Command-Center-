@@ -1,0 +1,10 @@
+✔ health checks reject local, credentialed, literal and unsafe scheme URLs (7.444609ms)
+✔ health socket pinning rejects nonpublic IPv4 ranges (0.342457ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 152.476383

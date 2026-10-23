@@ -69,3 +69,8 @@ htmlcov/
 *.tar.xz
 *.tar.zst
 ```
+
+# Next.js generated output
+.next/
+next-env.d.ts
+*.tsbuildinfo
