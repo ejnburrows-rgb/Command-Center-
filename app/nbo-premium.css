@@ -243,3 +243,38 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,te
  .premium-shell .topbar .appearance-trigger .palette-dot{display:none}
  .workspace-options{grid-template-columns:1fr}
 }
+
+/* GitHub Intelligence must not keep a second, always-dark design system. */
+.gh-panel,.gh-panel *{font-family:inherit}
+.gh-panel .gh-head{padding:30px clamp(20px,3vw,38px);border-radius:16px;background:var(--ui-panel)}
+.gh-panel .gh-heading h2{font-size:clamp(28px,3.2vw,42px);line-height:1.2;letter-spacing:-.045em;color:var(--ui-text)}
+.gh-panel .gh-controls{background:var(--ui-raised);border:1px solid var(--ui-border);border-radius:13px;padding:17px}
+.gh-panel .gh-controls>label{color:var(--ui-muted)}
+.gh-panel .gh-controls select{color:var(--ui-text);background-color:var(--ui-panel);border-color:var(--ui-border);font-size:13px;border-radius:9px}
+.gh-panel .gh-control-actions button{background:var(--ui-accent);color:var(--ui-accent-contrast);border-color:var(--ui-accent);border-radius:9px}
+.gh-panel .gh-control-actions button:hover{filter:brightness(1.04);background:var(--ui-accent)}
+.gh-panel .gh-control-actions a{background:var(--ui-panel);color:var(--ui-text);border-color:var(--ui-border);border-radius:9px}
+.gh-panel .gh-control-actions a:hover{border-color:var(--ui-accent)}
+.gh-panel .gh-metrics{background:transparent;border:0;gap:12px;margin-top:16px}
+.gh-panel .gh-metrics>div{background:var(--ui-panel);border:1px solid var(--ui-border);border-radius:14px;padding:19px 21px;box-shadow:var(--ui-shadow)}
+.gh-panel .gh-metrics span{color:var(--ui-subtle)}
+.gh-panel .gh-metrics strong{color:var(--ui-text);font-size:clamp(26px,3vw,39px)}
+.gh-panel .gh-metrics small{color:var(--ui-muted)}
+.gh-panel .gh-surface{background:var(--ui-panel);border-color:var(--ui-border);border-radius:15px;box-shadow:var(--ui-shadow)}
+.gh-panel .gh-filters{border-color:var(--ui-border)}
+.gh-panel .gh-filters button{color:var(--ui-muted)}
+.gh-panel .gh-filters button[aria-pressed="true"]{color:var(--ui-accent);border-color:var(--ui-accent)}
+.gh-panel .gh-work-item,.gh-panel .gh-change,.gh-panel .gh-record{border-color:var(--ui-border)}
+.gh-panel .gh-row-main:hover,.gh-panel .gh-more:hover{background:var(--ui-hover)}
+.gh-panel .gh-severity{color:var(--ui-muted);background:var(--ui-raised);border-color:var(--ui-border)}
+.gh-panel .gh-severity.urgent{color:#b44733;background:var(--ui-raised)}
+.gh-panel .gh-severity.draft{color:var(--ui-warn);background:var(--ui-raised)}
+.gh-panel .gh-select-credit select,.gh-panel .gh-inspect{background:var(--ui-raised);color:var(--ui-text);border-color:var(--ui-border);border-radius:8px}
+.gh-panel .gh-file-list{background:var(--ui-inset);border-color:var(--ui-border)}
+.gh-panel .gh-file-list p{color:var(--ui-muted)}
+.gh-panel .gh-work-copy p span,.gh-panel .gh-change p span{color:var(--ui-subtle)}
+.gh-panel .gh-gridline{stroke:var(--ui-border)}
+.gh-panel .gh-axis{fill:var(--ui-subtle)}
+.gh-panel .gh-line-point{fill:var(--ui-accent);stroke:var(--ui-panel)}
+.gh-panel .gh-warning{border-color:var(--ui-border);background:var(--ui-raised);color:var(--ui-warn)}
+@media(max-width:600px){.gh-panel .gh-metrics{gap:9px}.gh-panel .gh-metrics>div{padding:15px;border:1px solid var(--ui-border);border-radius:12px}}

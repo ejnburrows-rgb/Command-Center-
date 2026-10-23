@@ -43,3 +43,11 @@ test("settings provide designed, accessible controls instead of bare options",()
  assert.match(css,/\.workspace-options button\[aria-pressed="true"\]/);
  assert.match(settings,/role="group" aria-label="Workspace mode"/);
 });
+
+test("GitHub Intelligence selector, metrics and status all follow the selected light-dark theme",()=>{
+ const css=read("app/nbo-premium.css");
+ for(const className of [".gh-panel .gh-controls",".gh-panel .gh-controls select",".gh-panel .gh-metrics",".gh-panel .gh-severity",".gh-panel .gh-warning"]){
+  assert.ok(css.includes(className),className);
+ }
+ assert.match(css,/\.gh-panel \.gh-metrics>div\{background:var\(--ui-panel\)/);
+});
