@@ -7,6 +7,7 @@ import {usePins} from "./project-preferences";
 import {External} from "./hub-ui";
 import {projectPath} from "./route-paths";
 import {usePremium,visibleInWorkspace,workspaceLabels} from "./premium-preferences";
+import GretelCommander from "./gretel-commander";
 
 type State="owner"|"proof"|"draft"|"verified"|"active";
 type Filter="all"|State;
@@ -85,6 +86,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
     <div className="mission-fresh"><span className="mission-datalight"/><span>{busy?"Checking GitHub…":fullyLoaded?"GITHUB LIVE":"PARTIAL GITHUB DATA"}</span><small>{available.length} of {projects.length} complete · {fmt(jobs.fetchedAt)}</small></div>
    </header>
    {workspace!=="overview"&&<div className="workspace-banner"><strong>{workspaceLabels[workspace]} workspace</strong><span>{workspace==="coding"?"Showing only open issues and code changes.":workspace==="review"?"Only work awaiting proof or owner decisions.":"Select the next task and examine its evidence without distracting metrics."}</span></div>}
+   <GretelCommander project={projects.find(p=>p.slug==="cartilla-de-gretel")} jobs={jobs.jobs||[]} approvals={jobs.approvals||[]} loading={busy||Boolean(jobs.loading)||Boolean(jobs.error)} stale={Boolean(jobs.stale)||Boolean(jobs.error)} fetchedAt={jobs.fetchedAt}/>
    <div className="mission-metrics" aria-label="Actionable delivery statistics">
     {tiles.map(t=><button key={t.key} type="button" className={"mission-metric mission-tone-"+t.tone+(filter===t.key?" chosen":"")} onClick={()=>choose(t.key)} aria-pressed={filter===t.key}>
      <span>{t.name}</span><strong>{t.value===null?"—":t.value}</strong><small>{t.value===null?"Source incomplete":t.desc}</small>
