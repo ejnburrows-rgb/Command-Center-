@@ -30,6 +30,7 @@ export function OperationsBrief({projects,loading}:{projects:Project[];loading:b
       <div><small>NEEDS YOUR DECISION</small><strong>{knownApprovals?jobs.approvals.length:"—"}</strong><span>{knownApprovals?"Evidence-qualified only":"Evidence source unavailable"}</span></div>
       <div><small>UNVERIFIED JOB REPORTS</small><strong>{knownApprovals?jobs.jobs.filter(j=>j.status!=="VERIFIED").length:"—"}</strong><span>{knownApprovals?"Cartilla evidence feed":"Evidence source unavailable"}</span></div>
     </div>
+    <div className="aop-approvalqueue"><p className="aop-eyebrow">NEEDS YOU · OWNER APPROVAL</p>{jobs.loading?<p>Checking evidence…</p>:!knownApprovals?<p>Approval evidence unavailable or stale.</p>:jobs.approvals.length?jobs.approvals.map(a=><article key={a.id}><b>{a.title}</b><small>{a.project} · {a.state}</small><div><External href={a.proofUrl}>See proof</External><External href={a.sourceUrl}>Review context</External></div></article>):<p>No evidenced approvals waiting.</p>}</div>
     <p className="aop-fresh">GitHub repositories: {fresh.length} of {projects.length} complete · Job evidence: {sourceTime(jobs.fetchedAt)}{jobs.stale?" · STALE":""}</p>
   </div>
  </section>;
