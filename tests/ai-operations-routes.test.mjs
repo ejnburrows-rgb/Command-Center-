@@ -28,3 +28,26 @@ test("knowledge links survive feature-branch cleanup after main merge",()=>{
  assert.doesNotMatch(ui,/feature\/nbo-ai-ops-cockpit-20261023\/knowledge/);
  assert.match(ui,/\/blob\/main\/knowledge\/AGENT\.md/);
 });
+
+test("main home uses the supplied three-zone cockpit instead of the generic hero-card layout",()=>{
+ const shell=read("app/hub-shell.tsx");
+ const home=read("app/hub-home.tsx");
+ const cockpit=read("app/mission-home.tsx");
+ const css=read("app/mission-home.css");
+ assert.match(shell,/mission-shell/);
+ assert.match(home,/mission-home/);
+ assert.match(cockpit,/mission-center/);
+ assert.match(cockpit,/mission-inspector/);
+ assert.match(cockpit,/mission-tasklist/);
+ assert.match(cockpit,/mission-mobile-dock/);
+ assert.match(css,/grid-template-columns:minmax\(0,1fr\) 352px/);
+ assert.match(css,/@media\(max-width:620px\)/);
+});
+test("cockpit sources real repository and canonical job data, not design-demo fixtures",()=>{
+ const ui=read("app/mission-home.tsx");
+ assert.match(ui,/projects\.flatMap/);
+ assert.match(ui,/useJobs\(/);
+ assert.match(ui,/\.missingEvidence/);
+ assert.match(ui,/navigator\.clipboard\.writeText/);
+ assert.doesNotMatch(ui,/NBO_TASKS|NBO_PROJECTS|MOCK_TASKS|simulateSync|fakeAgent|mockAgent/);
+});

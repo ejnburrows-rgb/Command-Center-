@@ -20,5 +20,5 @@ useEffect(()=>{setTheme(localStorage.getItem("nbo-theme")==="teal"?"teal":"purpl
 useEffect(()=>{document.documentElement.dataset.theme=theme;localStorage.setItem("nbo-theme",theme)},[theme]);
 useEffect(()=>{void refresh();return()=>{requestGeneration.current++}},[project]);
 useEffect(()=>{if(!auto)return;const id=setInterval(()=>void refresh(),120000);return()=>clearInterval(id)},[auto,project]);
-return <HubShell tab={tab} theme={theme} setTheme={setTheme} menu={menu} setMenu={setMenu} loading={busy} errors={feed.errors} refresh={()=>void refresh()} navigate={navigate}><HubContent tab={tab} feed={feed} project={project} onBack={()=>router.push("/projects")} onOpen={(slug)=>router.push(projectPath(slug))} navigate={navigate} loading={busy} error={error} refresh={refresh} theme={theme} setTheme={setTheme} auto={auto} setAuto={setAuto}/></HubShell>;
+return <HubShell tab={tab} projects={feed.projects} theme={theme} setTheme={setTheme} menu={menu} setMenu={setMenu} loading={busy} errors={feed.errors} refresh={()=>void refresh()} navigate={navigate}><HubContent tab={tab} feed={feed} project={project} onBack={()=>router.push("/projects")} onOpen={(slug)=>router.push(projectPath(slug))} navigate={navigate} loading={busy} error={error} refresh={refresh} theme={theme} setTheme={setTheme} auto={auto} setAuto={setAuto}/></HubShell>;
 }
