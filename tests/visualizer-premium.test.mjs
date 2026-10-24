@@ -15,3 +15,6 @@ test("Graph rendering is frame-capped and Galaxy atmosphere is mode-specific",()
 
 test("Grid previews a bounded number of real records with a full Browse alternative",()=>{const g=read("public/visualizer/scene.js");assert.ok(g.includes("w<600?6:12"));assert.ok(g.includes("if(rank>=limit){n.screen=null;continue;}"));assert.ok(g.includes('shown · Browse for more'));});
 test("Mobile visualizer fits beneath NBO two-row topbar and touch tabs reach 44 pixels",()=>{const css=read("app/visualizer-embed.css");assert.ok(css.includes("height:calc(100dvh - 120px)"));assert.ok(css.includes(".universe .dock-item{min-height:44px}"));});
+
+test("Real browser regressions have guarded selectors and hidden Grid records",()=>{const g=read("public/visualizer/scene.js");const ui=read("app/visualizer-embed.tsx");assert.ok(g.includes('root.querySelector(".vu-file-import")?.addEventListener'));assert.ok(ui.includes('className="vu-file-import"'));assert.ok(g.includes('if(!n.screen)continue;const {x,y,r}=n.screen'));});
+test("Galaxy project spheres render at readable sizes",()=>{const g=read("public/visualizer/scene.js");assert.ok(g.includes('hovered?65:32+Math.min(24,Math.sqrt(n.weight||1)*3)'));});
