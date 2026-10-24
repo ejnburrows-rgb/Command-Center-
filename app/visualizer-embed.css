@@ -31,3 +31,6 @@
 @media(prefers-reduced-motion:reduce){.universe .inspector,.universe .dock-item,.universe .vu-button{transition:none}}
 
 .universe[data-mode="galaxy"] .vu-ambient::after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(200,220,255,.4) .5px,transparent 1px),radial-gradient(circle,rgba(200,220,255,.22) .6px,transparent 1px);background-size:103px 89px,191px 167px;opacity:.32;pointer-events:none}.universe[data-appearance="light"][data-mode="galaxy"] .vu-ambient::after{opacity:.08}
+
+@media(max-width:850px){.universe{height:calc(100dvh - 120px);min-height:min(410px,calc(100dvh - 120px))}.universe .dock-item{min-height:44px}.universe .vu-lower{bottom:9px}}
+@media(max-width:480px){.universe .vu-browse{bottom:65px}.universe .vu-identity h1{font-size:27px}}
