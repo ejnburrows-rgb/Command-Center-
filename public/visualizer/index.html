@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="color-scheme" content="dark light"/><title>NBO Data Universe</title>
+<link rel="stylesheet" href="/visualizer/scene.css"/>
+
+<script src="/visualizer/scene.js" defer></script>
+</head>
+<body data-appearance="dark" data-theme="blue">
+<main id="universe" class="universe" aria-label="NBO Data Universe">
+  <div class="backdrop" aria-hidden="true"><div class="nebula nebula-a"></div><div class="nebula nebula-b"></div><div class="stars"></div></div>
+  <canvas id="plane" aria-hidden="true"></canvas>
+  <canvas id="scene" aria-label="Interactive graph canvas; use the searchable node list for keyboard access"></canvas>
+  <div class="top-fade" aria-hidden="true"></div>
+  <header class="hud glass-flat">
+    <p class="eyebrow"><span class="signal"></span> NBO <span class="slash">/</span> DATA UNIVERSE</p>
+    <h1>Explore your <em>knowledge.</em></h1>
+    <p class="subtitle" id="source-label">Loading public GitHub records…</p>
+    <div class="counts"><span><strong id="node-count">—</strong> nodes</span><span class="count-div"></span><span><strong id="link-count">—</strong> links</span><span class="count-div"></span><span id="freshness" class="freshness">Checking source</span></div>
+  </header>
+  <div class="top-actions">
+    <div class="search-wrap glass" id="search-wrap">
+      <label for="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><span class="sr-only">Search knowledge nodes</span></label>
+      <input id="search" type="search" autocomplete="off" placeholder="Search the universe…" aria-controls="suggestions" aria-expanded="false"/>
+      <div id="suggestions" role="listbox" class="suggestions" hidden></div>
+    </div>
+    <div class="toolbar glass" aria-label="Universe controls">
+      <label class="select-control"><span class="sr-only">Filter category</span><select id="category"><option value="all">All categories</option><option value="Projects">Projects</option><option value="Resources">Resources</option><option value="Archives">Archives</option><option value="Hubs">Hubs</option></select></label>
+      <label class="select-control"><span class="sr-only">Sort nodes</span><select id="sort"><option value="name">Name</option><option value="date">Date</option><option value="weight">Weight</option></select></label>
+      <button id="fit" title="Fit the entire graph" aria-label="Fit view"><svg viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5"/></svg></button>
+      <button id="reset" title="Reset camera" aria-label="Reset camera"><svg viewBox="0 0 24 24"><path d="M3 10a9 9 0 1 1 0 5M3 4v6h6"/></svg></button>
+      <button id="pause" title="Pause motion" aria-label="Pause motion" aria-pressed="false"><svg viewBox="0 0 24 24"><path id="pause-icon" d="M8 5v14M16 5v14"/></svg></button>
+      <label class="import-btn" tabindex="0" role="button" aria-label="Import Markdown or JSON files, locally on this device"><svg viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 17v4h16v-4"/></svg><span>Import</span><input id="import" type="file" accept=".md,.markdown,.json,text/markdown,application/json" multiple hidden/></label>
+    </div>
+  </div>
+  <div class="legend glass"><span><i style="--dot:#00ffff"></i>Projects</span><span><i style="--dot:#bf00ff"></i>Resources</span><span><i style="--dot:#8392a9"></i>Archives</span><span><i style="--dot:#ffd700"></i>Hubs</span></div>
+  <div class="scene-status" id="status" role="status" aria-live="polite" hidden></div>
+  <div id="compass" class="compass" aria-hidden="true"><span>↔ DRAG TO ORBIT</span><span>+ SCROLL TO ZOOM</span></div>
+  <div class="dock-outer"><nav class="dock glass" aria-label="Visualization mode">
+     <button class="dock-item active" data-view="galaxy" aria-pressed="true"><span class="dock-icon">✧</span><span>GALAXY</span></button>
+     <button class="dock-item" data-view="god" aria-pressed="false"><span class="dock-icon">▥</span><span>GOD VIEW</span></button>
+     <button class="dock-item" data-view="web" aria-pressed="false"><span class="dock-icon">⌘</span><span>WEB GRAPH</span></button>
+     <button class="dock-item" data-view="grid" aria-pressed="false"><span class="dock-icon">▦</span><span>GRID</span></button>
+  </nav></div>
+  <button id="list-toggle" class="list-toggle glass" aria-expanded="false" aria-controls="node-list">Browse items <span id="list-count">0</span> ↗</button>
+  <section id="node-list" class="node-list glass" aria-label="Accessible knowledge list" hidden><header><h2>All items</h2><button id="list-close" aria-label="Close item list">×</button></header><div id="list-content"></div></section>
+  <div id="panel-shade" class="panel-shade" hidden></div>
+  <aside id="inspector" class="inspector glass" aria-label="Selected item details" aria-hidden="true"><div class="inspector-head"><span class="eyebrow">NODE INSPECTOR / SOURCE EVIDENCE</span><button id="close-inspector" title="Close details" aria-label="Close details">×</button></div><div class="inspector-main" id="inspector-main"></div></aside>
+  <div id="hover-label" class="hover-label glass" hidden></div>
+</main>
+</body>
+</html>

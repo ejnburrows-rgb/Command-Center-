@@ -6,7 +6,7 @@ import type {Section,Project} from "./hub-data";
 import {usePins} from "./project-preferences";
 import {usePremium,workspaceLabels,paletteLabels,type Palette,type Appearance,type WorkspaceMode} from "./premium-preferences";
 import {Icon,External} from "./hub-ui";
-const mainNav:Section[]=["Hub","Projects","AI Operations","GitHub","Evidence","Knowledge"];
+const mainNav:Section[]=["Hub","Projects","AI Operations","GitHub","Evidence","Knowledge","Visualizer"];
 const secondaryNav:Section[]=["Prompts","Best Practices","Tools","Assets","Settings"];
 const modes:WorkspaceMode[]=["overview","coding","review","focus"];
 const colors:Palette[]=["blue","purple","teal","mono"];
