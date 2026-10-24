@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import {readFileSync} from "node:fs";const read=x=>readFileSync(x,"utf8");
+test("Visualizer styles do not leak into existing NBO screens",()=>{const c=read("app/visualizer-embed.css");assert.ok(c.includes('.universe #scene'));assert.ok(c.includes('.universe[data-appearance="light"]'));assert.ok(!c.includes('html,body{'));assert.ok(!c.includes('}body{'));});
+test("No iframe; JS mounts on native component and cleans up",()=>{const c=read("app/visualizer-embed.tsx");const e=read("public/visualizer/scene.js");assert.ok(c.includes("NBOGraphMount(el)"));assert.ok(!c.includes("<iframe"));assert.ok(e.includes("cancelAnimationFrame(frameId)"));assert.ok(e.includes("windowCleanup.forEach"));});
