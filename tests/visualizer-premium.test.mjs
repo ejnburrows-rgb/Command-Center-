@@ -6,3 +6,6 @@ test("Graph colors resolve from theme variables and resource cleanup exists",()=
 
 test("Hidden options stay mounted so imperative renderer can attach handlers",()=>{const component=read("app/visualizer-embed.tsx");for(const id of ["category","sort","pause","reset","fit","import"])assert.ok(component.includes('id="'+id+'"'));assert.ok(component.includes('hidden={!toolsOpen}'));});
 test("WebGL initializes only after selecting 3D Galaxy",()=>{const s=read("public/visualizer/scene.js");assert.ok(s.includes('if(v==="galaxy"&&!state.webgl&&!state.webglError){initGl();resize();}'));assert.ok(!s.includes('initGl();resize(); if(state.webglError)'));});
+
+test("Quadrants and timeline reveal records while default network stays focused",()=>{const s=read("public/visualizer/scene.js");assert.ok(s.includes('(state.view==="grid"||state.view==="god")?true'));assert.ok(s.includes('function view(v){state.view=v;updateFiltered()'));});
+test("Phone network keeps readable node spread",()=>{const s=read("public/visualizer/scene.js");assert.ok(s.includes('Math.min(260,Math.max(84,state.size.w*.31))'));assert.ok(!s.includes('state.zoom=clamp(r.width/800'));});
