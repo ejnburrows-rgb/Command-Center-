@@ -83,7 +83,7 @@ $("focus-chip").addEventListener("click",()=>{state.focusProject=null;state.cate
 $("category").addEventListener("change",e=>{state.category=e.target.value;updateFiltered();});$("sort").addEventListener("change",e=>{state.sort=e.target.value;updateFiltered();});
 root.querySelector(".import-btn").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("import").click();}});
 $("import").addEventListener("change",e=>{if(e.target.files?.length)addImported(e.target.files);e.target.value="";});
-$("pause").addEventListener("click",()=>{state.paused=!state.paused;$("pause").setAttribute("aria-pressed",String(state.paused));$("pause").setAttribute("aria-label",state.paused?"Resume motion":"Pause motion");$("pause-icon").setAttribute("d",state.paused?"M7 4v16l13-8z":"M8 5v14M16 5v14");});
+$("pause").addEventListener("click",()=>{state.paused=!state.paused;$("pause").setAttribute("aria-pressed",String(state.paused));$("pause").setAttribute("aria-label",state.paused?"Resume motion":"Pause motion");$("pause-icon").textContent=state.paused?"▶":"Ⅱ";});
 $("fit").addEventListener("click",()=>{state.pan={x:0,y:0};state.zoom=1;state.camera.distance=650;state.camera.offsetX=0;state.camera.offsetY=0;state.cameraGoal=null;});
 $("reset").addEventListener("click",()=>{state.pan={x:0,y:0};state.zoom=1;state.camera={yaw:.35,pitch:.17,distance:650,offsetX:0,offsetY:0};state.cameraGoal=null;});
 $("close-inspector").addEventListener("click",closeInspector);$("panel-shade").addEventListener("click",closeInspector);
@@ -91,7 +91,7 @@ $("list-toggle").addEventListener("click",()=>{closeInspector();const open=$("no
 onWindowEvent("keydown",e=>{if(e.key==="Escape"){closeInspector();$("node-list").hidden=true;$("suggestions").hidden=true;}});
 function view(v){state.view=v;for(const b of root.querySelectorAll("[data-view]")){const active=b.dataset.view===v;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active));}
  state.pan={x:0,y:0};state.zoom=1;state.cameraGoal=null;$("compass").style.display=v==="galaxy"?"":"none";
- if(v==="galaxy"&&(!state.webgl||state.webglError)){message("3D unavailable here. Galaxy uses the interactive map.","warning");return}
+ if(v==="galaxy"&&!state.webgl&&!state.webglError){initGl();resize();}if(v==="galaxy"&&(!state.webgl||state.webglError)){message("3D unavailable here. Galaxy uses the interactive map.","warning");return}
  if(!state.sourceError&&state.nodes.length)message("");}
 root.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>view(b.dataset.view)));
 function resize(){const r=canvas.getBoundingClientRect();state.size={w:Math.max(1,r.width),h:Math.max(1,r.height)};if(!state.drag&&!state.selected&&state.pan.x===0&&state.pan.y===0&&state.zoom===1&&r.width<780)state.zoom=clamp(r.width/800,.4,1);const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);plane.width=Math.round(r.width*dpr);plane.height=Math.round(r.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);if(state.webgl)state.webgl.viewport(0,0,canvas.width,canvas.height);}
@@ -104,7 +104,7 @@ function initGl(){try{const gl=canvas.getContext("webgl",{alpha:true,antialias:t
  const lineFrag=`precision mediump float;varying vec3 vColor;varying float vDepth;void main(){gl_FragColor=vec4(vColor,(1.-vDepth*.5)*.23);}`;
  state.pointProgram=program(gl,vertex,pointFrag);state.lineProgram=program(gl,vertex,lineFrag);state.buffer=gl.createBuffer();gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);return true;
  }catch(e){console.warn("NBO WebGL initialization:",e);state.webglError=true;return false;}}
-initGl();resize(); if(state.webglError)message("3D graphics unavailable. Showing interactive 2D Galaxy mode.","warning");
+resize();
 function project(n){const {yaw,pitch,distance,offsetX,offsetY}=state.camera;const p=n.p3;const c=Math.cos(yaw),s=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);const x=p.x*c-p.z*s;const z=p.x*s+p.z*c;const y=p.y*cp-z*sp;const zz=p.y*sp+z*cp;const depth=Math.max(90,distance-zz);const focal=Math.min(state.size.w,state.size.h)*1.15;
  return {x:state.size.w/2+(x+offsetX)*focal/depth,y:state.size.h/2-(y+offsetY)*focal/depth,z:depth,r:clamp((12+Math.min(14,Math.sqrt(n.weight||1)*2))*focal/depth,3,24)};}
 function bufferDraw(gl,prog,items,mode){gl.useProgram(prog);gl.bindBuffer(gl.ARRAY_BUFFER,state.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(items),gl.DYNAMIC_DRAW);const stride=28;for(const [name,len,offset] of [["p",3,0],["color",3,12],["diameter",1,24]]){const a=gl.getAttribLocation(prog,name);gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,len,gl.FLOAT,false,stride,offset)}

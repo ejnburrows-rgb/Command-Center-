@@ -60,14 +60,14 @@ export default function DataVisualizer(){
         </div>}
       </div>
       <button type="button" className="vu-button" aria-label="Toggle advanced controls" aria-expanded={toolsOpen} onClick={()=>{setToolsOpen(!toolsOpen);setAppearanceOpen(false)}}><span aria-hidden="true">☷</span><span className="vu-button-word">Options</span></button>
-      {toolsOpen&&<div className="vu-options" role="group" aria-label="Graph options">
+      <div className="vu-options" role="group" aria-label="Graph options" hidden={!toolsOpen}>
         <label>Show<select id="category" defaultValue="all"><option value="all">All groups</option><option value="Projects">Projects</option><option value="Resources">Resources</option><option value="Archives">Archives</option><option value="Hubs">Hubs</option></select></label>
         <label>Sort<select id="sort" defaultValue="name"><option value="name">Name</option><option value="date">Date</option><option value="weight">Weight</option></select></label>
         <div className="vu-options-actions">
           <button id="fit" type="button">Fit</button><button id="reset" type="button">Reset</button><button id="pause" type="button" aria-pressed="false" aria-label="Pause motion"><span id="pause-icon" aria-hidden="true">Ⅱ</span> Motion</button>
         </div>
         <label className="vu-file-import">Import .md or .json <input id="import" type="file" accept=".md,.markdown,.json,text/markdown,application/json" multiple/></label>
-      </div>}
+      </div>
     </div>
   </header>
   <div className="vu-focus">
