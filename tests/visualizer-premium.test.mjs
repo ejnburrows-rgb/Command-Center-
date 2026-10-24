@@ -9,3 +9,6 @@ test("WebGL initializes only after selecting 3D Galaxy",()=>{const s=read("publi
 
 test("Quadrants and timeline reveal records while default network stays focused",()=>{const s=read("public/visualizer/scene.js");assert.ok(s.includes('(state.view==="grid"||state.view==="god")?true'));assert.ok(s.includes('function view(v){state.view=v;updateFiltered()'));});
 test("Phone network keeps readable node spread",()=>{const s=read("public/visualizer/scene.js");assert.ok(s.includes('Math.min(260,Math.max(84,state.size.w*.31))'));assert.ok(!s.includes('state.zoom=clamp(r.width/800'));});
+
+test("Galaxy uses shaded spheres with a legible projected-label overlay",()=>{const s=read("public/visualizer/scene.js");const c=read("app/visualizer-embed.css");assert.ok(s.includes("float fresnel="));assert.ok(s.includes("float specular="));assert.ok(s.includes("function drawGalaxyLabels()"));assert.ok(s.includes("renderGalaxy(dt);drawGalaxyLabels()"));assert.ok(c.includes(".universe #plane{pointer-events:none;z-index:3}"));});
+test("Graph rendering is frame-capped and Galaxy atmosphere is mode-specific",()=>{const s=read("public/visualizer/scene.js"),c=read("app/visualizer-embed.css");assert.ok(s.includes("visible3D?33:42"));assert.ok(c.includes('[data-mode="galaxy"] .vu-ambient::after'));assert.ok(s.includes("root.dataset.mode=v"));});

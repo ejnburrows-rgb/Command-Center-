@@ -29,7 +29,7 @@ export default function DataVisualizer(){
  },[]);
  useEffect(()=>{const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape"){setAppearanceOpen(false);setToolsOpen(false)}};const outside=(e:PointerEvent)=>{if(menuRef.current&&!menuRef.current.contains(e.target as Node))setAppearanceOpen(false)};document.addEventListener("keydown",onKey);document.addEventListener("pointerdown",outside);return()=>{document.removeEventListener("keydown",onKey);document.removeEventListener("pointerdown",outside)}},[]);
  const clearSearch=()=>{if(!searchRef.current)return;searchRef.current.value="";searchRef.current.dispatchEvent(new Event("input",{bubbles:true}));setSearch("");searchRef.current.focus()};
- return <section ref={root} id="universe" className="universe" aria-label="NBO knowledge visualizer" data-theme={palette} data-appearance={appearance} data-skin={skin}>
+ return <section ref={root} id="universe" className="universe" aria-label="NBO knowledge visualizer" data-theme={palette} data-appearance={appearance} data-skin={skin} data-mode="web">
   <div className="vu-ambient" aria-hidden="true"/>
   <canvas id="plane" aria-hidden="true"/>
   <canvas id="scene" aria-label="Interactive knowledge graph. Use Browse for a keyboard-accessible list."/>
