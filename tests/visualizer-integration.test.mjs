@@ -32,8 +32,11 @@ test("Visualizer is native in-dashboard UI rather than an iframe", () => {
 });
 test("Galaxy remains interactive on devices without WebGL", () => {
  const engine=read("public/visualizer/scene.js");
- assert.ok(engine.includes('interactive 2D Galaxy mode'));
+ assert.ok(engine.includes('Galaxy uses the interactive map.'));
  assert.ok(engine.includes('state.view==="galaxy"&&!state.webgl'));
  assert.ok(!engine.includes('view("web");message("3D'));
  assert.ok(engine.includes("cancelAnimationFrame(frameId)"));
 });
+
+import {Script} from "node:vm";
+test("Graph renderer JavaScript parses without syntax errors",()=>{assert.doesNotThrow(()=>new Script(read("public/visualizer/scene.js")))});
