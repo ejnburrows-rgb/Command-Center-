@@ -2,7 +2,11 @@
  * Only approved public GitHub metadata is retrieved. User imports never leave the browser.
  */
 (()=>{"use strict";
-const $=id=>document.getElementById(id);
+window.NBOGraphMount=function(root){
+const windowCleanup=[];
+function onWindowEvent(name,fn){window.addEventListener(name,fn);windowCleanup.push(()=>window.removeEventListener(name,fn));}
+let disposed=false,frameId=0;
+const $=id=>root.querySelector("#"+id);
 const categories=["Projects","Resources","Archives","Hubs"];
 const colors={Projects:[0,.95,1],Resources:[.78,.16,1],Archives:[.51,.59,.69],Hubs:[1,.85,.21]};
 const hex={Projects:"#00ffff",Resources:"#bf00ff",Archives:"#8392a9",Hubs:"#ffd700"};
@@ -53,8 +57,8 @@ async function load(){message("Connecting to public GitHub data…");try{const r
  $("freshness").style.color=good===total?"#64caaa":"#f4b86d";
  if(state.sourceError)message("Some GitHub sources are unavailable. Data may be incomplete.","warning");else if(!state.nodes.length)message("No available public GitHub data. Import Markdown or JSON to explore.");else message("");
  }catch(e){state.sourceError=true;$("freshness").textContent="GitHub unavailable";$("source-label").textContent="Device-local records only";setGraph(state.all.filter(n=>n.id.startsWith("local:")),state.allEdges.filter(e=>e.inferred));message("Public GitHub data could not load. You can still import files locally.","warning");}}
-function theme(){try{document.body.dataset.theme=localStorage.getItem("nbo-palette")||localStorage.getItem("nbo-theme")||"blue";document.body.dataset.appearance=localStorage.getItem("nbo-appearance")||"dark";}catch{}}theme();window.addEventListener("storage",theme);
-window.addEventListener("message",e=>{if(e.origin!==location.origin||!e.data||e.data.type!=="NBO_THEME")return;document.body.dataset.theme=e.data.palette;document.body.dataset.appearance=e.data.appearance;});
+function theme(){root.dataset.theme=document.documentElement.dataset.theme||"blue";root.dataset.appearance=document.documentElement.dataset.appearance||"dark";}theme();onWindowEvent("storage",theme);
+onWindowEvent("message",e=>{if(e.origin!==location.origin||!e.data||e.data.type!=="NBO_THEME")return;root.dataset.theme=e.data.palette;root.dataset.appearance=e.data.appearance;});
 function showInspector(n){state.selected=n;const joined=state.allEdges.filter(e=>e.source===n.id||e.target===n.id).slice(0,30);const conn=joined.map(e=>{const related=state.byId.get(e.source===n.id?e.target:e.source);return related?`<span class="connection">${esc(related.label)}<small>${e.inferred?"Inferred association":"Confirmed"} · ${esc(e.relationship)}</small></span>`:""}).join("");
  $("inspector-main").innerHTML=`<span class="inspector-group" style="--dot:${hex[n.group]}"><i></i>${esc(n.group.toUpperCase())}</span><h2>${esc(n.label)}</h2><p>${esc(n.description||"No description supplied by source.")}</p><dl><div class="detail-row"><dt>Type</dt><dd>${esc(n.kind)}</dd></div><div class="detail-row"><dt>Source</dt><dd>${esc(n.source)}${n.stale?" · Incomplete / stale":""}</dd></div><div class="detail-row"><dt>Updated</dt><dd>${esc(fmt(n.date))}</dd></div><div class="detail-row"><dt>Weight</dt><dd>${n.weight===undefined?"Not reported":esc(n.weight)}</dd></div></dl><h3>Connections (${joined.length}${state.allEdges.filter(e=>e.source===n.id||e.target===n.id).length>30?"+":""})</h3>${conn||"<p>No verified or inferred connections.</p>"}${n.url?`<a class="source-btn" href="${esc(n.url)}" target="_blank" rel="noopener noreferrer">Open original ↗</a>`:""}`;
  $("inspector").classList.add("open");$("inspector").setAttribute("aria-hidden","false");$("panel-shade").hidden=false;$("search").setAttribute("aria-expanded","false");$("suggestions").hidden=true;}
@@ -65,21 +69,21 @@ function renderList(){const q=$("search").value.toLowerCase().trim();const filte
 function suggestions(){const q=$("search").value.trim().toLowerCase(),el=$("suggestions");el.replaceChildren();if(!q){el.hidden=true;$("search").setAttribute("aria-expanded","false");return}for(const n of state.nodes.filter(x=>x.label.toLowerCase().includes(q)).slice(0,7)){const b=document.createElement("button");b.type="button";b.setAttribute("role","option");b.innerHTML=esc(n.label)+`<small>${esc(n.group)} · ${esc(n.kind)}</small>`;b.addEventListener("click",()=>{select(n);el.hidden=true;$("search").value=n.label;renderList();});el.appendChild(b);}el.hidden=!el.childElementCount;$("search").setAttribute("aria-expanded",String(!el.hidden));renderList();}
 $("search").addEventListener("input",suggestions);$("search").addEventListener("keydown",e=>{if(e.key==="Escape"){$("suggestions").hidden=true;return}if(e.key==="Enter"){e.preventDefault();const n=state.nodes.find(x=>x.label.toLowerCase().includes($("search").value.toLowerCase()));if(n)select(n);$("suggestions").hidden=true;}});
 $("category").addEventListener("change",e=>{state.category=e.target.value;updateFiltered();});$("sort").addEventListener("change",e=>{state.sort=e.target.value;updateFiltered();});
-document.querySelector(".import-btn").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("import").click();}});
+root.querySelector(".import-btn").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("import").click();}});
 $("import").addEventListener("change",e=>{if(e.target.files?.length)addImported(e.target.files);e.target.value="";});
 $("pause").addEventListener("click",()=>{state.paused=!state.paused;$("pause").setAttribute("aria-pressed",String(state.paused));$("pause").setAttribute("aria-label",state.paused?"Resume motion":"Pause motion");$("pause-icon").setAttribute("d",state.paused?"M7 4v16l13-8z":"M8 5v14M16 5v14");});
 $("fit").addEventListener("click",()=>{state.pan={x:0,y:0};state.zoom=1;state.camera.distance=650;state.camera.offsetX=0;state.camera.offsetY=0;state.cameraGoal=null;});
 $("reset").addEventListener("click",()=>{state.pan={x:0,y:0};state.zoom=1;state.camera={yaw:.35,pitch:.17,distance:650,offsetX:0,offsetY:0};state.cameraGoal=null;});
 $("close-inspector").addEventListener("click",closeInspector);$("panel-shade").addEventListener("click",closeInspector);
 $("list-toggle").addEventListener("click",()=>{const open=$("node-list").hidden;$("node-list").hidden=!open;$("list-toggle").setAttribute("aria-expanded",String(open));renderList();});$("list-close").addEventListener("click",()=>{$("node-list").hidden=true;$("list-toggle").setAttribute("aria-expanded","false");});
-window.addEventListener("keydown",e=>{if(e.key==="Escape"){closeInspector();$("node-list").hidden=true;$("suggestions").hidden=true;}});
-function view(v){state.view=v;for(const b of document.querySelectorAll("[data-view]")){const active=b.dataset.view===v;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active));}
+onWindowEvent("keydown",e=>{if(e.key==="Escape"){closeInspector();$("node-list").hidden=true;$("suggestions").hidden=true;}});
+function view(v){state.view=v;for(const b of root.querySelectorAll("[data-view]")){const active=b.dataset.view===v;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active));}
  state.pan={x:0,y:0};state.zoom=1;state.cameraGoal=null;$("compass").style.display=v==="galaxy"?"":"none";
- if(v==="galaxy"&&(!state.webgl||state.webglError)){view("web");message("3D graphics unavailable on this device. Showing Web Graph instead.","warning");return}
+ if(v==="galaxy"&&(!state.webgl||state.webglError)){message("3D graphics unavailable. Showing interactive 2D Galaxy mode.","warning");return}
  if(!state.sourceError&&state.nodes.length)message("");}
-document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>view(b.dataset.view)));
+root.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>view(b.dataset.view)));
 function resize(){const r=canvas.getBoundingClientRect();state.size={w:Math.max(1,r.width),h:Math.max(1,r.height)};if(!state.drag&&!state.selected&&state.pan.x===0&&state.pan.y===0&&state.zoom===1&&r.width<780)state.zoom=clamp(r.width/800,.4,1);const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);plane.width=Math.round(r.width*dpr);plane.height=Math.round(r.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);if(state.webgl)state.webgl.viewport(0,0,canvas.width,canvas.height);}
-window.addEventListener("resize",resize);resize();
+onWindowEvent("resize",resize);resize();
 function shader(gl,type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
 function program(gl,v,f){const p=gl.createProgram();gl.attachShader(p,shader(gl,gl.VERTEX_SHADER,v));gl.attachShader(p,shader(gl,gl.FRAGMENT_SHADER,f));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(p));return p;}
 function initGl(){try{const gl=canvas.getContext("webgl",{alpha:true,antialias:true,premultipliedAlpha:false});if(!gl)throw Error("WebGL unavailable");state.webgl=gl;
@@ -88,7 +92,7 @@ function initGl(){try{const gl=canvas.getContext("webgl",{alpha:true,antialias:t
  const lineFrag=`precision mediump float;varying vec3 vColor;varying float vDepth;void main(){gl_FragColor=vec4(vColor,(1.-vDepth*.5)*.23);}`;
  state.pointProgram=program(gl,vertex,pointFrag);state.lineProgram=program(gl,vertex,lineFrag);state.buffer=gl.createBuffer();gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);return true;
  }catch(e){console.warn("NBO WebGL initialization:",e);state.webglError=true;return false;}}
-initGl();resize(); if(state.webglError)view("web");
+initGl();resize(); if(state.webglError)message("3D graphics unavailable. Showing interactive 2D Galaxy mode.","warning");
 function project(n){const {yaw,pitch,distance,offsetX,offsetY}=state.camera;const p=n.p3;const c=Math.cos(yaw),s=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);const x=p.x*c-p.z*s;const z=p.x*s+p.z*c;const y=p.y*cp-z*sp;const zz=p.y*sp+z*cp;const depth=Math.max(90,distance-zz);const focal=Math.min(state.size.w,state.size.h)*1.15;
  return {x:state.size.w/2+(x+offsetX)*focal/depth,y:state.size.h/2-(y+offsetY)*focal/depth,z:depth,r:clamp((12+Math.min(14,Math.sqrt(n.weight||1)*2))*focal/depth,3,24)};}
 function bufferDraw(gl,prog,items,mode){gl.useProgram(prog);gl.bindBuffer(gl.ARRAY_BUFFER,state.buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(items),gl.DYNAMIC_DRAW);const stride=28;for(const [name,len,offset] of [["p",3,0],["color",3,12],["diameter",1,24]]){const a=gl.getAttribLocation(prog,name);gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,len,gl.FLOAT,false,stride,offset)}
@@ -107,14 +111,14 @@ function screenPos(p){return {x:state.size.w/2+state.pan.x+p.x*state.zoom,y:stat
 function computeGrid(){const w=state.size.w,h=state.size.h;const midx=w/2,midy=h/2;
  const x0=Math.max(10,w*.06),x1=w*.5,x2=w*.94,y0=Math.max(178,h*.29),y1=y0+(h-y0-125)/2,y2=h-160;
  return {x0,x1,x2,y0,y1,y2};}
-function render2D(dt){const {w,h}=state.size;ctx.clearRect(0,0,w,h);if(state.view==="galaxy")return;
- const light=document.body.dataset.appearance==="light",glow=light?.16:.48;const connections=new Set();if(state.hover){connections.add(state.hover.id);for(const e of state.edges){if(e.source===state.hover.id)connections.add(e.target);if(e.target===state.hover.id)connections.add(e.source)}}
+function render2D(dt){const {w,h}=state.size;ctx.clearRect(0,0,w,h);/* Render the usable 2D Galaxy when WebGL is unavailable. */
+ const light=root.dataset.appearance==="light",glow=light?.16:.48;const connections=new Set();if(state.hover){connections.add(state.hover.id);for(const e of state.edges){if(e.source===state.hover.id)connections.add(e.target);if(e.target===state.hover.id)connections.add(e.source)}}
  const grid=computeGrid();if(state.view==="grid"){categories.forEach((g,i)=>{const x=i%2===0?grid.x0:grid.x1,y=i<2?grid.y0:grid.y1;const width=(i%2===0?grid.x1:grid.x2)-x-8,height=(i<2?grid.y1:grid.y2)-y-8;ctx.fillStyle=light?"rgba(255,255,255,.68)":"rgba(11,20,41,.58)";ctx.strokeStyle=light?"rgba(44,86,147,.2)":"rgba(151,182,230,.16)";roundRect(ctx,x,y,width,height,18);ctx.fill();ctx.stroke();ctx.fillStyle=hex[g];ctx.font="700 13px Inter, sans-serif";ctx.fillText(g.toUpperCase(),x+19,y+26);const count=state.nodes.filter(n=>n.group===g).length;ctx.fillStyle=light?"#54677f":"#8196b6";ctx.font="11px Inter, sans-serif";ctx.fillText(count+" items",x+19,y+44)});}
  else if(state.view==="god"){const xs=state.nodes.map(n=>n.date&&new Date(n.date).valueOf()).filter(x=>Number.isFinite(x)&&x>0);const min=xs.length?Math.min(...xs):Date.now(),max=xs.length?Math.max(...xs):Date.now();const baseline=h-180,top=Math.max(200,h*.3);
  ctx.strokeStyle=light?"#b6c5dc":"rgba(132,156,203,.2)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(42,top);ctx.lineTo(42,baseline);ctx.lineTo(w-40,baseline);ctx.stroke();ctx.fillStyle=light?"#41536b":"#99aeca";ctx.font="11px Inter";ctx.fillText("LINK COUNT ↑",45,top-17);ctx.fillText("DATE →",Math.max(50,w-95),baseline+22);ctx.fillText(fmt(min),50,baseline+22);ctx.fillText(fmt(max),Math.max(80,w-175),baseline+22);if(state.nodes.some(n=>!n.date||!Number.isFinite(new Date(n.date).valueOf())))ctx.fillText("UNDATED",w-103,top-17);
  state.timeline={min,max,top,baseline};}
- if(state.view==="web")force(dt);
- for(const n of state.nodes){let pos;if(state.view==="web"){pos=screenPos(n.p2)}else if(state.view==="grid"){
+ if(state.view==="web"||(state.view==="galaxy"&&!state.webgl))force(dt);
+ for(const n of state.nodes){let pos;if(state.view==="web"||(state.view==="galaxy"&&!state.webgl)){pos=screenPos(n.p2)}else if(state.view==="grid"){
  const i=categories.indexOf(n.group),x=i%2===0?grid.x0:grid.x1,y=i<2?grid.y0:grid.y1;const width=((i%2===0?grid.x1:grid.x2)-x)-24,height=(i<2?grid.y1:grid.y2)-y-64;const sorted=state.nodes.filter(a=>a.group===n.group),rank=sorted.indexOf(n);const count=Math.min(sorted.length,120),cols=Math.max(1,Math.ceil(Math.sqrt(count*width/Math.max(height,1))));const cell=width/cols;const rows=Math.max(1,Math.ceil(count/cols));pos={x:x+16+(rank%cols+.5)*cell,y:y+59+(Math.floor(rank/cols)+.5)*(height/rows)};}
  else{const t=state.timeline,ms=n.date&&new Date(n.date).valueOf(),dated=Number.isFinite(ms)&&ms>0;const x=dated?75+(w-155)*(ms-t.min)/(Math.max(1,t.max-t.min)):w-55;const degree=state.allEdges.filter(e=>e.source===n.id||e.target===n.id).length;const height=(t.baseline-t.top)*clamp(Math.log2(2+degree)/7,.05,.95);pos={x:x+(seed(n.id)-.5)*14,y:t.baseline-height};}
  const r=state.view==="grid"?5:clamp(3.6+Math.sqrt(n.weight||1)*1.35,4,16);n.screen={...pos,r};}
@@ -136,14 +140,16 @@ function hit(x,y){let best=null,distance=Infinity;for(const n of state.nodes){if
 function hoverAt(e){if(state.drag)return;const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;const hitNode=hit(x,y);state.hover=hitNode;canvas.style.cursor=hitNode?"pointer":"grab";const tip=$("hover-label");tip.hidden=!hitNode;if(hitNode){tip.textContent=hitNode.label;tip.style.left=clamp(x+17,6,state.size.w-250)+"px";tip.style.top=clamp(y-32,6,state.size.h-50)+"px";}}
 canvas.addEventListener("pointermove",e=>{if(!state.drag){hoverAt(e);return}const dx=e.clientX-state.drag.x,dy=e.clientY-state.drag.y;state.drag.x=e.clientX;state.drag.y=e.clientY;state.drag.distance+=Math.abs(dx)+Math.abs(dy);
  if(state.drag.node&&state.view==="web"){state.drag.node.p2.x+=dx/state.zoom;state.drag.node.p2.y-=dy/state.zoom;state.forceSteps=0;}
- else if(state.view==="galaxy"){state.camera.yaw+=dx*.006;state.camera.pitch=clamp(state.camera.pitch+dy*.006,-1.3,1.3);state.cameraGoal=null;}
+ else if(state.view==="galaxy"&&state.webgl){state.camera.yaw+=dx*.006;state.camera.pitch=clamp(state.camera.pitch+dy*.006,-1.3,1.3);state.cameraGoal=null;}
  else {state.pan.x+=dx;state.pan.y+=dy;}});
 canvas.addEventListener("pointerdown",e=>{if(e.button!==0)return;canvas.setPointerCapture(e.pointerId);const r=canvas.getBoundingClientRect();state.drag={x:e.clientX,y:e.clientY,distance:0,node:state.view==="web"?hit(e.clientX-r.left,e.clientY-r.top):null};});
 canvas.addEventListener("pointerup",e=>{if(!state.drag)return;const moved=state.drag.distance;state.drag=null;if(moved<9){const r=canvas.getBoundingClientRect();const n=hit(e.clientX-r.left,e.clientY-r.top);if(n)select(n,false);}});
 canvas.addEventListener("pointercancel",()=>state.drag=null);canvas.addEventListener("pointerleave",()=>{if(!state.drag){state.hover=null;$("hover-label").hidden=true;}});
-canvas.addEventListener("wheel",e=>{e.preventDefault();if(state.view==="galaxy")state.camera.distance=clamp(state.camera.distance*Math.exp(e.deltaY*.001),170,2400);else state.zoom=clamp(state.zoom*Math.exp(-e.deltaY*.001),.35,4);},{passive:false});
-function frame(now){requestAnimationFrame(frame);if(document.hidden)return;const visible3D=state.view==="galaxy";if(!visible3D&&now-(state.lastDraw||0)<42)return;state.lastDraw=now;const dt=clamp(now-state.last,0,45);state.last=now;
+canvas.addEventListener("wheel",e=>{e.preventDefault();if(state.view==="galaxy"&&state.webgl)state.camera.distance=clamp(state.camera.distance*Math.exp(e.deltaY*.001),170,2400);else state.zoom=clamp(state.zoom*Math.exp(-e.deltaY*.001),.35,4);},{passive:false});
+function frame(now){if(disposed)return;frameId=requestAnimationFrame(frame);if(document.hidden)return;const visible3D=state.view==="galaxy"&&!!state.webgl;if(!visible3D&&now-(state.lastDraw||0)<42)return;state.lastDraw=now;const dt=clamp(now-state.last,0,45);state.last=now;
  canvas.style.opacity=visible3D?"1":"0";plane.style.opacity=visible3D?"0":"1";
- if(visible3D&&state.webgl)renderGalaxy(dt);else render2D(dt);
-}requestAnimationFrame(frame);load();
+ if(visible3D)renderGalaxy(dt);else render2D(dt);
+}frameId=requestAnimationFrame(frame);load();
+return ()=>{disposed=true;cancelAnimationFrame(frameId);windowCleanup.forEach(fn=>fn());};
+};
 })();

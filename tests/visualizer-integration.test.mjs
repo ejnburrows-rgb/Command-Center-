@@ -23,3 +23,17 @@ test("Four modes, controls, inspector and accessible list are present", () => {
  for (const mode of ["galaxy","god","web","grid"]) assert.ok(html.includes('data-view="'+mode+'"'), mode);
  for (const id of ["scene","plane","search","inspector","node-list","category","sort","import","pause"]) assert.ok(html.includes('id="'+id+'"'), id);
 });
+
+test("Visualizer is native in-dashboard UI rather than an iframe", () => {
+ const component=read("app/visualizer-embed.tsx");
+ assert.ok(component.includes('return <section ref={root}'));
+ assert.ok(component.includes('NBOGraphMount(el)'));
+ assert.ok(!component.includes("<iframe"));
+});
+test("Galaxy remains interactive on devices without WebGL", () => {
+ const engine=read("public/visualizer/scene.js");
+ assert.ok(engine.includes('interactive 2D Galaxy mode'));
+ assert.ok(engine.includes('state.view==="galaxy"&&!state.webgl'));
+ assert.ok(!engine.includes('view("web");message("3D'));
+ assert.ok(engine.includes("cancelAnimationFrame(frameId)"));
+});
