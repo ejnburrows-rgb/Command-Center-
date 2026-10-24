@@ -81,7 +81,7 @@ function suggestions(){const q=$("search").value.trim().toLowerCase(),el=$("sugg
 $("search").addEventListener("input",suggestions);$("search").addEventListener("keydown",e=>{if(e.key==="Escape"){$("suggestions").hidden=true;return}if(e.key==="Enter"){e.preventDefault();const n=state.all.find(x=>x.label.toLowerCase().includes($("search").value.toLowerCase()));if(n)select(n);$("suggestions").hidden=true;}});
 $("focus-chip").addEventListener("click",()=>{state.focusProject=null;state.category="all";$("category").value="all";state.pan={x:0,y:0};state.zoom=1;updateFiltered();closeInspector();});
 $("category").addEventListener("change",e=>{state.category=e.target.value;updateFiltered();});$("sort").addEventListener("change",e=>{state.sort=e.target.value;updateFiltered();});
-root.querySelector(".import-btn").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("import").click();}});
+root.querySelector(".vu-file-import")?.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target?.tagName!=="INPUT"){e.preventDefault();$("import").click();}});
 $("import").addEventListener("change",e=>{if(e.target.files?.length)addImported(e.target.files);e.target.value="";});
 $("pause").addEventListener("click",()=>{state.paused=!state.paused;$("pause").setAttribute("aria-pressed",String(state.paused));$("pause").setAttribute("aria-label",state.paused?"Resume motion":"Pause motion");$("pause-icon").textContent=state.paused?"▶":"Ⅱ";});
 $("fit").addEventListener("click",()=>{state.pan={x:0,y:0};state.zoom=1;state.camera.distance=650;state.camera.offsetX=0;state.camera.offsetY=0;state.cameraGoal=null;});
