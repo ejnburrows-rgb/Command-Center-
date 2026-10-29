@@ -112,7 +112,24 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
  ];
  function choose(f:Filter){setFilter(f);setPanel("inspector");document.getElementById("mission-work")?.scrollIntoView({block:"nearest",behavior:"smooth"});}
  async function copyPrompt(item:RecordItem){
-  const prompt=["Review and complete this AI software development task using the project's AGENTS.md and applicable findings.md.","Project: "+item.project,"Task: "+item.title,"Canonical source: "+item.source,"Current state: "+label[item.state],"Observed: "+item.summary,"Required next action: "+item.next,...item.missing.map(s=>"Missing evidence: "+s),"Do not call it complete without actual tests, proof links, screenshots where visual, and a clear READY TO PUSH assessment."].join("\n");
+  // The current owner directive has priority over historical PR/issue titles.
+  // Copying a backlog card must not become an unauthorized new agent assignment.
+  const productCopyPaused=(item.slug==="cartilla-de-gretel"||item.slug==="lany-books-web")&&!productAuthorized;
+  const prompt=(productCopyPaused?[
+    "ORGANIZATION ONLY — do not implement, dispatch, or restart product work.",
+    "Project: "+item.project,
+    "Existing record (context only): "+item.source,
+    "Current authority: https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877",
+    "Allowed scope: reconcile existing task ownership, instructions, source-of-truth and verified status.",
+    "Check open PRs and assignments first. Do not create duplicate agents, branches, tasks or handoffs.",
+    "Preserve parked Tutor, lessons, artwork, audio, books and LANY features until owner explicitly resumes product work."
+  ]:[
+    "Review and complete this AI software development task using the project's AGENTS.md and applicable findings.md.",
+    "Project: "+item.project,"Task: "+item.title,"Canonical source: "+item.source,
+    "Current state: "+label[item.state],"Observed: "+item.summary,"Required next action: "+item.next,
+    ...item.missing.map(s=>"Missing evidence: "+s),
+    "Do not call it complete without actual tests, proof links, screenshots where visual, and a clear READY TO PUSH assessment."
+  ]).join("\n");
   try{await navigator.clipboard.writeText(prompt);setCopied("yes")}catch{setCopied("error")}
  }
  return <div className="mission-home" data-workspace={workspace} data-visual-reference="nbo-premium-workspace">
