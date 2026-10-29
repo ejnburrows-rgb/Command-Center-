@@ -1,3 +1,3 @@
-# NBO agent entry point
+@AGENTS.md
 
-Follow [AGENTS.md](AGENTS.md). Use current GitHub and connected runtime evidence for tool availability, credentials, authorizations and deployment status. Do not rely on historical tool-access statements in this file. Never expose secrets or private owner notes.
+Use AGENTS.md as the shared repository contract. Inspect actual connected capabilities when access matters; historical tool availability is not a permanent limitation.
