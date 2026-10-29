@@ -33,6 +33,28 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
  const jobs=useJobs();
  const pins=usePins();
  const {workspace}=usePremium();
+ const cartilla=projects.find(p=>p.slug==="cartilla-de-gretel");
+ const tutorPr=cartilla?.items.find(w=>w.kind==="pr"&&w.number===1073);
+ const navigationPr=cartilla?.items.find(w=>w.kind==="pr"&&w.number===1203);
+ const otherReview=cartilla?.items.find(w=>w.kind==="pr"&&!w.draft&&w.number!==1073);
+ const reviewPr=navigationPr||otherReview;
+ const cartillaReady=Boolean(cartilla?.accessible&&!cartilla?.stale&&!cartilla?.limited);
+ const priorities=[
+  {id:"tutor",step:"01 · NEXT DELIVERABLE",title:tutorPr?.title||"Gretel Tutor — Lecciones 1–3",
+   state:cartillaReady?(tutorPr?.draft?"DRAFT · NOT INTEGRATED":"RECHECK CURRENT PR"):"SOURCE REFRESHING",
+   detail:"Finish one real Lesson 1 interaction with phone video, genuine voice and tested behavior. Do not rebuild the Tutor.",
+   url:tutorPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/1073"},
+  {id:"review",step:"02 · UNFINISHED PR",title:reviewPr?.title||"Review pending integration work",
+   state:cartillaReady?(reviewPr?.draft?"DRAFT · OPEN":"OPEN PR · NOT DEPLOYED"):"SOURCE REFRESHING",
+   detail:"Inspect the exact revision, independent review, test result and recording before integrating.",
+   url:reviewPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls"},
+  {id:"queue",step:"03 · AUTHORITATIVE NEXT STEP",title:"Cartilla execution queue · #877",
+   state:jobs.stale||jobs.error?"SOURCE UNAVAILABLE":"GITHUB ISSUE",
+   detail:"Artwork, authentic audio, activities, teacher and release blockers belong to this one current record.",
+   url:"https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877"},
+ ];
+ const playbackProof=jobs.media?.find(p=>p.type==="video");
+
  const [filter,setFilter]=useState<Filter>("all");
  const [query,setQuery]=useState("");
  const [scope,setScope]=useState("all");
@@ -85,6 +107,11 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
     <p className="mission-description">{workspace==="overview"?"Your projects and AI work, clearly organized in one place.":workspace==="coding"?"Track the actual issues and pull requests being built.":workspace==="review"?"Inspect evidence gaps and decisions before approving results.":"See one task at a time, with its context and next action."}</p></div>
     <div className="mission-fresh"><span className="mission-datalight"/><span>{busy?"Checking GitHub…":fullyLoaded?"GITHUB LIVE":"PARTIAL GITHUB DATA"}</span><small>{available.length} of {projects.length} complete · {fmt(jobs.fetchedAt)}</small></div>
    </header>
+   <section className="mission-now" aria-label="Three Cartilla actions from GitHub">
+    <div className="mission-now-heading"><div><p className="mission-eyebrow">LA CARTILLA DE GRETEL · CURRENT PRIORITIES</p><h2>Three things that matter now</h2></div><span>{jobs.fetchedAt&&!jobs.stale?"Queue checked "+fmt(jobs.fetchedAt):"Showing verified GitHub links · queue status pending"}</span></div>
+    <div className="mission-now-grid">{priorities.map(p=><a key={p.id} href={p.url} target="_blank" rel="noopener noreferrer" className={"mission-now-card mission-now-"+p.id}><small>{p.step}</small><strong>{p.title}</strong><span className="mission-now-state">{p.state}</span><p>{p.detail}</p><b>OPEN ACTUAL GITHUB RECORD ↗</b></a>)}</div>
+    {playbackProof&&<div className="mission-proof-reel"><div className="mission-proof-video"><video src={playbackProof.src} controls playsInline preload="metadata" aria-label={"Recorded Cartilla proof from pull request "+playbackProof.prNumber}/></div><div className="mission-proof-description"><strong>Real recorded evidence · PR #{playbackProof.prNumber}</strong><p>This is a versioned GitHub recording of the linked change, not a live-agent feed or proof that the full application is deployed.</p><a href={playbackProof.sourceUrl} target="_blank" rel="noopener noreferrer">Inspect recording in GitHub ↗</a></div></div>}
+   </section>
    {workspace!=="overview"&&<div className="workspace-banner"><strong>{workspaceLabels[workspace]} workspace</strong><span>{workspace==="coding"?"Showing only open issues and code changes.":workspace==="review"?"Only work awaiting proof or owner decisions.":"Select the next task and examine its evidence without distracting metrics."}</span></div>}
    <GretelCommander project={projects.find(p=>p.slug==="cartilla-de-gretel")} jobs={jobs.jobs||[]} approvals={jobs.approvals||[]} loading={busy||Boolean(jobs.loading)||Boolean(jobs.error)} stale={Boolean(jobs.stale)||Boolean(jobs.error)} fetchedAt={jobs.fetchedAt}/>
    <div className="mission-metrics" aria-label="Actionable delivery statistics">
