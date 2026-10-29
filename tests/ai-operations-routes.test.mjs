@@ -74,3 +74,23 @@ test("unscoped GitHub feed includes issue and PR records for the cockpit",()=>{
  assert.deepEqual(scope("cartilla-de-gretel","cartilla-de-gretel",result),records,"Project-specific work must be retained");
  assert.deepEqual(scope("otto","cartilla-de-gretel",result),[],"Other repositories must remain excluded from a scoped request");
 });
+
+test("owner priority repositories are present in the real GitHub feed",()=>{
+ const source=read("lib/repos.ts");
+ const section=source.split("export const READ_REPOS:RepoRef[]=")[1]?.split("];")[0]||"";
+ for(const repo of ["cartilla-de-gretel","lany-books-web","Command-Center-"])
+  assert.ok(section.includes('repo:"'+repo+'"'),"Missing active project: "+repo);
+ assert.equal((section.match(/\\{owner,repo:/g)||[]).length,8);
+});
+
+test("Board does not present a missing acceptance artifact as a global blocker",()=>{
+ const ui=read("app/mission-home.tsx");
+ assert.match(ui,/UNVERIFIED · NEEDS PROOF/);
+ assert.match(ui,/Evidence gaps/);
+ assert.match(ui,/not global blockers/);
+ assert.match(ui,/NEXT ELIGIBLE ACTION/);
+ assert.match(ui,/j\.id===1073/);
+ assert.match(ui,/j\.id===1203/);
+ assert.match(ui,/All tracked sources current/);
+ assert.doesNotMatch(ui,/BLOCKED \/ MISSING PROOF/);
+});
