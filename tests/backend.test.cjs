@@ -1,7 +1,7 @@
 const test=require('node:test');const assert=require('node:assert/strict');const path=require('node:path');
 const root=process.env.NBO_TEST_BUILD;if(!root)throw new Error('Run with tests/run-backend-tests.sh');
 const {allPages,summarize,snapshot,github}=require(path.join(root,'public-github.js'));
-const {canonicalJobs,buildEvidence,eligibleApproval,approvalType,visualArtifact}=require(path.join(root,'job-evidence.js'));
+const {canonicalJobs,currentQueueJobs,publicProofMedia,buildEvidence,eligibleApproval,approvalType,visualArtifact}=require(path.join(root,'job-evidence.js'));
 const body=`## Rules\nOwner approves pictures going live, merges to main and final voice.\n## Jobs\n1. **Index card wording.** Details\n2. **Lesson 3 as the archetype.** Details\n3. **Voice.** Details\n4. **Flip chart look.** Waiting on the owner's pick. Hold until then.\n5. **Rollout.** After approval.`;
 const comment=(id,text,date='2026-10-19T12:00:00Z')=>({id,body:text,html_url:`https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877#issuecomment-${id}`,updated_at:date});
 const prUrl='https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/123';
@@ -66,3 +66,29 @@ test('artifact checks reject private/internal/foreign destinations before any ne
 test('explicit NOT STARTED is not mistaken for started work',async()=>{const {jobs}=await buildEvidence(body,'now',[comment(1,'JOB 1 / STATUS: NOT STARTED')],noEvidence);assert.equal(jobs[0].status,'NOT STARTED');});
 
 test('genuinely ongoing reports keep PR OPEN while exposing independent GitHub state',async()=>{const result=await buildEvidence(body,'now',[comment(1,`JOB 1 / STATUS: IN PROGRESS ${prUrl}`)],{pr:async()=>({html_url:prUrl,state:'open'}),artifact:async()=>false});assert.equal(result.jobs[0].status,'PR OPEN');assert.equal(result.jobs[0].githubState,'PR OPEN');});
+
+test('current #877 stage queue is parsed without a historical Jobs heading',()=>{
+ const current=[
+  '## Current next product deliverable — existing Gretel Tutor #1073 (not a new lane)',
+  '## Stage 1 — Integrate only when eligible',
+  '| Existing candidate | Current exact head | Scope, readiness and hold |',
+  '|---|---|---|',
+  '| #1197 page turn | MERGED abc123 | Recorded proof is linked |',
+  '| #1203 navigation | abc123 | OPEN / not merged, Piano bookmark hold |',
+  '| #1213 phone toolbar | abc123 | Draft; approval accepted |',
+  '## Stage 2 — existing independent lanes'
+ ].join('\n');
+ const items=currentQueueJobs(current,'2026-10-29T10:40:00Z');
+ assert.deepEqual(items.map(j=>j.id),[1073,1203,1213]);
+ assert.ok(items.every(j=>j.status==='UNVERIFIED'));
+ assert.ok(items.every(j=>j.sourceUrl.startsWith('https://github.com/ejnburrows-rgb/cartilla-de-gretel/')));
+});
+test('GitHub proof videos retain original public source and raw playable URLs',()=>{
+ const body='[Phone recording](https://github.com/ejnburrows-rgb/cartilla-de-gretel/blob/fix/source-blocked-page-bindings-20261027/docs/proofs/source-blocked-pages-20261027/navigation-375.mp4)';
+ const video=publicProofMedia(body,1203)[0];
+ assert.equal(video.type,'video');
+ assert.equal(video.prNumber,1203);
+ assert.match(video.src,/^https:\/\/raw\.githubusercontent\.com\/ejnburrows-rgb\/cartilla-de-gretel\//);
+ assert.match(video.sourceUrl,/navigation-375\.mp4$/);
+ assert.deepEqual(publicProofMedia('https://other.invalid/example.mp4',1203),[]);
+});

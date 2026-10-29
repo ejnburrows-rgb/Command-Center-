@@ -9,7 +9,7 @@ export async function GET(request:NextRequest){
   const slug=ref.repo,url=`https://github.com/${ref.owner}/${slug}`,base=`/repos/${ref.owner}/${encodeURIComponent(slug)}`;
   try{
    // Repository metadata is validated BEFORE reading work; no authenticated/private data source.
-   const result=await serverSnapshot(`public:${slug}`,30*60*1000,async()=>{
+   const result=await serverSnapshot(`public-v2:${slug}`,slug==='cartilla-de-gretel'?15*60*1000:45*60*1000,async()=>{
     const {data:meta}=await github(base);
     const [issues,pulls]=await Promise.all([allPages<GitHubRecord>(base+'/issues?state=open&sort=created&direction=asc'),allPages<GitHubRecord>(base+'/pulls?state=open&sort=created&direction=asc')]);
     const counts=summarize(issues,pulls);
