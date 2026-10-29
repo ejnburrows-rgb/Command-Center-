@@ -21,3 +21,15 @@ test("canonical jobs accept the current stage format and expose real data freshn
  const route=read("app/api/hub/route.ts");
  assert.match(route,/cartilla-de-gretel'\?15\*60\*1000:45\*60\*1000/);
 });
+
+test("current owner scope prevents false product dispatch and exposes credit limits as unknown",()=>{
+ const evidence=read("lib/job-evidence.ts");
+ const home=read("app/mission-home.tsx");
+ const panel=read("app/ai-operations.tsx");
+ assert.match(evidence,/currentExecutionAuthority\(issue\.body\|\|''\)/);
+ assert.match(evidence,/if\(!authority\.productWorkAuthorized\)return \{jobs:\[\],approvals:\[\],media:\[\],execution\}/);
+ assert.match(home,/productAuthorized=jobs\.execution\?\.mode==="PRODUCT_DEVELOPMENT"/);
+ assert.match(home,/PARKED · NOT AUTHORIZED NOW/);
+ assert.match(panel,/Remaining Astra \/ Opus credits/);
+ assert.match(panel,/Running agent sessions/);
+});
