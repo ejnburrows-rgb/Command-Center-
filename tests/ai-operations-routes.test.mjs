@@ -94,3 +94,16 @@ test("Board does not present a missing acceptance artifact as a global blocker",
  assert.match(ui,/All tracked sources current/);
  assert.doesNotMatch(ui,/BLOCKED \/ MISSING PROOF/);
 });
+
+test("copying a parked Cartilla or LANY task cannot start unauthorized product work",()=>{
+ const ui=read("app/mission-home.tsx");
+ const match=ui.match(/const productCopyPaused=(.*);/);
+ assert.ok(match,"Missing current-scope guard before copying agent instructions");
+ const paused=new Function("item","productAuthorized","return ("+match[1]+");");
+ assert.equal(paused({slug:"cartilla-de-gretel"},false),true);
+ assert.equal(paused({slug:"lany-books-web"},false),true);
+ assert.equal(paused({slug:"cartilla-de-gretel"},true),false);
+ assert.equal(paused({slug:"Command-Center-"},false),false);
+ assert.match(ui,/ORGANIZATION ONLY — do not implement, dispatch, or restart product work/);
+ assert.match(ui,/Do not create duplicate agents, branches, tasks or handoffs/);
+});
