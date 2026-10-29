@@ -1,18 +1,17 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
 import type {Project} from "./hub-data";
-import type {Job,Approval} from "./evidence-panels";
+import type {Job,Approval,Execution} from "./evidence-panels";
 
 type Agent="chatgpt"|"antigravity"|"opus";
 const names:{id:Agent;name:string;role:string}[]=[
 {id:"chatgpt",name:"ChatGPT",role:"Audio, voice and playback"},
-{id:"antigravity",name:"Antigravity",role:"Games — only after current authorization"},
+{id:"antigravity",name:"Antigravity",role:"Historical notes only — Antigravity not authorized"},
 {id:"opus",name:"Opus",role:"Independent verification"}];
 const storageKey="nbo-gretel-owner-handoffs-v1";
 const blank:Record<Agent,string>={chatgpt:"",antigravity:"",opus:""};
-const checkpointRequest="CARTILLA — CONTINUE THE EXISTING ASSIGNMENT\nCodex coordinates existing assignments under current AGENTS.md and GitHub issue #877. Reuse the existing Tutor #1073 branch and valid proof. Finish one authentic Lesson 1 interaction; hold only genuinely blocked actions and continue independent authorized work within this session. Report the exact revision, tests, real screenshots/recordings, remaining holds and next action. Do not create a new controller, duplicate task or provider session. Muse is historical support only; Antigravity requires fresh task-specific owner authorization. No merge, production release, spending or security change without its applicable authorization.";
 
-export default function GretelCommander({project,jobs,approvals,loading,stale,fetchedAt}:{project?:Project;jobs:Job[];approvals:Approval[];loading:boolean;stale:boolean;fetchedAt?:string}){
+export default function GretelCommander({project,jobs,approvals,loading,stale,fetchedAt,execution}:{project?:Project;jobs:Job[];approvals:Approval[];loading:boolean;stale:boolean;fetchedAt?:string;execution?:Execution}){
  const [handoffs,setHandoffs]=useState<Record<Agent,string>>(blank);
  const [ready,setReady]=useState(false);
  const [inboxOpen,setInboxOpen]=useState(false);
@@ -30,7 +29,6 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
  function save(agent:Agent,text:string){const next={...handoffs,[agent]:text};setHandoffs(next);
   try{localStorage.setItem(storageKey,JSON.stringify(next));setFeedback(text.trim()?"Saved on this device":"Removed from this device");}
   catch{setFeedback("Could not save. Copy the prompt before closing.");}}
- async function copy(value:string){try{await navigator.clipboard.writeText(value);setFeedback("Copied — ready to paste");}catch{setFeedback("Clipboard unavailable. Select and copy the text instead.");}}
  const current=Boolean(project&&project.accessible&&!project.stale&&!project.limited&&project.prs!==null);
  const proposed=useMemo(()=>current?(project?.items||[]).filter(item=>item.kind==="pr"):[],[current,project]);
  const evidenceOk=!loading&&!stale;
@@ -40,7 +38,7 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
  const checked=fetchedAt&&!Number.isNaN(new Date(fetchedAt).valueOf())?new Date(fetchedAt).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"Time unknown";
  const steps=[
   {name:"Plan",detail:"Source checked",tone:"neutral"},
-  {name:"Build",detail:current?proposed.length+" proposed":"Source unavailable",tone:current&&proposed.length?"blue":"neutral"},
+  {name:"Build",detail:execution?.productWorkAuthorized?(current?proposed.length+" open PRs":"Source unavailable"):"Not authorized to start",tone:execution?.productWorkAuthorized&&current&&proposed.length?"blue":"neutral"},
   {name:"Verify",detail:evidenceOk?verified.length+" confirmed":"Not checked",tone:verified.length?"green":gaps.length?"amber":"neutral"},
   {name:"Approve",detail:evidenceOk?decisions+" requests":"Unknown",tone:decisions?"amber":"neutral"},
   {name:"Release",detail:"Not confirmed",tone:"neutral"}];
@@ -59,23 +57,23 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
      <div><span className="gretel-stat-label">NEED YOUR YES</span><strong>{evidenceOk?decisions:"—"}</strong><small>Evidence-backed decisions</small></div>
    </div>
    <div className="gretel-nextmove">
-     <div><span className="gretel-stat-label">YOUR NEXT MOVE</span><h3>Review actual proof.</h3><p>Codex coordinates existing assignments. Review the result and decide only when your approval is needed.</p></div>
-     <button className="gretel-main-action" type="button" onClick={()=>void copy(checkpointRequest)}>Copy current checkpoint <span aria-hidden="true">↗</span></button>
+     <div><span className="gretel-stat-label">CURRENT AUTHORIZED SCOPE</span><h3>{execution?.mode==="ORGANIZATION_ONLY"?"Organization only. Product work paused.":"Read the current owner directive."}</h3><p>{!evidenceOk?"Source unavailable: do not dispatch a new agent.":execution?.nextStep||"Owner scope UNKNOWN. Do not turn a stale model handoff into a new task."} Live agent activity and remaining model credits: UNKNOWN unless verified directly with that provider.</p></div>
+     <a className="gretel-main-action" href="https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877" target="_blank" rel="noopener noreferrer">Open current assignment <span aria-hidden="true">↗</span></a>
    </div>
    <div className="gretel-footerline">
     <span className="gretel-fresh">{evidenceOk?"Evidence checked "+checked:"Evidence source unavailable — status unconfirmed"}</span>
     <span className="gretel-finish">End goal: student book + teacher tools + games + approved audio. Release only with your permission.</span>
    </div>
-   <section className="gretel-inbox" aria-label="Your remaining handoffs">
+   <section className="gretel-inbox" aria-label="Archived handoff notes stored locally">
       <button type="button" className="gretel-inbox-toggle" onClick={()=>setInboxOpen(v=>!v)} aria-expanded={inboxOpen}>
-       <span><strong>My prompt inbox</strong><small>{savedCount} saved handoffs · Existing assignments</small></span><span aria-hidden="true">{inboxOpen?"−":"+"}</span>
+       <span><strong>Archived handoff notes</strong><small>{savedCount} local notes · Not active assignments</small></span><span aria-hidden="true">{inboxOpen?"−":"+"}</span>
       </button>
       {inboxOpen&&<div className="gretel-inbox-content">
-       <p className="gretel-inbox-instructions">Use current authorized assignments only; saved prompts do not launch workers. Historical handoffs saved here remain on this device.</p>
+       <p className="gretel-inbox-instructions">These are historical notes saved on this device, not agent instructions or proof of an active session. Current assignments come only from the live GitHub source above.</p>
        {names.map(agent=><div className="gretel-prompt" key={agent.id}>
          <div className="gretel-prompt-head"><div><b>{agent.name}</b><small>{ready&&handoffs[agent.id].trim()?"Saved on this device":"No handout saved"}</small></div>
           <button type="button" onClick={()=>setEditing(editing===agent.id?null:agent.id)} aria-expanded={editing===agent.id}>{editing===agent.id?"Close":"Add / edit"}</button>
-          <button type="button" disabled={!handoffs[agent.id].trim()} onClick={()=>void copy(handoffs[agent.id])}>Copy</button>
+          
          </div>
          {editing===agent.id&&<div className="gretel-editor">
            <label htmlFor={"gretel-"+agent.id}>Prompt for {agent.name}</label>
