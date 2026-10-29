@@ -58,7 +58,10 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
    </div>
    <div className="gretel-nextmove">
      <div><span className="gretel-stat-label">CURRENT AUTHORIZED SCOPE</span><h3>{execution?.mode==="ORGANIZATION_ONLY"?"Organization only. Product work paused.":execution?.mode==="TUTOR_1073_ONLY"?"Tutor #1073 only · Lección 1 qualification":"Read the current owner directive."}</h3><p>{!evidenceOk?"Source unavailable: do not dispatch a new agent.":execution?.nextStep||"Owner scope UNKNOWN. Do not turn a stale model handoff into a new task."} Live agent activity and remaining model credits: UNKNOWN unless verified directly with that provider.</p></div>
-     <a className="gretel-main-action" href="https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877" target="_blank" rel="noopener noreferrer">Open current assignment <span aria-hidden="true">↗</span></a>
+     <div style={{display:"flex",gap:"0.5rem",flexWrap:"wrap",alignItems:"center"}}>
+       <a className="gretel-main-action" href="https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877" target="_blank" rel="noopener noreferrer">Open current assignment <span aria-hidden="true">↗</span></a>
+       <a className="gretel-main-action" href="/art-inventory" style={{background:"#0284c7",color:"#ffffff",borderColor:"#0284c7"}}>Visual Inventory (Activities · Art · Motion) <span aria-hidden="true">→</span></a>
+     </div>
    </div>
    <div className="gretel-footerline">
     <span className="gretel-fresh">{evidenceOk?"Evidence checked "+checked:"Evidence source unavailable — status unconfirmed"}</span>
