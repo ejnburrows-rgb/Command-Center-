@@ -26,7 +26,7 @@ test("Gretel is part of the main canvas with one primary action and clean timeli
  assert.match(src,/gretel-progress/);
  assert.match(src,/CURRENT AUTHORIZED SCOPE/);
  assert.doesNotMatch(src,/Copy current checkpoint/);
- assert.match(src,/Codex coordinates existing assignments/);
+ assert.match(src,/Open current assignment/);
  assert.doesNotMatch(src,/Muse manages Jules|Ask Muse for your handouts/);
  assert.match(src,/gretel-inbox-toggle/);
 });
