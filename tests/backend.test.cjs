@@ -69,6 +69,7 @@ test('genuinely ongoing reports keep PR OPEN while exposing independent GitHub s
 
 test('current #877 stage queue is parsed without a historical Jobs heading',()=>{
  const current=[
+  '## CURRENT OWNER DIRECTIVE — PRODUCT DEVELOPMENT',
   '## Current next product deliverable — existing Gretel Tutor #1073 (not a new lane)',
   '## Stage 1 — Integrate only when eligible',
   '| Existing candidate | Current exact head | Scope, readiness and hold |',
@@ -91,4 +92,18 @@ test('GitHub proof videos retain original public source and raw playable URLs',(
  assert.match(video.src,/^https:\/\/raw\.githubusercontent\.com\/ejnburrows-rgb\/cartilla-de-gretel\//);
  assert.match(video.sourceUrl,/navigation-375\.mp4$/);
  assert.deepEqual(publicProofMedia('https://other.invalid/example.mp4',1203),[]);
+});
+
+test('current #877 Tutor-only directive excludes other unapproved Stage 1 work',()=>{
+ const body=[
+  '## CURRENT OWNER DIRECTIVE — TUTOR #1073 DEVELOPMENT AND QUALIFICATION ONLY',
+  '## Stage 1 — Integrate only when eligible',
+  '| Existing candidate | Current exact head | Scope, readiness and hold |',
+  '|---|---|---|',
+  '| #1203 navigation | abc123 | OPEN / not merged |',
+  '| #1213 phone toolbar | abc123 | Draft |',
+ ].join('\\n');
+ const jobs=currentQueueJobs(body,'2026-10-29T15:02:32Z');
+ assert.deepEqual(jobs.map(j=>j.id),[1073]);
+ assert.match(jobs[0].title,/Lección 1/);
 });
