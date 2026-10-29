@@ -74,3 +74,38 @@ test("unscoped GitHub feed includes issue and PR records for the cockpit",()=>{
  assert.deepEqual(scope("cartilla-de-gretel","cartilla-de-gretel",result),records,"Project-specific work must be retained");
  assert.deepEqual(scope("otto","cartilla-de-gretel",result),[],"Other repositories must remain excluded from a scoped request");
 });
+
+test("owner priority repositories are present in the real GitHub feed",()=>{
+ const source=read("lib/repos.ts");
+ const section=source.split("export const READ_REPOS:RepoRef[]=")[1]?.split("];")[0]||"";
+ for(const repo of ["cartilla-de-gretel","lany-books-web","Command-Center-"])
+  assert.ok(section.includes('repo:"'+repo+'"'),"Missing active project: "+repo);
+ assert.equal((section.match(/\{owner,repo:/g)||[]).length,8);
+});
+
+test("Board does not present a missing acceptance artifact as a global blocker",()=>{
+ const ui=read("app/mission-home.tsx");
+ assert.match(ui,/UNVERIFIED · NEEDS PROOF/);
+ assert.match(ui,/Evidence gaps/);
+ assert.match(ui,/not global blockers/);
+ assert.match(ui,/NEXT ELIGIBLE ACTION/);
+ assert.match(ui,/j\.id===1073/);
+ assert.match(ui,/j\.id===1203/);
+ assert.match(ui,/All tracked sources current/);
+ assert.doesNotMatch(ui,/BLOCKED \/ MISSING PROOF/);
+});
+
+test("copying a parked Cartilla or LANY task cannot start unauthorized product work",()=>{
+ const ui=read("app/mission-home.tsx");
+ const match=ui.match(/const productCopyPaused=(.*);/);
+ assert.ok(match,"Missing current-scope guard before copying agent instructions");
+ const paused=new Function("item","productAuthorized","return ("+match[1]+");");
+ assert.equal(paused({slug:"cartilla-de-gretel"},false),true);
+ assert.equal(paused({slug:"lany-books-web"},false),true);
+ assert.equal(paused({slug:"cartilla-de-gretel",id:"cartilla-de-gretel/pr/1073"},true),false);
+ assert.equal(paused({slug:"cartilla-de-gretel",id:"cartilla-de-gretel/pr/1203"},true),true);
+ assert.equal(paused({slug:"lany-books-web"},true),true);
+ assert.equal(paused({slug:"Command-Center-"},false),false);
+ assert.match(ui,/NOT AUTHORIZED FOR THIS TASK — do not implement, dispatch, or restart this product work/);
+ assert.match(ui,/Do not create duplicate agents, branches, tasks or handoffs/);
+});

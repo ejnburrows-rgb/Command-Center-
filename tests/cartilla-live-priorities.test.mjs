@@ -21,3 +21,35 @@ test("canonical jobs accept the current stage format and expose real data freshn
  const route=read("app/api/hub/route.ts");
  assert.match(route,/cartilla-de-gretel'\?15\*60\*1000:45\*60\*1000/);
 });
+
+test("current owner scope prevents false product dispatch and exposes credit limits as unknown",()=>{
+ const evidence=read("lib/job-evidence.ts");
+ const home=read("app/mission-home.tsx");
+ const panel=read("app/ai-operations.tsx");
+ assert.match(evidence,/currentExecutionAuthority\(issue\.body\|\|''\)/);
+ assert.match(evidence,/if\(!authority\.productWorkAuthorized\)return \{jobs:\[\],approvals:\[\],media:\[\],execution\}/);
+ assert.match(home,/jobs\.execution\?\.mode==="TUTOR_1073_ONLY"/);
+ assert.match(home,/PARKED · NOT AUTHORIZED NOW/);
+ assert.match(panel,/Remaining Astra \/ Opus credits/);
+ assert.match(panel,/Running agent sessions/);
+});
+
+test("Gretel Commander cannot copy a stale Tutor launcher or imply Antigravity authorization",()=>{
+ const commander=read("app/gretel-commander.tsx");
+ const home=read("app/mission-home.tsx");
+ assert.doesNotMatch(commander,/const checkpointRequest=|Copy current checkpoint|void copy\(checkpointRequest\)/);
+ assert.match(commander,/Archived handoff notes/);
+ assert.match(commander,/Open current assignment/);
+ assert.match(commander,/execution\?\.mode==="ORGANIZATION_ONLY"/);
+ assert.match(home,/execution=\{jobs\.execution\}/);
+ assert.match(commander,/Antigravity not authorized/);
+});
+
+test("Tutor-only authorization never promotes other Cartilla PRs into active tasks",()=>{
+ const source=read("lib/job-evidence.ts"),home=read("app/mission-home.tsx"),panel=read("app/gretel-commander.tsx");
+ assert.match(source,/authority.mode==='TUTOR_1073_ONLY'/);
+ assert.match(source,/return jobs;/);
+ assert.match(home,/Other Cartilla activities — paused/);
+ assert.match(home,/PARKED · NOT AUTHORIZED NOW/);
+ assert.match(panel,/Tutor #1073 only/);
+});

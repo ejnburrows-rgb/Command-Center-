@@ -19,7 +19,7 @@ type RecordItem={
 };
 const color:Record<State,string>={owner:"violet",proof:"amber",draft:"amber",verified:"teal",active:"slate"};
 const label:Record<State,string>={owner:"NEEDS YOU",proof:"MISSING PROOF",draft:"DRAFT · NOT DONE",verified:"VERIFIED",active:"OPEN WORK"};
-const tabs:{key:Panel;label:string}[]=[{key:"inspector",label:"Inspector"},{key:"decisions",label:"Needs You"},{key:"blocked",label:"Blocked"},{key:"memory",label:"Memory"}];
+const tabs:{key:Panel;label:string}[]=[{key:"inspector",label:"Inspector"},{key:"decisions",label:"Needs You"},{key:"blocked",label:"Evidence gaps"},{key:"memory",label:"Memory"}];
 const fmt=(input?:string)=>{if(!input)return "Not reported";const d=new Date(input);return Number.isFinite(d.getTime())?d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):"Not reported"};
 const alertText=(n:number|undefined)=>n===1?"1 missing item":(n||0)+" missing items";
 function fromWork(p:Project,w:Work):RecordItem{
@@ -39,19 +39,36 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
  const otherReview=cartilla?.items.find(w=>w.kind==="pr"&&!w.draft&&w.number!==1073);
  const reviewPr=navigationPr||otherReview;
  const cartillaReady=Boolean(cartilla?.accessible&&!cartilla?.stale&&!cartilla?.limited);
- const priorities=[
-  {id:"tutor",step:"01 · NEXT DELIVERABLE",title:tutorPr?.title||"Gretel Tutor — Lecciones 1–3",
+ const productAuthorized=(jobs.execution?.mode==="PRODUCT_DEVELOPMENT"||jobs.execution?.mode==="TUTOR_1073_ONLY")&&!jobs.loading&&!jobs.stale&&!jobs.error;
+ const scopeKnown=!!jobs.execution&&!jobs.loading&&!jobs.stale&&!jobs.error;
+ // The current #877 owner directive outranks historical Tutor/PR headings.
+ // A new model conversation never grants permission to launch product work.
+ const priorities=productAuthorized?[
+  {id:"tutor",step:"01 · AUTHORIZED PRODUCT TASK",title:tutorPr?.title||"Gretel Tutor — Lecciones 1–3",
    state:cartillaReady?(tutorPr?.draft?"DRAFT · NOT INTEGRATED":"RECHECK CURRENT PR"):"SOURCE REFRESHING",
-   detail:"Finish one real Lesson 1 interaction with phone video, genuine voice and tested behavior. Do not rebuild the Tutor.",
+   detail:"Reuse the existing Tutor branch. Verify one real Lesson 1 interaction, not a rebuilt project.",
    url:tutorPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/1073"},
-  {id:"review",step:"02 · UNFINISHED PR",title:reviewPr?.title||"Review pending integration work",
-   state:cartillaReady?(reviewPr?.draft?"DRAFT · OPEN":"OPEN PR · NOT DEPLOYED"):"SOURCE REFRESHING",
-   detail:"Inspect the exact revision, independent review, test result and recording before integrating.",
-   url:reviewPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls"},
+  {id:"review",step:jobs.execution?.mode==="TUTOR_1073_ONLY"?"02 · PRESERVED BACKLOG":"02 · UNFINISHED PR",
+   title:jobs.execution?.mode==="TUTOR_1073_ONLY"?"Other Cartilla activities — paused":reviewPr?.title||"Review pending integration work",
+   state:jobs.execution?.mode==="TUTOR_1073_ONLY"?"PARKED · NOT AUTHORIZED NOW":cartillaReady?(reviewPr?.draft?"DRAFT · OPEN":"OPEN PR · NOT DEPLOYED"):"SOURCE REFRESHING",
+   detail:jobs.execution?.mode==="TUTOR_1073_ONLY"?"Navigation, games, artwork and teacher lanes are preserved, not authorized for active work.":"Inspect exact revision and prior proof before new testing, merges or another agent.",
+   url:jobs.execution?.mode==="TUTOR_1073_ONLY"?"https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877":reviewPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls"},
   {id:"queue",step:"03 · AUTHORITATIVE NEXT STEP",title:"Cartilla execution queue · #877",
-   state:jobs.stale||jobs.error?"SOURCE UNAVAILABLE":"GITHUB ISSUE",
-   detail:"Artwork, authentic audio, activities, teacher and release blockers belong to this one current record.",
+   state:"CURRENT OWNER SCOPE",detail:jobs.execution?.nextStep||"Read the authorized next action in the current issue.",
    url:"https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877"},
+ ]:[
+  {id:"queue",step:"01 · CURRENT AUTHORIZATION",title:scopeKnown&&jobs.execution?.mode==="ORGANIZATION_ONLY"?"Organization only — product work paused":"Work authorization cannot be verified",
+   state:scopeKnown?"OWNER DIRECTIVE":"SOURCE UNKNOWN · NO DISPATCH",
+   detail:scopeKnown?jobs.execution!.nextStep:"No new jobs or new agents until the current #877 owner scope can be read.",
+   url:"https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877"},
+  {id:"review",step:"02 · SAFE CONTINUITY",title:"Resume saved work, not a fresh interpretation",
+   state:"NO DUPLICATE ASSIGNMENTS",
+   detail:"Keep existing branch, objective and verified evidence. Model usage and live worker status are UNKNOWN without provider records.",
+   url:"https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877"},
+  {id:"tutor",step:"03 · PRESERVED BACKLOG",title:tutorPr?.title||"Gretel Tutor — existing PR #1073",
+   state:"PARKED · NOT AUTHORIZED NOW",
+   detail:"Tutor stays intact for a later explicit product-development resumption; no replacement worker or rebuild.",
+   url:tutorPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/1073"},
  ];
  const playbackProof=jobs.media?.find(p=>p.type==="video");
 
@@ -72,7 +89,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
     state:j.status==="VERIFIED"?(j.missingEvidence?.length?"proof":"verified"):"proof",
     source:j.sourceUrl,proof:j.proofUrl,updatedAt:j.updatedAt,kind:"Agent job report",
     missing:j.missingEvidence||[],summary:j.status==="VERIFIED"?"The source reports verified work; review linked acceptance evidence.":"Reported work is not verified as delivered.",
-    next:j.missingEvidence?.length?"Ask the assigned agent for the missing evidence.":"Review the canonical job and require acceptance proof before approval."}));
+    next:j.id===1073?"Verify the exact combined Tutor build and actual phone-width Lección 1 behavior; real-device speech is still unverified. Do not merge or release.":j.id===1203?"Repair the Piano bookmark overwrite on the existing PR, rerun its focused checks, then review before merge.":j.missingEvidence?.length?"Obtain the missing acceptance proof for this Cartilla item; continue unrelated eligible work.":"Review the canonical job and require acceptance proof before approval."}));
   const approvals:RecordItem[]=(jobs.approvals||[]).map(a=>({
     id:"approval/"+a.id,title:a.title,project:a.project,slug:"",
     state:"owner",source:a.sourceUrl,proof:a.proofUrl,updatedAt:a.updatedAt,
@@ -90,13 +107,30 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
  const pinned=projects.filter(p=>pins.value.includes(p.slug));
  const tiles=[
   {key:"owner" as Filter,name:"NEEDS YOUR DECISION",value:dataValid?decisions.length:null,desc:"Proof-qualified approvals",tone:"violet"},
-  {key:"proof" as Filter,name:"BLOCKED / MISSING PROOF",value:dataValid?blocked.length:null,desc:"Unverified Cartilla jobs",tone:"amber"},
+  {key:"proof" as Filter,name:"UNVERIFIED · NEEDS PROOF",value:dataValid?blocked.length:null,desc:"Cartilla evidence gaps, not global blockers",tone:"amber"},
   {key:"draft" as Filter,name:"DRAFT PRs · NOT DONE",value:drafts,desc:"Across accessible repositories",tone:"amber"},
   {key:"verified" as Filter,name:"VERIFIED JOB REPORTS",value:dataValid?jobs.jobs.filter(j=>j.status==="VERIFIED"&&!j.missingEvidence?.length).length:null,desc:"Canonical job evidence only",tone:"teal"}
  ];
  function choose(f:Filter){setFilter(f);setPanel("inspector");document.getElementById("mission-work")?.scrollIntoView({block:"nearest",behavior:"smooth"});}
  async function copyPrompt(item:RecordItem){
-  const prompt=["Review and complete this AI software development task using the project's AGENTS.md and applicable findings.md.","Project: "+item.project,"Task: "+item.title,"Canonical source: "+item.source,"Current state: "+label[item.state],"Observed: "+item.summary,"Required next action: "+item.next,...item.missing.map(s=>"Missing evidence: "+s),"Do not call it complete without actual tests, proof links, screenshots where visual, and a clear READY TO PUSH assessment."].join("\n");
+  // The current owner directive has priority over historical PR/issue titles.
+  // Copying a backlog card must not become an unauthorized new agent assignment.
+  const productCopyPaused=item.slug==="lany-books-web"||(item.slug==="cartilla-de-gretel"&&(!productAuthorized||item.id!=="cartilla-de-gretel/pr/1073"));
+  const prompt=(productCopyPaused?[
+    "NOT AUTHORIZED FOR THIS TASK — do not implement, dispatch, or restart this product work.",
+    "Project: "+item.project,
+    "Existing record (context only): "+item.source,
+    "Current authority: https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877",
+    "Current authorized scope: "+(jobs.execution?.nextStep||"Not verified; do not dispatch."),
+    "Check open PRs and assignments first. Do not create duplicate agents, branches, tasks or handoffs.",
+    "Preserve other Cartilla and LANY tasks; only Tutor #1073 is currently authorized by #877."
+  ]:[
+    "Review and complete this AI software development task using the project's AGENTS.md and applicable findings.md.",
+    "Project: "+item.project,"Task: "+item.title,"Canonical source: "+item.source,
+    "Current state: "+label[item.state],"Observed: "+item.summary,"Required next action: "+item.next,
+    ...item.missing.map(s=>"Missing evidence: "+s),
+    "Do not call it complete without actual tests, proof links, screenshots where visual, and a clear READY TO PUSH assessment."
+  ]).join("\n");
   try{await navigator.clipboard.writeText(prompt);setCopied("yes")}catch{setCopied("error")}
  }
  return <div className="mission-home" data-workspace={workspace} data-visual-reference="nbo-premium-workspace">
@@ -113,7 +147,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
     {playbackProof&&<div className="mission-proof-reel"><div className="mission-proof-video"><video src={playbackProof.src} controls playsInline preload="metadata" aria-label={"Recorded Cartilla proof from pull request "+playbackProof.prNumber}/></div><div className="mission-proof-description"><strong>Real recorded evidence · PR #{playbackProof.prNumber}</strong><p>This is a versioned GitHub recording of the linked change, not a live-agent feed or proof that the full application is deployed.</p><a href={playbackProof.sourceUrl} target="_blank" rel="noopener noreferrer">Inspect recording in GitHub ↗</a></div></div>}
    </section>
    {workspace!=="overview"&&<div className="workspace-banner"><strong>{workspaceLabels[workspace]} workspace</strong><span>{workspace==="coding"?"Showing only open issues and code changes.":workspace==="review"?"Only work awaiting proof or owner decisions.":"Select the next task and examine its evidence without distracting metrics."}</span></div>}
-   <GretelCommander project={projects.find(p=>p.slug==="cartilla-de-gretel")} jobs={jobs.jobs||[]} approvals={jobs.approvals||[]} loading={busy||Boolean(jobs.loading)||Boolean(jobs.error)} stale={Boolean(jobs.stale)||Boolean(jobs.error)} fetchedAt={jobs.fetchedAt}/>
+   <GretelCommander project={projects.find(p=>p.slug==="cartilla-de-gretel")} jobs={jobs.jobs||[]} approvals={jobs.approvals||[]} loading={busy||Boolean(jobs.loading)||Boolean(jobs.error)} stale={Boolean(jobs.stale)||Boolean(jobs.error)} fetchedAt={jobs.fetchedAt} execution={jobs.execution}/>
    <div className="mission-metrics" aria-label="Actionable delivery statistics">
     {tiles.map(t=><button key={t.key} type="button" className={"mission-metric mission-tone-"+t.tone+(filter===t.key?" chosen":"")} onClick={()=>choose(t.key)} aria-pressed={filter===t.key}>
      <span>{t.name}</span><strong>{t.value===null?"—":t.value}</strong><small>{t.value===null?"Source incomplete":t.desc}</small>
@@ -166,17 +200,17 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
       {selectedItem?<><div className={"mission-status mission-tone-"+color[selectedItem.state]}>{label[selectedItem.state]}</div>
        <h2>{selectedItem.title}</h2><p className="mission-inspector-meta">{selectedItem.project} · {selectedItem.kind}</p>
        <div className="mission-inspector-block"><h3>WHAT WE KNOW</h3><p>{selectedItem.summary}</p></div>
-       <div className="mission-inspector-block"><h3>NEXT ACTION</h3><p>{selectedItem.next}</p></div>
+       <div className="mission-inspector-block"><h3>NEXT ELIGIBLE ACTION · {selectedItem.project}</h3><p>{selectedItem.next}</p></div>
        {selectedItem.missing.length>0&&<div className="mission-inspector-block mission-missing"><h3>MISSING PROOF · {alertText(selectedItem.missing.length)}</h3>{selectedItem.missing.map(m=><p key={m}>• {m}</p>)}</div>}
        <div className="mission-inspector-actions"><External href={selectedItem.source}>Open source ↗</External>{selectedItem.proof&&<External href={selectedItem.proof}>View proof ↗</External>}
         <button type="button" onClick={()=>void copyPrompt(selectedItem)}>{copied==="yes"?"✓ Handoff copied":copied==="error"?"Copy unavailable":"Copy corrective AI handoff"}</button></div>
-       <p className="mission-inspector-note">Source evidence only. No merge, deployment or AI task is launched by this panel.</p>
+       <p className="mission-inspector-note">Record updated {fmt(selectedItem.updatedAt)}. {selectedItem.kind==="Agent job report"||selectedItem.kind==="Owner approval"?(dataValid?"Current evidence snapshot.":"Evidence snapshot stale or unavailable."):(projects.some(p=>p.slug===selectedItem.slug&&p.accessible&&!p.stale&&!p.limited)?"Current GitHub source snapshot.":"GitHub source stale or unavailable.")} Missing proof limits acceptance of this item only; other eligible work may continue. No merge, deployment or AI task is launched by this panel.</p>
       </>:<p className="mission-empty">Choose a work item to inspect verified source records.</p>}
     </div>}
     {panel==="decisions"&&<div className="mission-inspector-content"><p className="mission-eyebrow">OWNER CHECKPOINT</p><h2>Needs your decision</h2>{!dataValid?<p className="mission-empty">Approval source unavailable or refreshing.</p>:decisions.length?decisions.map(d=><button key={d.id} className="mission-minirow" onClick={()=>{setSelected(d.id);setPanel("inspector");setMobileInspect(true)}}>{d.title}<small>{d.project} · Review proof</small></button>):<p className="mission-empty">No decisions with qualified evidence are waiting.</p>}<p className="mission-inspector-note">Draft or unverified jobs do not qualify for owner approval.</p></div>}
-    {panel==="blocked"&&<div className="mission-inspector-content"><p className="mission-eyebrow">EVIDENCE GAPS</p><h2>Blocked or unverified</h2>{!dataValid?<p className="mission-empty">Job evidence unavailable or refreshing.</p>:blocked.length?blocked.map(x=><button key={x.id} className="mission-minirow" onClick={()=>{setSelected(x.id);setPanel("inspector");setMobileInspect(true)}}>{x.title}<small>{alertText(x.missing.length)} · {x.project}</small></button>):<p className="mission-empty">No unverified job reports in the source feed.</p>}<Link href="/evidence" className="mission-inspector-cta">Open all evidence →</Link></div>}
+    {panel==="blocked"&&<div className="mission-inspector-content"><p className="mission-eyebrow">EVIDENCE GAPS</p><h2>Unverified work · not a global block</h2>{!dataValid?<p className="mission-empty">Job evidence unavailable or refreshing.</p>:blocked.length?blocked.map(x=><button key={x.id} className="mission-minirow" onClick={()=>{setSelected(x.id);setPanel("inspector");setMobileInspect(true)}}>{x.title}<small>{alertText(x.missing.length)} · {x.project}</small></button>):<p className="mission-empty">No unverified job reports in the source feed.</p>}<Link href="/evidence" className="mission-inspector-cta">Open all evidence →</Link></div>}
     {panel==="memory"&&<div className="mission-inspector-content"><p className="mission-eyebrow">OBSIDIAN-STYLE KNOWLEDGE</p><h2>Human authority. Machine findings.</h2><p className="mission-inspector-meta">The owner decides. AI agents document evidence.</p><div className="mission-memory-links"><Link href="/knowledge">▤ Knowledge & Memory →</Link><External href="https://github.com/ejnburrows-rgb/Command-Center-/blob/main/knowledge/AGENT.md">↳ AGENT.md source</External><External href="https://github.com/ejnburrows-rgb/Command-Center-/tree/main/knowledge/Machine">↳ Verified findings</External></div><p className="mission-inspector-note">Private documents require your GitHub sign-in; they are not leaked to anonymous viewers.</p></div>}
-    <div className="mission-inspector-bottom"><span className="mission-datalight"/><div><strong>GITHUB-BACKED SOURCES</strong><small>{fullyLoaded?"All six sources current":"Source may be limited"} · {dataValid?"Evidence fetched":"Evidence status unknown"}</small></div></div>
+    <div className="mission-inspector-bottom"><span className="mission-datalight"/><div><strong>GITHUB-BACKED SOURCES</strong><small>{fullyLoaded?"All tracked sources current":"Some sources unavailable or stale"} · {dataValid?"Evidence fetched":"Evidence status unknown"}</small></div></div>
   </aside>
   <nav className="mission-mobile-dock" aria-label="Mobile shortcuts"><Link href="/ai-operations">◈<span>AI Ops</span></Link><Link href="/projects">▣<span>Projects</span></Link><Link href="/evidence">✓<span>Proof</span></Link><Link href="/knowledge">▤<span>Memory</span></Link></nav>
  </div>;

@@ -1,4 +1,5 @@
 import {allPages,github,type GitHubRecord} from './public-github';
+import {currentExecutionAuthority} from './execution-authority.mjs';
 import {serverSnapshot} from './server-snapshot';
 const repo='/repos/ejnburrows-rgb/cartilla-de-gretel';
 export const jobSource='https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877';
@@ -83,9 +84,12 @@ export async function buildEvidence(body:string,updatedAt:string,comments:Commen
 
 /** Current #877 is a stage-based execution queue, not the historical ## Jobs list. */
 export function currentQueueJobs(body:string,updatedAt:string):Job[]{
+ // Never turn a historical backlog into new work while the owner has paused product development.
+ const authority=currentExecutionAuthority(body);
+ if(!authority.productWorkAuthorized)return [];
  const tutorHeading=/^## Current next product deliverable[^\n]*#1073/m.test(body);
  const stage=body.match(/^## Stage 1[^\n]*\n([\s\S]*?)(?=^## |$(?![\s\S]))/m)?.[1]||'';
- if(!tutorHeading&&!stage)throw new Error('Current Cartilla execution queue is unavailable');
+ if(!tutorHeading&&!stage&&authority.mode!=='TUTOR_1073_ONLY')throw new Error('Current Cartilla execution queue is unavailable');
  const jobs:Job[]=[];
  const add=(id:number,title:string,detail:string,sourceUrl:string)=>{
   if(jobs.some(j=>j.id===id))return;
@@ -93,6 +97,11 @@ export function currentQueueJobs(body:string,updatedAt:string):Job[]{
   jobs.push({id,title,status:'UNVERIFIED',sourceUrl,prUrl:sourceUrl.includes('/pull/')?sourceUrl:undefined,
    proofUrl:proof,updatedAt,missingEvidence:proof?['Linked report is not independently confirmed runtime acceptance']:['Current running-build and review proof not established']});
  };
+ // The current owner authorized exactly one Tutor milestone, not all Stage 1 PRs.
+ if(authority.mode==='TUTOR_1073_ONLY'){
+  add(1073,'Gretel Tutor — Lección 1 qualification','',repo.replace('/repos/','https://github.com/')+'/pull/1073');
+  return jobs;
+ }
  if(tutorHeading)add(1073,'Gretel Tutor — Lecciones 1–3','',repo.replace('/repos/','https://github.com/')+'/pull/1073');
  for(const match of stage.matchAll(/^\|\s*#(\d+)\s+([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|/gm)){
   const id=Number(match[1]),name=match[2].trim(),status=match[3].trim(),detail=match[4].trim();
@@ -110,9 +119,12 @@ export function publicProofMedia(body:string,prNumber:number){
   sourceUrl:m[0]}));
 }
 
-export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-v3',10*60*1000,async()=>{
+export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-v5',10*60*1000,async()=>{
  const {data:meta}=await github(repo);if(meta.private!==false)throw new Error('Public repository metadata unavailable');
  const {data:issue}=await github(repo+'/issues/877');
+ const authority=currentExecutionAuthority(issue.body||'');
+ const execution={...authority,sourceUrl:jobSource,sourceUpdatedAt:issue.updated_at||'',agentActivity:'UNKNOWN' as const,creditsRemaining:'UNKNOWN' as const};
+ if(!authority.productWorkAuthorized)return {jobs:[],approvals:[],media:[],execution};
  if(!/^##\\s+Jobs\\s*$/im.test(issue.body||'')){
   const jobs=currentQueueJobs(issue.body||'',issue.updated_at||new Date().toISOString());
   let media:ReturnType<typeof publicProofMedia>=[];
@@ -126,9 +138,10 @@ export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-
     if(job.id===1203)media=publicProofMedia(pr.body||'',job.id);
    }catch{/* Keep source-derived queue visible; never invent a PR state. */}
   }
-  return {jobs,approvals:[],media};
+  return {jobs,approvals:[],media,execution};
  }
  const comments=await allPages<Comment>(repo+'/issues/877/comments');
  if(comments.length!==issue.comments)throw new Error('Issue comments changed during pagination; evidence refresh required');
- return buildEvidence(issue.body||'',issue.updated_at,comments,{pr:async number=>(await github(repo+'/pulls/'+number)).data,artifact:visualArtifact});
+ const evidence=await buildEvidence(issue.body||'',issue.updated_at,comments,{pr:async number=>(await github(repo+'/pulls/'+number)).data,artifact:visualArtifact});
+ return {...evidence,execution};
 });}

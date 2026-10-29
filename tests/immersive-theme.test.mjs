@@ -24,9 +24,9 @@ test("Gretel is part of the main canvas with one primary action and clean timeli
  assert.match(css,/\.gretel-owner\{[^}]*background:transparent/);
  assert.match(src,/One clear path/);
  assert.match(src,/gretel-progress/);
- assert.match(src,/Your next move|YOUR NEXT MOVE/);
- assert.match(src,/Copy current checkpoint/);
- assert.match(src,/Codex coordinates existing assignments/);
+ assert.match(src,/CURRENT AUTHORIZED SCOPE/);
+ assert.doesNotMatch(src,/Copy current checkpoint/);
+ assert.match(src,/Open current assignment/);
  assert.doesNotMatch(src,/Muse manages Jules|Ask Muse for your handouts/);
  assert.match(src,/gretel-inbox-toggle/);
 });
@@ -35,7 +35,7 @@ test("inbox remains device-local and is closed by default",()=>{
  assert.match(src,/useState\(false\)/);
  assert.match(src,/localStorage\.setItem/);
  assert.doesNotMatch(src,/fetch\(/);
- assert.match(src,/navigator\.clipboard\.writeText/);
+ assert.doesNotMatch(src,/navigator\.clipboard\.writeText/);
 });
 test("palette colors change on the actual shell, sidebar, topbar, and the work surface",()=>{
  const css=read("app/nbo-premium.css");
