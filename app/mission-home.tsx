@@ -39,19 +39,35 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
  const otherReview=cartilla?.items.find(w=>w.kind==="pr"&&!w.draft&&w.number!==1073);
  const reviewPr=navigationPr||otherReview;
  const cartillaReady=Boolean(cartilla?.accessible&&!cartilla?.stale&&!cartilla?.limited);
- const priorities=[
-  {id:"tutor",step:"01 · NEXT DELIVERABLE",title:tutorPr?.title||"Gretel Tutor — Lecciones 1–3",
+ const productAuthorized=jobs.execution?.mode==="PRODUCT_DEVELOPMENT"&&!jobs.loading&&!jobs.stale&&!jobs.error;
+ const scopeKnown=!!jobs.execution&&!jobs.loading&&!jobs.stale&&!jobs.error;
+ // The current #877 owner directive outranks historical Tutor/PR headings.
+ // A new model conversation never grants permission to launch product work.
+ const priorities=productAuthorized?[
+  {id:"tutor",step:"01 · AUTHORIZED PRODUCT TASK",title:tutorPr?.title||"Gretel Tutor — Lecciones 1–3",
    state:cartillaReady?(tutorPr?.draft?"DRAFT · NOT INTEGRATED":"RECHECK CURRENT PR"):"SOURCE REFRESHING",
-   detail:"Finish one real Lesson 1 interaction with phone video, genuine voice and tested behavior. Do not rebuild the Tutor.",
+   detail:"Reuse the existing Tutor branch. Verify one real Lesson 1 interaction, not a rebuilt project.",
    url:tutorPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/1073"},
   {id:"review",step:"02 · UNFINISHED PR",title:reviewPr?.title||"Review pending integration work",
    state:cartillaReady?(reviewPr?.draft?"DRAFT · OPEN":"OPEN PR · NOT DEPLOYED"):"SOURCE REFRESHING",
-   detail:"Inspect the exact revision, independent review, test result and recording before integrating.",
+   detail:"Inspect exact revision and prior proof before new testing, merges or another agent.",
    url:reviewPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls"},
   {id:"queue",step:"03 · AUTHORITATIVE NEXT STEP",title:"Cartilla execution queue · #877",
-   state:jobs.stale||jobs.error?"SOURCE UNAVAILABLE":"GITHUB ISSUE",
-   detail:"Artwork, authentic audio, activities, teacher and release blockers belong to this one current record.",
+   state:"CURRENT OWNER SCOPE",detail:jobs.execution?.nextStep||"Read the authorized next action in the current issue.",
    url:"https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877"},
+ ]:[
+  {id:"queue",step:"01 · CURRENT AUTHORIZATION",title:scopeKnown&&jobs.execution?.mode==="ORGANIZATION_ONLY"?"Organization only — product work paused":"Work authorization cannot be verified",
+   state:scopeKnown?"OWNER DIRECTIVE":"SOURCE UNKNOWN · NO DISPATCH",
+   detail:scopeKnown?jobs.execution!.nextStep:"No new jobs or new agents until the current #877 owner scope can be read.",
+   url:"https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877"},
+  {id:"review",step:"02 · SAFE CONTINUITY",title:"Resume saved work, not a fresh interpretation",
+   state:"NO DUPLICATE ASSIGNMENTS",
+   detail:"Keep existing branch, objective and verified evidence. Model usage and live worker status are UNKNOWN without provider records.",
+   url:"https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877"},
+  {id:"tutor",step:"03 · PRESERVED BACKLOG",title:tutorPr?.title||"Gretel Tutor — existing PR #1073",
+   state:"PARKED · NOT AUTHORIZED NOW",
+   detail:"Tutor stays intact for a later explicit product-development resumption; no replacement worker or rebuild.",
+   url:tutorPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/1073"},
  ];
  const playbackProof=jobs.media?.find(p=>p.type==="video");
 
