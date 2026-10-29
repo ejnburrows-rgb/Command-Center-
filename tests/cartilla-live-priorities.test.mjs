@@ -33,3 +33,14 @@ test("current owner scope prevents false product dispatch and exposes credit lim
  assert.match(panel,/Remaining Astra \/ Opus credits/);
  assert.match(panel,/Running agent sessions/);
 });
+
+test("Gretel Commander cannot copy a stale Tutor launcher or imply Antigravity authorization",()=>{
+ const commander=read("app/gretel-commander.tsx");
+ const home=read("app/mission-home.tsx");
+ assert.doesNotMatch(commander,/const checkpointRequest=|Copy current checkpoint|void copy\(checkpointRequest\)/);
+ assert.match(commander,/Archived handoff notes/);
+ assert.match(commander,/Open current assignment/);
+ assert.match(commander,/execution\?\.mode==="ORGANIZATION_ONLY"/);
+ assert.match(home,/execution=\{jobs\.execution\}/);
+ assert.match(commander,/Antigravity not authorized/);
+});
