@@ -28,7 +28,7 @@ test("current owner scope prevents false product dispatch and exposes credit lim
  const panel=read("app/ai-operations.tsx");
  assert.match(evidence,/currentExecutionAuthority\(issue\.body\|\|''\)/);
  assert.match(evidence,/if\(!authority\.productWorkAuthorized\)return \{jobs:\[\],approvals:\[\],media:\[\],execution\}/);
- assert.match(home,/productAuthorized=jobs\.execution\?\.mode==="PRODUCT_DEVELOPMENT"/);
+ assert.match(home,/jobs\.execution\?\.mode==="TUTOR_1073_ONLY"/);
  assert.match(home,/PARKED · NOT AUTHORIZED NOW/);
  assert.match(panel,/Remaining Astra \/ Opus credits/);
  assert.match(panel,/Running agent sessions/);
@@ -43,4 +43,13 @@ test("Gretel Commander cannot copy a stale Tutor launcher or imply Antigravity a
  assert.match(commander,/execution\?\.mode==="ORGANIZATION_ONLY"/);
  assert.match(home,/execution=\{jobs\.execution\}/);
  assert.match(commander,/Antigravity not authorized/);
+});
+
+test("Tutor-only authorization never promotes other Cartilla PRs into active tasks",()=>{
+ const source=read("lib/job-evidence.ts"),home=read("app/mission-home.tsx"),panel=read("app/gretel-commander.tsx");
+ assert.match(source,/authority.mode==='TUTOR_1073_ONLY'/);
+ assert.match(source,/return jobs;/);
+ assert.match(home,/Other Cartilla activities — paused/);
+ assert.match(home,/PARKED · NOT AUTHORIZED NOW/);
+ assert.match(panel,/Tutor #1073 only/);
 });
