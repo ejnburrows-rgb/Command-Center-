@@ -24,7 +24,7 @@ test("Gretel is part of the main canvas with one primary action and clean timeli
  assert.match(css,/\.gretel-owner\{[^}]*background:transparent/);
  assert.match(src,/One clear path/);
  assert.match(src,/gretel-progress/);
- assert.match(src,/Your next move|YOUR NEXT MOVE/);
+ assert.match(src,/CURRENT AUTHORIZED SCOPE/);
  assert.doesNotMatch(src,/Copy current checkpoint/);
  assert.match(src,/Codex coordinates existing assignments/);
  assert.doesNotMatch(src,/Muse manages Jules|Ask Muse for your handouts/);
