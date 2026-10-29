@@ -80,7 +80,7 @@ test("owner priority repositories are present in the real GitHub feed",()=>{
  const section=source.split("export const READ_REPOS:RepoRef[]=")[1]?.split("];")[0]||"";
  for(const repo of ["cartilla-de-gretel","lany-books-web","Command-Center-"])
   assert.ok(section.includes('repo:"'+repo+'"'),"Missing active project: "+repo);
- assert.equal((section.match(/\\{owner,repo:/g)||[]).length,8);
+ assert.equal((section.match(/\{owner,repo:/g)||[]).length,8);
 });
 
 test("Board does not present a missing acceptance artifact as a global blocker",()=>{
