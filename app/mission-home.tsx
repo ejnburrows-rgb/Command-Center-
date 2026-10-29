@@ -19,7 +19,7 @@ type RecordItem={
 };
 const color:Record<State,string>={owner:"violet",proof:"amber",draft:"amber",verified:"teal",active:"slate"};
 const label:Record<State,string>={owner:"NEEDS YOU",proof:"MISSING PROOF",draft:"DRAFT · NOT DONE",verified:"VERIFIED",active:"OPEN WORK"};
-const tabs:{key:Panel;label:string}[]=[{key:"inspector",label:"Inspector"},{key:"decisions",label:"Needs You"},{key:"blocked",label:"Blocked"},{key:"memory",label:"Memory"}];
+const tabs:{key:Panel;label:string}[]=[{key:"inspector",label:"Inspector"},{key:"decisions",label:"Needs You"},{key:"blocked",label:"Evidence gaps"},{key:"memory",label:"Memory"}];
 const fmt=(input?:string)=>{if(!input)return "Not reported";const d=new Date(input);return Number.isFinite(d.getTime())?d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):"Not reported"};
 const alertText=(n:number|undefined)=>n===1?"1 missing item":(n||0)+" missing items";
 function fromWork(p:Project,w:Work):RecordItem{
@@ -90,7 +90,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
  const pinned=projects.filter(p=>pins.value.includes(p.slug));
  const tiles=[
   {key:"owner" as Filter,name:"NEEDS YOUR DECISION",value:dataValid?decisions.length:null,desc:"Proof-qualified approvals",tone:"violet"},
-  {key:"proof" as Filter,name:"BLOCKED / MISSING PROOF",value:dataValid?blocked.length:null,desc:"Unverified Cartilla jobs",tone:"amber"},
+  {key:"proof" as Filter,name:"UNVERIFIED · NEEDS PROOF",value:dataValid?blocked.length:null,desc:"Cartilla evidence gaps, not global blockers",tone:"amber"},
   {key:"draft" as Filter,name:"DRAFT PRs · NOT DONE",value:drafts,desc:"Across accessible repositories",tone:"amber"},
   {key:"verified" as Filter,name:"VERIFIED JOB REPORTS",value:dataValid?jobs.jobs.filter(j=>j.status==="VERIFIED"&&!j.missingEvidence?.length).length:null,desc:"Canonical job evidence only",tone:"teal"}
  ];
@@ -166,15 +166,15 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
       {selectedItem?<><div className={"mission-status mission-tone-"+color[selectedItem.state]}>{label[selectedItem.state]}</div>
        <h2>{selectedItem.title}</h2><p className="mission-inspector-meta">{selectedItem.project} · {selectedItem.kind}</p>
        <div className="mission-inspector-block"><h3>WHAT WE KNOW</h3><p>{selectedItem.summary}</p></div>
-       <div className="mission-inspector-block"><h3>NEXT ACTION</h3><p>{selectedItem.next}</p></div>
+       <div className="mission-inspector-block"><h3>NEXT ELIGIBLE ACTION · {selectedItem.project}</h3><p>{selectedItem.next}</p></div>
        {selectedItem.missing.length>0&&<div className="mission-inspector-block mission-missing"><h3>MISSING PROOF · {alertText(selectedItem.missing.length)}</h3>{selectedItem.missing.map(m=><p key={m}>• {m}</p>)}</div>}
        <div className="mission-inspector-actions"><External href={selectedItem.source}>Open source ↗</External>{selectedItem.proof&&<External href={selectedItem.proof}>View proof ↗</External>}
         <button type="button" onClick={()=>void copyPrompt(selectedItem)}>{copied==="yes"?"✓ Handoff copied":copied==="error"?"Copy unavailable":"Copy corrective AI handoff"}</button></div>
-       <p className="mission-inspector-note">Source evidence only. No merge, deployment or AI task is launched by this panel.</p>
+       <p className="mission-inspector-note">Record updated {fmt(selectedItem.updatedAt)}. {selectedItem.kind==="Agent job report"||selectedItem.kind==="Owner approval"?(dataValid?"Current evidence snapshot.":"Evidence snapshot stale or unavailable."):(projects.some(p=>p.slug===selectedItem.slug&&p.accessible&&!p.stale&&!p.limited)?"Current GitHub source snapshot.":"GitHub source stale or unavailable.")} Missing proof limits acceptance of this item only; other eligible work may continue. No merge, deployment or AI task is launched by this panel.</p>
       </>:<p className="mission-empty">Choose a work item to inspect verified source records.</p>}
     </div>}
     {panel==="decisions"&&<div className="mission-inspector-content"><p className="mission-eyebrow">OWNER CHECKPOINT</p><h2>Needs your decision</h2>{!dataValid?<p className="mission-empty">Approval source unavailable or refreshing.</p>:decisions.length?decisions.map(d=><button key={d.id} className="mission-minirow" onClick={()=>{setSelected(d.id);setPanel("inspector");setMobileInspect(true)}}>{d.title}<small>{d.project} · Review proof</small></button>):<p className="mission-empty">No decisions with qualified evidence are waiting.</p>}<p className="mission-inspector-note">Draft or unverified jobs do not qualify for owner approval.</p></div>}
-    {panel==="blocked"&&<div className="mission-inspector-content"><p className="mission-eyebrow">EVIDENCE GAPS</p><h2>Blocked or unverified</h2>{!dataValid?<p className="mission-empty">Job evidence unavailable or refreshing.</p>:blocked.length?blocked.map(x=><button key={x.id} className="mission-minirow" onClick={()=>{setSelected(x.id);setPanel("inspector");setMobileInspect(true)}}>{x.title}<small>{alertText(x.missing.length)} · {x.project}</small></button>):<p className="mission-empty">No unverified job reports in the source feed.</p>}<Link href="/evidence" className="mission-inspector-cta">Open all evidence →</Link></div>}
+    {panel==="blocked"&&<div className="mission-inspector-content"><p className="mission-eyebrow">EVIDENCE GAPS</p><h2>Unverified work · not a global block</h2>{!dataValid?<p className="mission-empty">Job evidence unavailable or refreshing.</p>:blocked.length?blocked.map(x=><button key={x.id} className="mission-minirow" onClick={()=>{setSelected(x.id);setPanel("inspector");setMobileInspect(true)}}>{x.title}<small>{alertText(x.missing.length)} · {x.project}</small></button>):<p className="mission-empty">No unverified job reports in the source feed.</p>}<Link href="/evidence" className="mission-inspector-cta">Open all evidence →</Link></div>}
     {panel==="memory"&&<div className="mission-inspector-content"><p className="mission-eyebrow">OBSIDIAN-STYLE KNOWLEDGE</p><h2>Human authority. Machine findings.</h2><p className="mission-inspector-meta">The owner decides. AI agents document evidence.</p><div className="mission-memory-links"><Link href="/knowledge">▤ Knowledge & Memory →</Link><External href="https://github.com/ejnburrows-rgb/Command-Center-/blob/main/knowledge/AGENT.md">↳ AGENT.md source</External><External href="https://github.com/ejnburrows-rgb/Command-Center-/tree/main/knowledge/Machine">↳ Verified findings</External></div><p className="mission-inspector-note">Private documents require your GitHub sign-in; they are not leaked to anonymous viewers.</p></div>}
     <div className="mission-inspector-bottom"><span className="mission-datalight"/><div><strong>GITHUB-BACKED SOURCES</strong><small>{fullyLoaded?"All six sources current":"Source may be limited"} · {dataValid?"Evidence fetched":"Evidence status unknown"}</small></div></div>
   </aside>
