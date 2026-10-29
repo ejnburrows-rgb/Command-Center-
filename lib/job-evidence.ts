@@ -80,9 +80,54 @@ export async function buildEvidence(body:string,updatedAt:string,comments:Commen
  }
  return {jobs,approvals};
 }
-export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-v2',30*60*1000,async()=>{
+
+/** Current #877 is a stage-based execution queue, not the historical ## Jobs list. */
+export function currentQueueJobs(body:string,updatedAt:string):Job[]{
+ const tutorHeading=/^## Current next product deliverable[^\n]*#1073/m.test(body);
+ const stage=body.match(/^## Stage 1[^\n]*\n([\s\S]*?)(?=^## |$(?![\s\S]))/m)?.[1]||'';
+ if(!tutorHeading&&!stage)throw new Error('Current Cartilla execution queue is unavailable');
+ const jobs:Job[]=[];
+ const add=(id:number,title:string,detail:string,sourceUrl:string)=>{
+  if(jobs.some(j=>j.id===id))return;
+  const proof=(detail.match(/https:\/\/github\.com\/ejnburrows-rgb\/cartilla-de-gretel\/(?:blob|tree)\/[^\s)]+/)||[])[0];
+  jobs.push({id,title,status:'UNVERIFIED',sourceUrl,prUrl:sourceUrl.includes('/pull/')?sourceUrl:undefined,
+   proofUrl:proof,updatedAt,missingEvidence:proof?['Linked report is not independently confirmed runtime acceptance']:['Current running-build and review proof not established']});
+ };
+ if(tutorHeading)add(1073,'Gretel Tutor — Lecciones 1–3','',repo.replace('/repos/','https://github.com/')+'/pull/1073');
+ for(const match of stage.matchAll(/^\|\s*#(\d+)\s+([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|/gm)){
+  const id=Number(match[1]),name=match[2].trim(),status=match[3].trim(),detail=match[4].trim();
+  if(/\bMERGED\b/i.test(status)||/\bMERGED INTO MAIN\b/i.test(detail))continue;
+  if(id===1073)continue;
+  add(id,name,detail,'https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/'+id);
+ }
+ return jobs;
+}
+/** Only public GitHub repository proof media. A link is evidence to inspect, not proof of completion. */
+export function publicProofMedia(body:string,prNumber:number){
+ const found=[...body.matchAll(/https:\/\/github\.com\/ejnburrows-rgb\/cartilla-de-gretel\/blob\/([^\s)\]]+?\.(?:mp4|webm|png|jpe?g|webp))(?=[\s)\]]|$)/gi)];
+ return found.slice(0,4).map(m=>({prNumber,type:/\.(mp4|webm)$/i.test(m[1])?'video':'image',
+  src:'https://raw.githubusercontent.com/ejnburrows-rgb/cartilla-de-gretel/'+m[1],
+  sourceUrl:m[0]}));
+}
+
+export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-v3',10*60*1000,async()=>{
  const {data:meta}=await github(repo);if(meta.private!==false)throw new Error('Public repository metadata unavailable');
  const {data:issue}=await github(repo+'/issues/877');
+ if(!/^##\\s+Jobs\\s*$/im.test(issue.body||'')){
+  const jobs=currentQueueJobs(issue.body||'',issue.updated_at||new Date().toISOString());
+  let media:ReturnType<typeof publicProofMedia>=[];
+  for(const job of jobs.filter(j=>j.id===1073||j.id===1203)){
+   try{
+    const {data:pr}=await github(repo+'/pulls/'+job.id);
+    job.githubState=pr.merged_at?'MERGED':pr.state==='open'?'PR OPEN':'PR CLOSED';
+    job.status=pr.merged_at?'MERGED':pr.state==='open'?'PR OPEN':'UNVERIFIED';
+    job.prUrl=pr.html_url;
+    // An open/merged PR is not automatically verified, integrated into a release, or deployed.
+    if(job.id===1203)media=publicProofMedia(pr.body||'',job.id);
+   }catch{/* Keep source-derived queue visible; never invent a PR state. */}
+  }
+  return {jobs,approvals:[],media};
+ }
  const comments=await allPages<Comment>(repo+'/issues/877/comments');
  if(comments.length!==issue.comments)throw new Error('Issue comments changed during pagination; evidence refresh required');
  return buildEvidence(issue.body||'',issue.updated_at,comments,{pr:async number=>(await github(repo+'/pulls/'+number)).data,artifact:visualArtifact});

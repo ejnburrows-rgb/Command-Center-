@@ -136,3 +136,22 @@
  .mission-inspector-content{min-height:240px}
  .mission-inspector-bottom{flex-shrink:0}
 }
+
+/* Live Cartilla priorities — GitHub-derived; never show simulated progress. */
+.mission-now{margin:0 0 22px;padding:18px;border:1px solid var(--ui-border,#29354a);border-radius:15px;background:var(--ui-panel,#111522);min-width:0}
+.mission-now-heading{display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.mission-now-heading h2{font-size:clamp(16px,2vw,21px);font-weight:800;line-height:1.25;letter-spacing:-.035em;margin:0;color:var(--ui-text,#f8fafc)}
+.mission-now-heading>span{font-size:10px;color:var(--ui-muted,#98a8bc)}
+.mission-now-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.mission-now-card{display:flex;flex-direction:column;align-items:flex-start;gap:9px;text-decoration:none;color:var(--ui-text,#f8fafc);padding:14px;border:1px solid var(--ui-border,#273145);background:var(--ui-raised,#171e2b);border-radius:12px;min-height:166px;transition:border-color .15s}
+.mission-now-card:hover,.mission-now-card:focus-visible{border-color:var(--ui-accent,#a78bfa)}
+.mission-now-card>small{font-size:9px;font-weight:800;letter-spacing:.095em;color:var(--ui-accent,#aa91fa)}
+.mission-now-card>strong{font-size:13px;font-weight:800;line-height:1.4;overflow-wrap:anywhere}
+.mission-now-card .mission-now-state{font-size:10px;font-weight:750;color:var(--ui-muted,#aab3c5);border:1px solid var(--ui-border,#30374c);border-radius:5px;padding:4px 7px}
+.mission-now-card p{font-size:11px;line-height:1.55;color:var(--ui-muted,#aab3c5);margin:0;flex:1}
+.mission-now-card b{font-size:10px;color:var(--ui-accent,#bca8ff)}
+.mission-proof-reel{margin-top:14px;display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:16px;align-items:center;background:var(--ui-raised,#171e2b);border-radius:10px;border:1px solid var(--ui-border,#30394d);padding:11px}
+.mission-proof-video video{display:block;width:100%;max-height:160px;object-fit:contain;background:#05060b;border-radius:7px}
+.mission-proof-description strong{font-size:12px}.mission-proof-description p{font-size:11px;line-height:1.6;color:var(--ui-muted,#aab3c5);margin:8px 0}.mission-proof-description a{font-size:11px;color:var(--ui-accent,#bca8ff);font-weight:700}
+@media(max-width:1060px){.mission-now-grid{grid-template-columns:1fr}.mission-now-card{min-height:auto}.mission-proof-reel{grid-template-columns:minmax(0,180px) minmax(0,1fr)}}
+@media(max-width:620px){.mission-now{padding:13px}.mission-proof-reel{grid-template-columns:1fr}.mission-proof-video video{max-height:220px}}
