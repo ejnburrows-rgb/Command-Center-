@@ -10,7 +10,7 @@ const names:{id:Agent;name:string;role:string}[]=[
 {id:"opus",name:"Opus",role:"Independent verification"}];
 const storageKey="nbo-gretel-owner-handoffs-v1";
 const blank:Record<Agent,string>={chatgpt:"",antigravity:"",opus:""};
-const museRequest="MUSE — SEND MY REMAINING HANDOFF PROMPTS\nRead the current repo instructions, approvals, conflicts, agent sessions, Mission Board, open PRs and verified proof. You dispatch Jules directly: do not send me a Jules prompt. Produce individually labeled COMPLETE copy-paste prompts ONLY for the remaining agents I must handle: ChatGPT/audio, Antigravity/games (if currently allowed), and Opus/independent verification. Include exact current task, owning agent, source PR/job links, scope, blocked prerequisites, acceptance checks, and expected evidence. Exclude agents without ready work, and never present old reports, PRs or worker claims as completed. Summarize my required actions in plain English.";
+const checkpointRequest="CARTILLA — CONTINUE THE EXISTING ASSIGNMENT\nCodex coordinates existing assignments under current AGENTS.md and GitHub issue #877. Reuse the existing Tutor #1073 branch and valid proof. Finish one authentic Lesson 1 interaction; hold only genuinely blocked actions and continue independent authorized work within this session. Report the exact revision, tests, real screenshots/recordings, remaining holds and next action. Do not create a new controller, duplicate task or provider session. Muse is historical support only; Antigravity requires fresh task-specific owner authorization. No merge, production release, spending or security change without its applicable authorization.";
 
 export default function GretelCommander({project,jobs,approvals,loading,stale,fetchedAt}:{project?:Project;jobs:Job[];approvals:Approval[];loading:boolean;stale:boolean;fetchedAt?:string}){
  const [handoffs,setHandoffs]=useState<Record<Agent,string>>(blank);
@@ -59,8 +59,8 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
      <div><span className="gretel-stat-label">NEED YOUR YES</span><strong>{evidenceOk?decisions:"—"}</strong><small>Evidence-backed decisions</small></div>
    </div>
    <div className="gretel-nextmove">
-     <div><span className="gretel-stat-label">YOUR NEXT MOVE</span><h3>Ask Muse for your handouts.</h3><p>Muse manages Jules. You only copy the remaining prompts for agents that need you.</p></div>
-     <button className="gretel-main-action" type="button" onClick={()=>void copy(museRequest)}>Copy Muse request <span aria-hidden="true">↗</span></button>
+     <div><span className="gretel-stat-label">YOUR NEXT MOVE</span><h3>Review actual proof.</h3><p>Codex coordinates existing assignments. Review the result and decide only when your approval is needed.</p></div>
+     <button className="gretel-main-action" type="button" onClick={()=>void copy(checkpointRequest)}>Copy current checkpoint <span aria-hidden="true">↗</span></button>
    </div>
    <div className="gretel-footerline">
     <span className="gretel-fresh">{evidenceOk?"Evidence checked "+checked:"Evidence source unavailable — status unconfirmed"}</span>
@@ -68,10 +68,10 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
    </div>
    <section className="gretel-inbox" aria-label="Your remaining handoffs">
       <button type="button" className="gretel-inbox-toggle" onClick={()=>setInboxOpen(v=>!v)} aria-expanded={inboxOpen}>
-       <span><strong>My prompt inbox</strong><small>{savedCount} saved handouts · ChatGPT / Antigravity / Opus</small></span><span aria-hidden="true">{inboxOpen?"−":"+"}</span>
+       <span><strong>My prompt inbox</strong><small>{savedCount} saved handoffs · Existing assignments</small></span><span aria-hidden="true">{inboxOpen?"−":"+"}</span>
       </button>
       {inboxOpen&&<div className="gretel-inbox-content">
-       <p className="gretel-inbox-instructions">Copy only the handouts Muse gives you. Jules stays with Muse. Prompts saved here remain on this device.</p>
+       <p className="gretel-inbox-instructions">Use current authorized assignments only; saved prompts do not launch workers. Historical handoffs saved here remain on this device.</p>
        {names.map(agent=><div className="gretel-prompt" key={agent.id}>
          <div className="gretel-prompt-head"><div><b>{agent.name}</b><small>{ready&&handoffs[agent.id].trim()?"Saved on this device":"No handout saved"}</small></div>
           <button type="button" onClick={()=>setEditing(editing===agent.id?null:agent.id)} aria-expanded={editing===agent.id}>{editing===agent.id?"Close":"Add / edit"}</button>
@@ -79,7 +79,7 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
          </div>
          {editing===agent.id&&<div className="gretel-editor">
            <label htmlFor={"gretel-"+agent.id}>Prompt for {agent.name}</label>
-           <textarea id={"gretel-"+agent.id} rows={6} value={handoffs[agent.id]} placeholder="Paste Muse's handout here" onChange={e=>setHandoffs(prev=>({...prev,[agent.id]:e.target.value}))}/>
+           <textarea id={"gretel-"+agent.id} rows={6} value={handoffs[agent.id]} placeholder="Paste an authorized task checkpoint here" onChange={e=>setHandoffs(prev=>({...prev,[agent.id]:e.target.value}))}/>
            <div><button type="button" onClick={()=>save(agent.id,handoffs[agent.id])}>Save on this device</button><button type="button" onClick={()=>save(agent.id,"")}>Clear</button></div>
          </div>}
        </div>)}

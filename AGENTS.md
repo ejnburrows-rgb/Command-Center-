@@ -1,69 +1,25 @@
-# AGENTS.md
+# NBO Operations Hub — agent working rules
 
-## GITHUB ACCOUNT LIMITS
+**Purpose:** Help the owner see real project progress, control decisions and complete existing work. This is the existing Command Center, **not** a new controller or dashboard.
 
-- EJN uses a free GitHub account and does not have GitHub Actions available.
-- Do not depend on GitHub Actions, required CI checks, or hosted Actions runners to complete or verify work.
-- Use direct verification, local/sandbox testing, or other available tools instead.
-- Do not recommend upgrading GitHub solely to enable Actions unless EJN explicitly asks about paid options.
+## Before work
 
----
+- Confirm the latest GitHub repo, `main`, existing PR/branch and acceptance criteria. Inspect the current app and actual connected evidence before proposing any redesign. Reuse open work (including existing NBO PRs) before creating a replacement.
+- Owner decisions in `knowledge/Human/` take precedence over AI findings; read `knowledge/AGENT.md` and scoped findings **only when working on project knowledge**. Do not confuse historical prompts with live tasks.
+- Use GitHub PR/commit states as Git evidence, not proof of a running Codex/Jules session. Show the source and last observed timestamp. When API information is unavailable, show **Unknown/Stale**, never simulated worker presence or invented completion percentages.
 
-## NON-TECHNICAL OWNER WORKFLOW — MANDATORY
+## One bounded product deliverable at a time
 
-EJN does not review code or GitHub internals. Agents own the technical judgment and must show proof in chat.
+- Work **Idea → Plan → Build → Focused Test → Real Visual Proof → Review/Owner Decision → Authorized Integration → Separately Authorized Release**.
+- Set one visible acceptance goal and complete the smallest coherent implementation. Do not create duplicate command centers, branches, monitoring services or another master plan; do not repeat unchanged audits and test runs.
+- Recover safely from ordinary local test/tool failures. A block holds **only the affected action**; save real work and continue the next independent eligible, already-authorized assignment **within the same available session**. Do not imply background activity after the session ends.
+- Avoid unnecessary sequential commits/builds or Vercel deployments. Use the repo's existing test/build commands for changed behavior. For visible changes, verify actual phone and desktop UI. A successful compile alone does not prove usable product behavior.
 
-- Never put unfinished or unverified work into `main`.
-- One branch per active job. No backup, experiment, duplicate, or unrelated branches.
-- Maximum two active coding lanes at once. Before changing shared areas, check the other active lane and avoid overlap.
-- Make normal technical choices yourself. Do not ask EJN to choose libraries, Git methods, file structure, or test methods unless it changes what he will actually see or use.
-- Before asking for approval, fix obvious issues, run relevant tests, confirm the project builds, check the actual feature/screen, and address known important review findings.
-- Preserve unrelated working parts of the project. Do not reorganize or modernize outside the task.
-- Do not claim success without verification.
+## Owner control and evidence
 
-### Proof shown to EJN
-For visual work, show screenshots/images or before-and-after proof in chat. For functional work, explain in plain English what works and what was tested. EJN should not need to open GitHub.
+- Show the owner the task, actual change, applicable pass/fail/unverified checks, screenshot/video when relevant, exact Git revision, release state, next executable action and what truly needs a decision. The owner should not need to read code, but must be able to inspect and override priorities.
+- Keep **visual acceptance**, independent technical review, exact-change merge permission and production deployment authorization **separate**. Do not auto-merge, auto-deploy, spend credits, change access/security, expose secrets or private knowledge, or delete irreplaceable work without applicable permission.
+- When a current task is ready, save a concise checkpoint on its existing PR/issue, then continue safe eligible work. **Do not stop just to wait for routine technical approval.** Do stop at a specific protected merge/release/owner action without authorization.
+- For any private owner notes, require actual server-side authorization; never put them in a publicly accessible client bundle.
 
-When work is ready, report exactly:
-
-```
-RESULT:
-What changed in plain English.
-
-PROOF:
-What was checked and the result. Include visible proof when appropriate.
-
-KNOWN LIMITATIONS:
-Anything unfinished, blocked, or uncertain. Write "None" if there are none.
-
-READY TO PUSH:
-Yes or No.
-```
-
-Then stop and wait.
-
-### Meaning of "Push it"
-When EJN says **"Push it"**, put the completed, tested work into `main`, confirm it is there, let the finished branch be removed when safe, and report back. EJN should never have to merge, rebase, cherry-pick, resolve conflicts, or supervise GitHub.
-
-"Push it" does **not** mean deploy publicly. Do not deploy, publish, spend money, change production data, delete data, or take another hard-to-reverse external action without explicit authorization. If updating `main` would automatically deploy production, warn EJN first and wait.
-
-Never merge work with known serious bugs, unresolved important review findings, a broken build, missing relevant testing, or a real conflict with another active lane. Fix those issues first.
-
-Do not enable automatic merging. Do not depend on GitHub Actions or paid GitHub features; use direct verification instead.
-
-If something goes wrong after "Push it", diagnose the cause, repair it if clearly within the approved task, verify the repair, and show the result without making EJN perform Git operations.
-
-Normal workflow: EJN asks → agent builds safely → agent tests → agent shows proof → EJN says "Push it" → agent puts finished work in `main` → agent confirms it.
-
----
-
-## AI-FIRST DELIVERY EVIDENCE GATE
-
-Before touching project knowledge, read `knowledge/AGENT.md` and the relevant scoped workflow `findings.md`. Owner-written decisions are authoritative and must not be overwritten by AI.
-
-- A claimed completion, draft PR, green-looking card, or test count is not proof of deployment or working behavior.
-- Show a real source, exact Git ref, tested behavior, screenshots for visual changes, and an honest missing-evidence list.
-- Do not substitute demo fixture data or simulated agent presence for GitHub/API evidence.
-- Use one coherent change and minimize redundant builds. Vercel may build every commit even on preview branches; avoid sequential one-file commits when possible.
-- For GitHub-backed private knowledge, require real server authorization before displaying it in an anonymous dashboard. Do not put secrets or private owner notes into client bundles.
-- Never claim a build is ready until the final HEAD deployment is green. Fix failed builds before requesting approval.
+**Checkpoint:** WORKS (and proof) / DOES NOT WORK (and reproduction) / NOT VERIFIED (and why) / NEXT (one accountable action). State the version checked. Distinguish built, tested, reviewed, integrated, deployed and live-verified.

@@ -16,10 +16,12 @@ test("status depends on real GitHub and accepted evidence rather than a guess",(
  assert.match(view,/Not confirmed/);
  assert.match(view,/evidenceOk/);
 });
-test("Muse owns Jules, remaining handoffs are ChatGPT Antigravity and Opus",()=>{
+test("current coordinator guidance cannot resurrect retired dispatch or make owner carry prompts",()=>{
  const view=read("app/gretel-commander.tsx");
  for(const name of ["ChatGPT","Antigravity","Opus"])assert.ok(view.includes(name));
- assert.match(view,/Muse manages Jules/);
+ assert.doesNotMatch(view,/Muse manages Jules|Jules stays with Muse|MUSE — SEND|Ask Muse for your handouts/);
+ assert.match(view,/Codex coordinates existing assignments/);
+ assert.match(view,/Review actual proof/);
  assert.match(view,/navigator\.clipboard\.writeText/);
  assert.doesNotMatch(view,/setInterval/);
 });

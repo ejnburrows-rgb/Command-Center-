@@ -25,8 +25,9 @@ test("Gretel is part of the main canvas with one primary action and clean timeli
  assert.match(src,/One clear path/);
  assert.match(src,/gretel-progress/);
  assert.match(src,/Your next move|YOUR NEXT MOVE/);
- assert.match(src,/Copy Muse request/);
- assert.match(src,/Muse manages Jules/);
+ assert.match(src,/Copy current checkpoint/);
+ assert.match(src,/Codex coordinates existing assignments/);
+ assert.doesNotMatch(src,/Muse manages Jules|Ask Muse for your handouts/);
  assert.match(src,/gretel-inbox-toggle/);
 });
 test("inbox remains device-local and is closed by default",()=>{
