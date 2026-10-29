@@ -33,3 +33,23 @@ test('explicit current product authorization can resume already-approved work',(
   assert.equal(result.mode,'PRODUCT_DEVELOPMENT');
   assert.equal(result.productWorkAuthorized,true);
 });
+
+const current877 = `# Cartilla execution queue
+## CURRENT OWNER DIRECTIVE — TUTOR #1073 DEVELOPMENT AND QUALIFICATION ONLY (October 29, 2026)
+**Active authorization** of Tutor development only.
+## CREDIT AND CONTEXT CONTROL — active organization-only operating rule (historical wording)
+## Current next product deliverable — existing Gretel Tutor #1073`;
+test('current actual #877 heading grants only existing Tutor #1073',()=>{
+  const result=currentExecutionAuthority(current877);
+  assert.equal(result.mode,'TUTOR_1073_ONLY');
+  assert.equal(result.productWorkAuthorized,true);
+  assert.deepEqual(result.authorizedJobIds,[1073]);
+  assert.match(result.nextStep,/Lección 1/);
+});
+test('a later historical organization-only note cannot override the current Tutor-only owner scope',()=>{
+  assert.equal(currentExecutionAuthority(current877+'\n## CURRENT OWNER DIRECTIVE — ORGANIZATION ONLY (historical)').mode,'TUTOR_1073_ONLY');
+});
+test('similarly named but not expressly authorized Tutor headings fail closed',()=>{
+  assert.equal(currentExecutionAuthority('## CURRENT OWNER DIRECTIVE — TUTOR #1074 DEVELOPMENT AND QUALIFICATION ONLY').productWorkAuthorized,false);
+  assert.equal(currentExecutionAuthority('## CURRENT OWNER DIRECTIVE — TUTOR #1073 GENERAL WORK').productWorkAuthorized,false);
+});
