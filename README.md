@@ -1,9 +1,8 @@
 # Command Center
 
-A private, single-user developer command center. **The GitHub repo is the only
-backend** — no database. Every read asks GitHub live; every "add" is a commit.
+The existing public NBO project hub. **GitHub supplies project evidence**; there is no new database. Repository code and the public read routes define current behavior. Follow `AGENTS.md` for execution and approval rules.
 
-- **Dev status** (issues/PRs) is read live from the GitHub API on each page load.
+- **Dev status** comes from public GitHub API snapshots. Source timestamps and stale/error indicators matter; a browser refresh does not guarantee a new GitHub fetch.
 - **Portal content** (prompts, research, decisions, checklists, readiness) lives
   as Markdown files in this repo under `content/`, also read live via the API.
 - **Adding content** commits a new file to this repo — the next page load shows
@@ -14,10 +13,11 @@ backend** — no database. Every read asks GitHub live; every "add" is a commit.
 Next.js (App Router) + TypeScript + Tailwind + Octokit. Deploys on Vercel Hobby
 (free). No Supabase, no ORM, no external database.
 
-## Auth
+## Public access and private data
 
-One passphrase (`PORTAL_PASSPHRASE`) checked by `middleware.ts`, which sets an
-httpOnly cookie and gates every route. That's the whole auth system.
+Current `proxy.ts` allows the hub without a site password, redirects `/login` to `/`, and blocks the legacy `/crm-core` and `/api/auth` routes. Public evidence requests in `lib/public-github.ts` do not use authenticated content tokens. Do not treat the historical passphrase helper as an active access gate or put private owner material in this public repository/client bundle.
+
+Legacy content clients and environment-variable helpers below are implementation references, not proof that public pages are authenticated. Adding private data requires separately authorized and verified server-side protection.
 
 ## Environment variables
 
@@ -80,6 +80,5 @@ exact fields.
 ├── app/              # Next.js App Router pages & layouts
 ├── content/          # Markdown content (prompts, research, decisions, etc.)
 ├── lib/              # Core utilities (auth, GitHub API, content parsing)
-├── middleware.ts     # Authentication middleware
-└── proxy.ts          # API proxy for GitHub requests
+└── proxy.ts          # Public hub routing; legacy CRM/auth paths blocked
 ```
