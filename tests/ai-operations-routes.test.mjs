@@ -102,8 +102,10 @@ test("copying a parked Cartilla or LANY task cannot start unauthorized product w
  const paused=new Function("item","productAuthorized","return ("+match[1]+");");
  assert.equal(paused({slug:"cartilla-de-gretel"},false),true);
  assert.equal(paused({slug:"lany-books-web"},false),true);
- assert.equal(paused({slug:"cartilla-de-gretel"},true),false);
+ assert.equal(paused({slug:"cartilla-de-gretel",id:"cartilla-de-gretel/pr/1073"},true),false);
+ assert.equal(paused({slug:"cartilla-de-gretel",id:"cartilla-de-gretel/pr/1203"},true),true);
+ assert.equal(paused({slug:"lany-books-web"},true),true);
  assert.equal(paused({slug:"Command-Center-"},false),false);
- assert.match(ui,/ORGANIZATION ONLY — do not implement, dispatch, or restart product work/);
+ assert.match(ui,/NOT AUTHORIZED FOR THIS TASK — do not implement, dispatch, or restart this product work/);
  assert.match(ui,/Do not create duplicate agents, branches, tasks or handoffs/);
 });
