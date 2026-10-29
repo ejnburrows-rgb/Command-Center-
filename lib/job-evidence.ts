@@ -1,4 +1,5 @@
 import {allPages,github,type GitHubRecord} from './public-github';
+import {currentExecutionAuthority} from './execution-authority.mjs';
 import {serverSnapshot} from './server-snapshot';
 const repo='/repos/ejnburrows-rgb/cartilla-de-gretel';
 export const jobSource='https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877';
@@ -83,6 +84,8 @@ export async function buildEvidence(body:string,updatedAt:string,comments:Commen
 
 /** Current #877 is a stage-based execution queue, not the historical ## Jobs list. */
 export function currentQueueJobs(body:string,updatedAt:string):Job[]{
+ // Never turn a historical backlog into new work while the owner has paused product development.
+ if(!currentExecutionAuthority(body).productWorkAuthorized)return [];
  const tutorHeading=/^## Current next product deliverable[^\n]*#1073/m.test(body);
  const stage=body.match(/^## Stage 1[^\n]*\n([\s\S]*?)(?=^## |$(?![\s\S]))/m)?.[1]||'';
  if(!tutorHeading&&!stage)throw new Error('Current Cartilla execution queue is unavailable');
@@ -110,9 +113,12 @@ export function publicProofMedia(body:string,prNumber:number){
   sourceUrl:m[0]}));
 }
 
-export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-v3',10*60*1000,async()=>{
+export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-v4',10*60*1000,async()=>{
  const {data:meta}=await github(repo);if(meta.private!==false)throw new Error('Public repository metadata unavailable');
  const {data:issue}=await github(repo+'/issues/877');
+ const authority=currentExecutionAuthority(issue.body||'');
+ const execution={...authority,sourceUrl:jobSource,sourceUpdatedAt:issue.updated_at||'',agentActivity:'UNKNOWN' as const,creditsRemaining:'UNKNOWN' as const};
+ if(!authority.productWorkAuthorized)return {jobs:[],approvals:[],media:[],execution};
  if(!/^##\\s+Jobs\\s*$/im.test(issue.body||'')){
   const jobs=currentQueueJobs(issue.body||'',issue.updated_at||new Date().toISOString());
   let media:ReturnType<typeof publicProofMedia>=[];
@@ -126,9 +132,10 @@ export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-
     if(job.id===1203)media=publicProofMedia(pr.body||'',job.id);
    }catch{/* Keep source-derived queue visible; never invent a PR state. */}
   }
-  return {jobs,approvals:[],media};
+  return {jobs,approvals:[],media,execution};
  }
  const comments=await allPages<Comment>(repo+'/issues/877/comments');
  if(comments.length!==issue.comments)throw new Error('Issue comments changed during pagination; evidence refresh required');
- return buildEvidence(issue.body||'',issue.updated_at,comments,{pr:async number=>(await github(repo+'/pulls/'+number)).data,artifact:visualArtifact});
+ const evidence=await buildEvidence(issue.body||'',issue.updated_at,comments,{pr:async number=>(await github(repo+'/pulls/'+number)).data,artifact:visualArtifact});
+ return {...evidence,execution};
 });}
