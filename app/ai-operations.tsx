@@ -47,6 +47,14 @@ export default function AIOperations({projects,view}:{projects:Project[];view:"o
  const description=isKnowledge?"Your local documents and the protected project-memory source.":isEvidence?"Check the evidence before accepting an AI completion claim.":"The live GitHub work queue and evidenced AI work. Agent presence is not inferred.";
  return <div className="aop-page">
   <header className="aop-pagehead"><div><p className="aop-eyebrow">NBO / MISSION CONTROL</p><h1>{title}</h1><p>{description}</p></div><div className="aop-source"><b>DATA INTEGRITY</b><span>Verified GitHub source only</span><small>No simulated activity or progress</small></div></header>
+  {!isKnowledge&&<section className="aop-card" aria-label="Agent continuation and current owner scope">
+   <p className="aop-eyebrow">CURRENT CARTILLA AUTHORIZATION · SOURCE #877</p>
+   <h2>{jobs.loading?"Checking owner scope…":jobs.stale||jobs.error||!jobs.execution?"Scope UNKNOWN — no agent dispatch":jobs.execution.mode==="ORGANIZATION_ONLY"?"Organization only · Product work parked":jobs.execution.mode==="PRODUCT_DEVELOPMENT"?"Product work permitted within existing assignments":"Scope UNKNOWN — no agent dispatch"}</h2>
+   <p>{!jobs.loading&&!jobs.stale&&!jobs.error&&jobs.execution?jobs.execution.nextStep:"Do not start Tutor, create a new task, or switch models to invent work until the source is verified."}</p>
+   <p>Running agent sessions: <strong>UNKNOWN</strong> · Remaining Astra / Opus credits: <strong>UNKNOWN</strong> — the public GitHub feed does not contain provider telemetry.</p>
+   <p>Source updated: {jobs.execution?.sourceUpdatedAt?sourceTime(jobs.execution.sourceUpdatedAt):"Not verified"}{jobs.stale?" · STALE":""}</p>
+   <div className="aop-links"><External href="https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877">Inspect current assignment and evidence</External></div>
+  </section>}
   {isKnowledge?<div className="aop-knowledge">
    <section className="aop-card"><p className="aop-eyebrow">PROJECT MEMORY</p><h2>Owner instructions are authoritative.</h2><p>Shared workflow instructions and AI findings are stored in the private Command Center repository. These links open GitHub with your own access permissions; the public dashboard never fetches private documents.</p><div className="aop-linkgrid"><External href="https://github.com/ejnburrows-rgb/Command-Center-/tree/main/knowledge/Human">Human / owner notes</External><External href="https://github.com/ejnburrows-rgb/Command-Center-/tree/main/knowledge/Machine">Machine / verified findings</External><External href="https://github.com/ejnburrows-rgb/Command-Center-/blob/main/knowledge/AGENT.md">Agent operating rules</External></div><p className="aop-caution">These documents remain GitHub-only until private server-side authentication is verified.</p></section>
    <FileVault/>
