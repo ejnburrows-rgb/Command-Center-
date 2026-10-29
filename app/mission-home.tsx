@@ -39,7 +39,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
  const otherReview=cartilla?.items.find(w=>w.kind==="pr"&&!w.draft&&w.number!==1073);
  const reviewPr=navigationPr||otherReview;
  const cartillaReady=Boolean(cartilla?.accessible&&!cartilla?.stale&&!cartilla?.limited);
- const productAuthorized=jobs.execution?.mode==="PRODUCT_DEVELOPMENT"&&!jobs.loading&&!jobs.stale&&!jobs.error;
+ const productAuthorized=(jobs.execution?.mode==="PRODUCT_DEVELOPMENT"||jobs.execution?.mode==="TUTOR_1073_ONLY")&&!jobs.loading&&!jobs.stale&&!jobs.error;
  const scopeKnown=!!jobs.execution&&!jobs.loading&&!jobs.stale&&!jobs.error;
  // The current #877 owner directive outranks historical Tutor/PR headings.
  // A new model conversation never grants permission to launch product work.
@@ -48,10 +48,11 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
    state:cartillaReady?(tutorPr?.draft?"DRAFT · NOT INTEGRATED":"RECHECK CURRENT PR"):"SOURCE REFRESHING",
    detail:"Reuse the existing Tutor branch. Verify one real Lesson 1 interaction, not a rebuilt project.",
    url:tutorPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/1073"},
-  {id:"review",step:"02 · UNFINISHED PR",title:reviewPr?.title||"Review pending integration work",
-   state:cartillaReady?(reviewPr?.draft?"DRAFT · OPEN":"OPEN PR · NOT DEPLOYED"):"SOURCE REFRESHING",
-   detail:"Inspect exact revision and prior proof before new testing, merges or another agent.",
-   url:reviewPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls"},
+  {id:"review",step:jobs.execution?.mode==="TUTOR_1073_ONLY"?"02 · PRESERVED BACKLOG":"02 · UNFINISHED PR",
+   title:jobs.execution?.mode==="TUTOR_1073_ONLY"?"Other Cartilla activities — paused":reviewPr?.title||"Review pending integration work",
+   state:jobs.execution?.mode==="TUTOR_1073_ONLY"?"PARKED · NOT AUTHORIZED NOW":cartillaReady?(reviewPr?.draft?"DRAFT · OPEN":"OPEN PR · NOT DEPLOYED"):"SOURCE REFRESHING",
+   detail:jobs.execution?.mode==="TUTOR_1073_ONLY"?"Navigation, games, artwork and teacher lanes are preserved, not authorized for active work.":"Inspect exact revision and prior proof before new testing, merges or another agent.",
+   url:jobs.execution?.mode==="TUTOR_1073_ONLY"?"https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877":reviewPr?.url||"https://github.com/ejnburrows-rgb/cartilla-de-gretel/pulls"},
   {id:"queue",step:"03 · AUTHORITATIVE NEXT STEP",title:"Cartilla execution queue · #877",
    state:"CURRENT OWNER SCOPE",detail:jobs.execution?.nextStep||"Read the authorized next action in the current issue.",
    url:"https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877"},
@@ -114,15 +115,15 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
  async function copyPrompt(item:RecordItem){
   // The current owner directive has priority over historical PR/issue titles.
   // Copying a backlog card must not become an unauthorized new agent assignment.
-  const productCopyPaused=(item.slug==="cartilla-de-gretel"||item.slug==="lany-books-web")&&!productAuthorized;
+  const productCopyPaused=item.slug==="lany-books-web"||(item.slug==="cartilla-de-gretel"&&(!productAuthorized||item.id!=="cartilla-de-gretel/pr/1073"));
   const prompt=(productCopyPaused?[
-    "ORGANIZATION ONLY — do not implement, dispatch, or restart product work.",
+    "NOT AUTHORIZED FOR THIS TASK — do not implement, dispatch, or restart this product work.",
     "Project: "+item.project,
     "Existing record (context only): "+item.source,
     "Current authority: https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877",
-    "Allowed scope: reconcile existing task ownership, instructions, source-of-truth and verified status.",
+    "Current authorized scope: "+(jobs.execution?.nextStep||"Not verified; do not dispatch."),
     "Check open PRs and assignments first. Do not create duplicate agents, branches, tasks or handoffs.",
-    "Preserve parked Tutor, lessons, artwork, audio, books and LANY features until owner explicitly resumes product work."
+    "Preserve other Cartilla and LANY tasks; only Tutor #1073 is currently authorized by #877."
   ]:[
     "Review and complete this AI software development task using the project's AGENTS.md and applicable findings.md.",
     "Project: "+item.project,"Task: "+item.title,"Canonical source: "+item.source,
