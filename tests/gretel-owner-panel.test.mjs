@@ -20,16 +20,16 @@ test("current coordinator guidance cannot resurrect retired dispatch or make own
  const view=read("app/gretel-commander.tsx");
  for(const name of ["ChatGPT","Antigravity","Opus"])assert.ok(view.includes(name));
  assert.doesNotMatch(view,/Muse manages Jules|Jules stays with Muse|MUSE — SEND|Ask Muse for your handouts/);
- assert.match(view,/Codex coordinates existing assignments/);
- assert.match(view,/Review actual proof/);
- assert.match(view,/navigator\.clipboard\.writeText/);
+ assert.match(view,/Open current assignment/);
+ assert.match(view,/Archived handoff notes/);
+ assert.doesNotMatch(view,/navigator\.clipboard\.writeText/);
  assert.doesNotMatch(view,/setInterval/);
 });
 test("owner prompt content stays on the device",()=>{
  const view=read("app/gretel-commander.tsx");
  assert.match(view,/localStorage\.getItem/);
  assert.match(view,/localStorage\.setItem/);
- assert.match(view,/saved here remain on this device/);
+ assert.match(view,/Saved on this device/);
  assert.doesNotMatch(view,/fetch\(/);
 });
 test("clean open-canvas Gretel section responds to narrow screens",()=>{
