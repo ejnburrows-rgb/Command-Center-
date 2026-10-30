@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { COOKIE_NAME, sha256hex } from "@/lib/auth";
+import { COOKIE_NAME, sha256hex } from "../../../lib/auth";
 
 export const runtime = "nodejs";
 
