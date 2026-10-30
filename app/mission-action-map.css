@@ -54,3 +54,5 @@
 
 /* Superseded click-through priority cards: direct copy-first actions are now above the old dashboard. */
 .mission-shell:has(.next-mission) .mission-now{display:none}
+
+/* Interactive network supersedes the original non-expandable label ring. */
