@@ -30,10 +30,26 @@ test("next tasks have real source records, copy-ready prompts and inspectable fu
 test("existing Tutor permission and Jules duplicate guard prevent blind dispatch",()=>{
  const view=read("app/mission-action-map.tsx");
  assert.match(view,/jobs\.execution\?\.productWorkAuthorized/);
- assert.match(view,/do not dispatch another/i);
+ assert.match(view,/Do not launch, resume, or duplicate a Jules task/i);
  assert.match(view,/SOURCE NOT VERIFIED FRESH/);
  assert.match(view,/Copying a prompt does not assign work or start an agent/);
  assert.doesNotMatch(view,/api\/dispatch|api\/jules\/start/);
+});
+test("Jules task prompts require fresh assignment evidence and failure becomes read-only review",()=>{
+ const view=read("app/mission-action-map.tsx");
+ const source=read("lib/jules-assignment.mjs");
+ assert.match(view,/fetch\("\/api\/assignment"/);
+ assert.match(view,/assignmentFresh=Boolean\(assignment\?\.fetchedAt&&!assignment\.stale&&!assignment\.error\)/);
+ assert.match(view,/assignmentEvidence\.status\.startsWith\("FAILED"\)/);
+ assert.match(view,/Review Jules task failure \(not active\)/);
+ assert.match(view,/Do not resume or dispatch from this Board/);
+ assert.match(view,/Read-only review of NBO ownership and project evidence/);
+ assert.match(view,/STALE \/ UNAVAILABLE — current Jules assignment state is UNKNOWN/);
+ assert.match(view,/projectPrompt\(chosen,assignment,assignmentFresh\)/);
+ assert.match(view,/Do not resume, edit, or dispatch an agent from this prompt/);
+ assert.doesNotMatch(view,/Jules — resume existing task/);
+ assert.match(source,/FAILED — PROVIDER REPORTED TASK FAILURE/);
+ assert.match(source,/Do not resume or dispatch from this Board/);
 });
 test("interactive map is phone-accessible and reduced-motion safe",()=>{
  const css=read("app/mission-network.css");
