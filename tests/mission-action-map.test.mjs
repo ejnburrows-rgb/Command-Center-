@@ -2,11 +2,13 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 const read=path=>readFileSync(new URL("../"+path,import.meta.url),"utf8");
-test("the home route renders the project mind map before the existing mission dashboard",()=>{
+test("the home route renders Cartilla-First MissionHome first, followed by compact JulesAssignment and MissionActionMap",()=>{
  const entry=read("app/hub-content.tsx");
  assert.match(entry,/import MissionActionMap from "\.\/mission-action-map"/);
  assert.match(entry,/tab==="Hub"&&<MissionActionMap projects=\{feed\.projects\} busy=\{loading\}\/>/);
- assert.ok(entry.indexOf("<MissionActionMap")<entry.indexOf("<Home projects="));
+ assert.ok(entry.indexOf("<Home projects=")<entry.indexOf("<MissionActionMap"));
+ assert.doesNotMatch(entry,/PURPLE NIGHT|TEAL DAY/);
+ assert.doesNotMatch(entry,/div className="page-title"/);
 });
 test("mind map expands real GitHub task branches instead of static project label lines",()=>{
  const view=read("app/mission-action-map.tsx");
@@ -30,23 +32,41 @@ test("next tasks have real source records, copy-ready prompts and inspectable fu
 test("existing Tutor permission and Jules duplicate guard prevent blind dispatch",()=>{
  const view=read("app/mission-action-map.tsx");
  assert.match(view,/jobs\.execution\?\.productWorkAuthorized/);
- assert.match(view,/do not dispatch another/i);
+ assert.match(view,/Do not launch, resume, or duplicate a Jules task/i);
  assert.match(view,/SOURCE NOT VERIFIED FRESH/);
  assert.match(view,/Copying a prompt does not assign work or start an agent/);
  assert.doesNotMatch(view,/api\/dispatch|api\/jules\/start/);
 });
-test("interactive map is phone-accessible and reduced-motion safe",()=>{
+test("Jules task prompts require fresh assignment evidence and failure becomes read-only review",()=>{
+ const view=read("app/mission-action-map.tsx");
+ const source=read("lib/jules-assignment.mjs");
+ assert.match(view,/fetch\("\/api\/assignment"/);
+ assert.match(view,/assignmentFresh=Boolean\(assignment\?\.fetchedAt&&!assignment\.stale&&!assignment\.error\)/);
+ assert.match(view,/assignmentEvidence\.status\.startsWith\("FAILED"\)/);
+ assert.match(view,/Review Jules task failure \(not active\)/);
+ assert.match(view,/Do not resume or dispatch from this Board/);
+ assert.match(view,/Read-only review of NBO ownership and project evidence/);
+ assert.match(view,/STALE \/ UNAVAILABLE — current Jules assignment state is UNKNOWN/);
+ assert.match(view,/projectPrompt\(chosen,assignment,assignmentFresh\)/);
+ assert.match(view,/Do not resume, edit, or dispatch an agent from this prompt/);
+ assert.doesNotMatch(view,/Jules — resume existing task/);
+ assert.match(source,/FAILED — PROVIDER REPORTED TASK FAILURE/);
+ assert.match(source,/Do not resume or dispatch from this Board/);
+});
+test("interactive map is phone-accessible, renders mobile tree < 640px, and is reduced-motion safe",()=>{
  const css=read("app/mission-network.css");
  const layout=read("app/layout.tsx");
  assert.match(layout,/mission-network\.css/);
  assert.match(css,/touch-action:none/);
  assert.match(css,/@media\(max-width:760px\)/);
+ assert.match(css,/@media\(max-width:639px\)/);
+ assert.match(css,/\.network-mobile-tree\{display:flex\}/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
 });
 
-test("never suggest stale PRs and hide the obsolete GitHub-only next-action cards",()=>{
+test("never suggest stale PRs and keep Cartilla priority cards visible in Cartilla-First header",()=>{
  const view=read("app/mission-action-map.tsx");
  const css=read("app/mission-action-map.css");
  assert.match(view,/p\.accessible&&!p\.stale&&!p\.limited/);
- assert.match(css,/:has\(\.next-mission\) \.mission-now\{display:none\}/);
+ assert.doesNotMatch(css,/:has\(\.next-mission\) \.mission-now\{display:none\}/);
 });

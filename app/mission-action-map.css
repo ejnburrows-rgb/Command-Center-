@@ -53,6 +53,6 @@
 @media(prefers-reduced-motion:reduce){.next-mission *{transition:none!important;animation:none!important}}
 
 /* Superseded click-through priority cards: direct copy-first actions are now above the old dashboard. */
-.mission-shell:has(.next-mission) .mission-now{display:none}
+/* Priority cards remain visible in Cartilla-First Command Header. */
 
 /* Interactive network supersedes the original non-expandable label ring. */

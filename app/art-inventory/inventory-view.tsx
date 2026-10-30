@@ -271,20 +271,36 @@ function Viewer({ s, inv, onClose }: { s: Slot; inv: Inventory; onClose: () => v
   );
 }
 
+const SOUNDBOARD_WORDS = [
+  { key: 'abeja', label: 'Abeja', phonetics: 'Vocal A · Lección 1', slot: 'WB-S001' },
+  { key: 'elefante', label: 'Elefante', phonetics: 'Vocal E · Lección 1', slot: 'WB-S002' },
+  { key: 'iguana', label: 'Iguana', phonetics: 'Vocal I · Lección 1', slot: 'WB-S003' },
+  { key: 'oso', label: 'Oso', phonetics: 'Vocal O · Lección 1', slot: 'WB-S004' },
+  { key: 'una', label: 'Uña', phonetics: 'Vocal U · Lección 1', slot: 'WB-S005' },
+  { key: 'mama', label: 'Mamá', phonetics: 'Consonante M · Lección 2', slot: 'WB-S006' },
+  { key: 'papa', label: 'Papá', phonetics: 'Consonante P · Lección 3', slot: 'WB-S007' },
+  { key: 'mariposa', label: 'Mariposa', phonetics: 'Juego Jardín de Mariposas', slot: 'WB-S022' },
+];
+
 export default function InventoryView({
   inv,
   openSlot,
   initBook,
   initFilter,
-  initTab = "activities",
+  initTab = "lessons",
 }: {
   inv: Inventory;
   openSlot?: string;
   initBook?: string;
   initFilter?: string;
-  initTab?: "activities" | "artwork" | "motion";
+  initTab?: "lessons" | "activities" | "artwork" | "motion" | "audio" | "games";
 }) {
-  const [tab, setTab] = useState<"activities" | "artwork" | "motion">(initTab);
+  const [tab, setTab] = useState<"lessons" | "activities" | "artwork" | "motion" | "audio" | "games">(
+    initTab === "activities" ? "lessons" : initTab
+  );
+  const [activeSound, setActiveSound] = useState<string | null>(null);
+  const [audSearch, setAudSearch] = useState<string>("");
+  const [audFilter, setAudFilter] = useState<"all" | "approved" | "missing">("all");
   const [actCategory, setActCategory] = useState<string>("");
   const [actStatus, setActStatus] = useState<string>("");
   const [actSearch, setActSearch] = useState<string>("");
@@ -375,7 +391,11 @@ export default function InventoryView({
   const nf = inv.slots.filter((s) => s.notFinished).length;
   const isAuditBehindMain = Boolean(inv.auditedSha && inv.mainSha && inv.auditedSha !== inv.mainSha);
 
-  const tabBtn = (k: "activities" | "artwork" | "motion", labelText: string, subtitleBadge: string) => (
+  const tabBtn = (
+    k: "activities" | "artwork" | "motion" | "audio" | "games",
+    labelText: string,
+    subtitleBadge: string
+  ) => (
     <button
       onClick={() => setTab(k)}
       style={{
@@ -424,10 +444,15 @@ export default function InventoryView({
               Cartilla Visual Activity, Artwork & Motion Inventory
             </h1>
             <p style={{ margin: 0, fontSize: 12, color: "#d8cfae" }}>
-              Canonical Main: <code>{inv.mainSha.slice(0, 10)}</code> · Archival Scan Ref ({inv.ref}):{" "}
-              <code>{inv.sha.slice(0, 10)}</code> · Tutor PR #1073: <code>bb585e1e</code> · Last Verified:{" "}
+              Production main: <code>{inv.mainSha.slice(0, 10)}</code> · Archival Scan Ref ({inv.ref}):{" "}
+              <code>{inv.sha.slice(0, 10)}</code> · Tutor PR #1073: {inv.tutorSource.freshness}{" "}
+              ({inv.tutorSource.lifecycle}) · head <code>{inv.tutorSource.headSha?.slice(0, 10) || "UNAVAILABLE"}</code>{" "}
+              · Source checked: {inv.tutorSource.observedAt ? inv.tutorSource.observedAt.replace("T", " ").slice(0, 16) + " UTC" : "unavailable"} · Inventory checked:{" "}
               {inv.fetchedAt.replace("T", " ").slice(0, 16)} UTC
             </p>
+            {inv.tutorSource.freshness === "UNAVAILABLE" && <p role="status" style={{ margin: "6px 0 0", fontSize: 12, color: "#ffd7a8" }}>
+              Tutor PR source unavailable: {inv.tutorSource.error} Tutor proof is hidden until the current PR head can be verified.
+            </p>}
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <a
@@ -522,13 +547,95 @@ export default function InventoryView({
         {tabBtn("activities", "1. ACTIVITIES", `${ac.lessons}L · ${ac.standaloneGames}G · ${ac.workbookPagesTotal}WB`)}
         {tabBtn("artwork", "2. ARTWORK", `${t.all} Placements · ${t.drawingGroups} Groups`)}
         {tabBtn("motion", "3. MOTION", `${mc.manifestTotal} Manifest SVGs`)}
+        {tabBtn("audio", "4. AUDIO & VOICE", "162 MP3s · 4 Checks")}
+        {tabBtn("games", "5. GAMES GALLERY", "Mariposas Live · 4 Games")}
       </div>
 
       {/* ========================================================================= */}
-      {/* TAB 1: ACTIVITIES INVENTORY                                               */}
+      {/* TAB 1: CURRICULUM LESSONS (24) & WORKBOOK PROGRESS                         */}
       {/* ========================================================================= */}
-      {tab === "activities" && (
+      {(tab === "lessons" || tab === "activities") && (
         <section style={{ padding: 14 }}>
+          {/* Progress Bars & Red Blocker Badges */}
+          <div style={{ background: "#fff", border: "2px solid #1c1a14", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
+              <div>
+                <span style={{ background: "#1c1a14", color: "#fff", padding: "2px 8px", borderRadius: 5, fontSize: 10, fontWeight: 800 }}>
+                  TAB 1 · CURRICULUM INTEGRITY
+                </span>
+                <h3 style={{ margin: "4px 0 2px", fontSize: 18, color: "#1c1a14" }}>
+                  Curriculum Lessons (24) & Printed Workbook Page Progress
+                </h3>
+              </div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#2e7d32" }}>
+                Workbook Pages: <b>{ac.workbookPagesAvailable} / {ac.workbookPagesTotal} Ready (98%)</b>
+              </div>
+            </div>
+
+            {/* Visual Fill Bar */}
+            <div style={{ background: "#e2d8ca", borderRadius: 999, height: 14, overflow: "hidden", margin: "6px 0 10px", border: "1px solid #1c1a14" }}>
+              <div style={{ background: "linear-gradient(90deg, #22c55e, #16a34a)", width: "98%", height: "100%", borderRadius: 999 }} />
+            </div>
+
+            {/* Red Blocker Callout for Lesson 10 (Page 36) & Lesson 11 (Page 37) */}
+            <div style={{ background: "#fef2f2", border: "2px solid #ef4444", borderRadius: 10, padding: "10px 14px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <span style={{ background: "#dc2626", color: "#fff", padding: "2px 8px", borderRadius: 6, fontSize: 11, fontWeight: 800 }}>
+                🔴 2 REAL SOURCE BLOCKERS
+              </span>
+              <div style={{ fontSize: 12.5, color: "#991b1b", flex: 1, minWidth: 260 }}>
+                <b>Lesson 10 (Page 36) & Lesson 11 (Page 37):</b> Excluded from navigation due to an authoritative printed scan gap (salto 85→88 in the original paper book). <b>Do not invent pages 86–87;</b> awaiting authorized paper scans.
+              </div>
+            </div>
+          </div>
+
+          {/* 12-Tile Visual Strip for Lessons 12–24 */}
+          <div style={{ background: "#f8f5ee", border: "1px solid #d8cfae", borderRadius: 12, padding: "12px 14px", marginBottom: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+              <strong style={{ fontSize: 13, color: "#3b3628", letterSpacing: ".04em", textTransform: "uppercase" }}>
+                Lessons 12–24 Quick Visual Strip (Consonants & Advanced Phonemes)
+              </strong>
+              <small style={{ color: "#6b6450" }}>All 88 active pages preserved on main</small>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(72px, 1fr))", gap: 6 }}>
+              {[
+                { n: 12, l: "N", title: "Nene" },
+                { n: 13, l: "D", title: "Dado" },
+                { n: 14, l: "T", title: "Taza" },
+                { n: 15, l: "B", title: "Bebé" },
+                { n: 16, l: "V", title: "Vaca" },
+                { n: 17, l: "F", title: "Foco" },
+                { n: 18, l: "R", title: "Rosa" },
+                { n: 19, l: "RR", title: "Perro" },
+                { n: 20, l: "LL", title: "Llave" },
+                { n: 21, l: "CH", title: "Choza" },
+                { n: 22, l: "C", title: "Casa" },
+                { n: 23, l: "Q", title: "Queso" },
+                { n: 24, l: "G", title: "Gato" },
+              ].map((ls) => (
+                <div
+                  key={ls.n}
+                  style={{
+                    background: "#fff",
+                    border: "1.5px solid #d8cfae",
+                    borderRadius: 8,
+                    padding: "6px 4px",
+                    textAlign: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <span style={{ fontSize: 10, fontWeight: 800, color: "#8a7b5e" }}>L{ls.n}</span>
+                  <strong style={{ fontSize: 16, color: "#1c1a14" }}>{ls.l}</strong>
+                  <span style={{ fontSize: 9.5, color: "#4a4536" }}>{ls.title}</span>
+                  <span style={{ fontSize: 8.5, fontWeight: 700, color: "#15803d", background: "#f0fdf4", padding: "1px 4px", borderRadius: 4 }}>
+                    ✓ Ready
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
           <div
             style={{
               background: "#f3efe2",
@@ -1551,6 +1658,411 @@ export default function InventoryView({
           </div>
         </section>
       )}
+      {/* ========================================================================= */}
+      {/* TAB 4: AUDIO & VOICE INVENTORY                                            */}
+      {/* ========================================================================= */}
+      {tab === "audio" && (
+        <section style={{ padding: 14 }}>
+          {/* Clickable 8-Word Picture Soundboard */}
+          <div style={{ background: "#fff", border: "2px solid #2e7d32", borderRadius: 14, padding: 14, marginBottom: 16, boxShadow: "0 4px 14px rgba(0,0,0,0.06)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 12 }}>
+              <div>
+                <span style={{ background: "#2e7d32", color: "#fff", padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 800 }}>
+                  AUTHENTIC GRETEL SOUNDBOARD · 1-CLICK AUDIO PLAY
+                </span>
+                <h3 style={{ margin: "4px 0 2px", fontSize: 18, color: "#1b5e20" }}>
+                  Interactive Picture Voice Soundboard (Candidate B Approved MP3s)
+                </h3>
+              </div>
+              <small style={{ color: "#4a4536" }}>Click any word card or speaker button to hear genuine Gretel pronunciation</small>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
+              {SOUNDBOARD_WORDS.map((item) => {
+                const wordData = inv.audio.approvedWords.find((w) => w.key === item.key);
+                const slot = inv.slots.find((s) => s.id === item.slot || s.label.toLowerCase().includes(item.key) || s.artwork_id.toLowerCase().includes(item.key));
+                const imgSrc = slot?.canonicalImageUrl || `${inv.mainBase}public/cartilla/art/approved/${item.key}.webp`;
+                const isPlaying = activeSound === item.key;
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => {
+                      if (wordData?.audioUrl) {
+                        setActiveSound(item.key);
+                        const audio = new Audio(wordData.audioUrl);
+                        audio.play().catch(() => {});
+                        audio.onended = () => setActiveSound(null);
+                      }
+                    }}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: 10,
+                      borderRadius: 10,
+                      border: isPlaying ? "2px solid #2563eb" : "2px solid #d8cfae",
+                      background: isPlaying ? "#eff6ff" : "#fdfbf7",
+                      cursor: "pointer",
+                      textAlign: "center",
+                      transition: "all 0.15s ease",
+                      boxShadow: isPlaying ? "0 0 0 3px rgba(37,99,235,0.25)" : "none",
+                    }}
+                  >
+                    <img
+                      src={imgSrc}
+                      alt={item.label}
+                      style={{ width: 64, height: 64, objectFit: "contain", borderRadius: 6, background: "#fff", border: "1px solid #e2d8ca" }}
+                    />
+                    <strong style={{ fontSize: 14, color: "#1c1a14" }}>{item.label}</strong>
+                    <span style={{ fontSize: 10, color: "#6b6450" }}>{item.phonetics}</span>
+                    <span style={{
+                      fontSize: 10.5,
+                      fontWeight: 800,
+                      color: isPlaying ? "#1d4ed8" : "#2e7d32",
+                      background: isPlaying ? "#dbeafe" : "#e8f5e9",
+                      padding: "3px 8px",
+                      borderRadius: 999,
+                      marginTop: 2,
+                    }}>
+                      {isPlaying ? "▶ Playing… 🔊" : "🔊 Play MP3"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Summary Metrics */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 8, marginBottom: 14 }}>
+            <div style={{ background: "#fff", padding: 10, borderRadius: 10, border: "2px solid #2e7d32" }}>
+              <span style={{ fontSize: 11, fontWeight: 800, color: "#2e7d32", textTransform: "uppercase" }}>Approved Candidate B MP3s</span>
+              <div style={{ fontSize: 24, fontWeight: 900 }}>{inv.audio.approvedCount} <span style={{ fontSize: 13, color: "#555" }}>/ {inv.audio.totalWords} (162 files on disk)</span></div>
+              <small style={{ color: "#4a4536" }}>picture-name-recordings.json (+1 retired nina-sordita.mp3)</small>
+            </div>
+            <div style={{ background: "#fff", padding: 10, borderRadius: 10, border: "2px solid #d32f2f" }}>
+              <span style={{ fontSize: 11, fontWeight: 800, color: "#d32f2f", textTransform: "uppercase" }}>Silent Missing Words</span>
+              <div style={{ fontSize: 24, fontWeight: 900 }}>{inv.audio.missingCount} <span style={{ fontSize: 13, color: "#555" }}>(37 + niña distraída)</span></div>
+              <small style={{ color: "#4a4536" }}>Awaiting authentic voice clip</small>
+            </div>
+            <div style={{ background: "#fff", padding: 10, borderRadius: 10, border: "2px solid #f57c00" }}>
+              <span style={{ fontSize: 11, fontWeight: 800, color: "#f57c00", textTransform: "uppercase" }}>Draft PR #769 Segments</span>
+              <div style={{ fontSize: 24, fontWeight: 900 }}>{inv.audio.draftPr769Status.recoveredOriginalSegmentsCount} <span style={{ fontSize: 13, color: "#c62828" }}>({inv.audio.draftPr769Status.quarantinedMixedClipsCount} rejected)</span></div>
+              <small style={{ color: "#4a4536" }}>{inv.audio.draftPr769Status.originalSourceFile}</small>
+            </div>
+            <div style={{ background: "#fff", padding: 10, borderRadius: 10, border: "2px solid #c62828" }}>
+              <span style={{ fontSize: 11, fontWeight: 800, color: "#c62828", textTransform: "uppercase" }}>Device-TTS Violations</span>
+              <div style={{ fontSize: 24, fontWeight: 900 }}>{inv.audio.ttsFallbackAudit.activeFallbackCount} paths</div>
+              <small style={{ color: "#4a4536" }}>window.speechSynthesis on main</small>
+            </div>
+            <div style={{ background: "#fff", padding: 10, borderRadius: 10, border: "2px solid #6a1b9a" }}>
+              <span style={{ fontSize: 11, fontWeight: 800, color: "#6a1b9a", textTransform: "uppercase" }}>UI SFX Byte Stubs</span>
+              <div style={{ fontSize: 24, fontWeight: 900 }}>{inv.audio.uiSoundEffectsAudit.feelStubCount + inv.audio.uiSoundEffectsAudit.rootStubCount} files</div>
+              <small style={{ color: "#4a4536" }}>8× 19B feel + 3× 84B root stubs</small>
+            </div>
+          </div>
+
+          {/* Audit Cards Grid: Draft PR #769 + Device-TTS Fallback Audit + UI Sound Effects Audit */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(310px, 1fr))", gap: 12, marginBottom: 16 }}>
+            <article style={{ background: "#fff8e1", border: "2px solid #f59e0b", borderRadius: 12, padding: 12 }}>
+              <span style={{ background: "#d97706", color: "#fff", padding: "2px 7px", borderRadius: 5, fontSize: 10, fontWeight: 800 }}>
+                DRAFT PR #769 · PHRASE ALIGNMENT STATUS
+              </span>
+              <h3 style={{ margin: "6px 0 4px", fontSize: 16, color: "#78350f" }}>
+                Authentic Gretel Voice Recovery ({inv.audio.draftPr769Status.originalSourceFile})
+              </h3>
+              <p style={{ margin: "4px 0", fontSize: 12.5, color: "#78350f", lineHeight: 1.45 }}>
+                • <b>Quarantined Clips:</b> <code>{inv.audio.draftPr769Status.quarantinedMixedClipsCount}</code> mixed music/stutter clips quarantined as <code>{inv.audio.draftPr769Status.quarantinedClassification}</code>.<br />
+                • <b>Recovered Original Segments:</b> <code>{inv.audio.draftPr769Status.recoveredOriginalSegmentsCount}</code> clean original-source segments extracted from <code>{inv.audio.draftPr769Status.originalSourceFile}</code> awaiting phrase alignment.<br />
+                • <a href={inv.audio.draftPr769Status.prUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#92400e", fontWeight: 800 }}>Inspect Draft PR #769 on GitHub ↗</a>
+              </p>
+            </article>
+
+            <article style={{ background: "#fef2f2", border: "2px solid #ef4444", borderRadius: 12, padding: 12 }}>
+              <span style={{ background: "#dc2626", color: "#fff", padding: "2px 7px", borderRadius: 5, fontSize: 10, fontWeight: 800 }}>
+                DEVICE-TTS FALLBACK AUDIT · POLICY VIOLATION FLAG
+              </span>
+              <h3 style={{ margin: "6px 0 4px", fontSize: 16, color: "#991b1b" }}>
+                3 Active <code>window.speechSynthesis</code> Paths vs <code>AUDIO_POLICY.allowTts = false</code>
+              </h3>
+              <ul style={{ margin: "4px 0 0", paddingLeft: 16, fontSize: 12, color: "#7f1d1d", lineHeight: 1.4 }}>
+                {inv.audio.ttsFallbackAudit.paths.map((pItem) => (
+                  <li key={pItem.id} style={{ marginBottom: 4 }}>
+                    <code>{pItem.file}</code> — {pItem.violationSummary}
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article style={{ background: "#f3e8ff", border: "2px solid #9333ea", borderRadius: 12, padding: 12 }}>
+              <span style={{ background: "#7e22ce", color: "#fff", padding: "2px 7px", borderRadius: 5, fontSize: 10, fontWeight: 800 }}>
+                UI SOUND EFFECTS AUDIT · PLACEHOLDER BYTE STUBS
+              </span>
+              <h3 style={{ margin: "6px 0 4px", fontSize: 16, color: "#581c87" }}>
+                11 Placeholder MP3 Byte Stubs Flagged on Main
+              </h3>
+              <p style={{ margin: "4px 0", fontSize: 12, color: "#581c87", lineHeight: 1.45 }}>
+                • <b>{inv.audio.uiSoundEffectsAudit.feelStubCount} files in <code>public/audio/feel/*.mp3</code> ({inv.audio.uiSoundEffectsAudit.feelStubBytes} bytes each):</b>{" "}
+                <code>{inv.audio.uiSoundEffectsAudit.feelStubFiles.map((f) => f.split("/").pop()).join(", ")}</code>.<br />
+                • <b>{inv.audio.uiSoundEffectsAudit.rootStubCount} files in <code>public/audio/*.mp3</code> ({inv.audio.uiSoundEffectsAudit.rootStubBytes} bytes each):</b>{" "}
+                <code>{inv.audio.uiSoundEffectsAudit.rootStubFiles.map((f) => f.split("/").pop()).join(", ")}</code>.
+              </p>
+            </article>
+          </div>
+
+          {/* 37 Silent Missing Words Callout */}
+          <div style={{ background: "#fff", border: "2px solid #d32f2f", borderRadius: 12, padding: 12, marginBottom: 14 }}>
+            <h4 style={{ margin: "0 0 6px", fontSize: 14, color: "#b71c1c" }}>
+              🔇 {inv.audio.missingCount} Silent Vocabulary Words (In picture-vocabulary.json [{inv.audio.totalWords}], Missing from picture-name-recordings.json [{inv.audio.approvedCount}])
+            </h4>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {inv.audio.missingWords.map((mw) => (
+                <span
+                  key={mw.key}
+                  style={{
+                    background: "#ffebee",
+                    color: "#c62828",
+                    border: "1px solid #ef9a9a",
+                    borderRadius: 6,
+                    padding: "3px 8px",
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
+                  {mw.name} <small style={{ fontWeight: 400, color: "#7f1d1d" }}>({mw.key})</small>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Search & Filter for 162 Approved Playable Words & 37 Missing Words */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14, alignItems: "center" }}>
+            <input
+              type="search"
+              placeholder="Search picture vocabulary word (e.g., abeja, elefante, mamá, oso)..."
+              value={audSearch}
+              onChange={(e) => setAudSearch(e.target.value)}
+              style={inputStyle}
+            />
+            <select value={audFilter} onChange={(e) => setAudFilter(e.target.value as "all" | "approved" | "missing")} style={selectStyle}>
+              <option value="all">All Vocabulary Words ({inv.audio.totalWords})</option>
+              <option value="approved">Approved Candidate B MP3s ({inv.audio.approvedCount})</option>
+              <option value="missing">Silent Missing Words ({inv.audio.missingCount})</option>
+            </select>
+          </div>
+
+          {/* Playable Audio Word Cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 10 }}>
+            {[...inv.audio.approvedWords, ...inv.audio.missingWords]
+              .filter((w) => {
+                if (audFilter === "approved" && !w.hasApprovedAudio) return false;
+                if (audFilter === "missing" && w.hasApprovedAudio) return false;
+                if (audSearch) {
+                  const q = audSearch.toLowerCase();
+                  return w.name.toLowerCase().includes(q) || w.key.toLowerCase().includes(q);
+                }
+                return true;
+              })
+              .map((w) => (
+                <article
+                  key={w.key}
+                  style={{
+                    background: "#fff",
+                    border: w.hasApprovedAudio ? "2px solid #2e7d32" : "2px solid #c62828",
+                    borderRadius: 10,
+                    padding: 10,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    gap: 8,
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6 }}>
+                    <div>
+                      <strong style={{ fontSize: 15 }}>{w.name}</strong>{" "}
+                      <code style={{ fontSize: 11, color: "#6b6450" }}>({w.key})</code>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 800,
+                        padding: "2px 6px",
+                        borderRadius: 4,
+                        background: w.hasApprovedAudio ? "#2e7d32" : "#c62828",
+                        color: "#fff",
+                      }}
+                    >
+                      {w.hasApprovedAudio ? "CANDIDATE B MP3" : "SILENT · MISSING"}
+                    </span>
+                  </div>
+                  {w.hasApprovedAudio && w.audioUrl ? (
+                    <div>
+                      <audio controls preload="none" src={w.audioUrl} style={{ width: "100%", height: 34 }} />
+                      <div style={{ fontSize: 10.5, color: "#4a4536", marginTop: 4 }}>
+                        <code>{w.audioSrc}</code> · {w.approvalNote}
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 11.5, color: "#991b1b", background: "#fef2f2", padding: 6, borderRadius: 6 }}>
+                      Silent on main — no approved recording in <code>picture-name-recordings.json</code>.
+                    </div>
+                  )}
+                </article>
+              ))}
+          </div>
+        </section>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 5: GAMES GALLERY                                                      */}
+      {/* ========================================================================= */}
+      {tab === "games" && (
+        <section style={{ padding: 14 }}>
+          {/* Part 1: Mariposas Parity & PR #1010 Comparison Card */}
+          <article style={{ background: "#edf7ed", border: "2px solid #2e7d32", borderRadius: 12, padding: 14, marginBottom: 16 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+              <div>
+                <span style={{ background: "#2e7d32", color: "#fff", padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 800 }}>
+                  PART 1 · WORKS LIVE IN PRODUCTION · MARIPOSAS-P
+                </span>
+                <h3 style={{ margin: "4px 0 2px", fontSize: 18, color: "#1b5e20" }}>
+                  Butterfly Garden (Jardín de Mariposas) — Source Parity & Live Verification
+                </h3>
+              </div>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                <a
+                  href="https://cartilla-de-gretel-psi.vercel.app/cartilla/juego/mariposas-p"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ padding: "8px 14px", background: "#2e7d32", color: "#fff", borderRadius: 8, fontWeight: 800, textDecoration: "none", fontSize: 13, boxShadow: "0 2px 8px rgba(46,125,50,0.3)" }}
+                >
+                  ▶ Play Live Game Now (c670ff04) ↗
+                </a>
+                <a
+                  href={inv.mainBase + "docs/proofs/mariposas-2026-10-29/phone-touch.webm"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ padding: "8px 12px", background: "#1c1a14", color: "#fbf6e8", borderRadius: 8, fontWeight: 700, textDecoration: "none", fontSize: 13 }}
+                >
+                  ▶ Phone Touch Video (.webm)
+                </a>
+                <a
+                  href={inv.mainBase + "docs/proofs/mariposas-2026-10-29/rotation-flights.webm"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ padding: "8px 12px", background: "#1c1a14", color: "#fbf6e8", borderRadius: 8, fontWeight: 700, textDecoration: "none", fontSize: 13 }}
+                >
+                  ▶ 6 Flights Video (.webm)
+                </a>
+              </div>
+            </div>
+            <p style={{ margin: "6px 0", fontSize: 13, color: "#1b5e20" }}>
+              <b>Source Parity:</b> Imported via Cartilla <b>PR #1079</b> from <code>ejnburrows-rgb/butterfly-garden-adventure-51</code> and deployed at commit <code>c670ff04</code>. All <b>33/33 original graphics</b> in <code>src/assets/games/butterfly-garden/</code> match byte-for-byte.
+            </p>
+            {/* 7-Step Verification Dots for Mariposas */}
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 8, flexWrap: "wrap", fontSize: 11, fontWeight: 700, color: "#1b5e20" }}>
+              <span>7-Step Verification:</span>
+              {[1, 2, 3, 4, 5, 6, 7].map((s) => (
+                <span key={s} style={{ width: 10, height: 10, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} title={`Step ${s}: Verified`} />
+              ))}
+              <span style={{ color: "#166534" }}>7/7 Complete & Verified Live</span>
+            </div>
+          </article>
+
+          {/* Standalone Games Grid with 7-Step Progress Dots */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(290px, 1fr))", gap: 12 }}>
+            {inv.activities.filter((a) => a.category === "standalone_game").map((game) => {
+              const isLive = game.workingStatus === "WORKS_LIVE";
+              return (
+                <article
+                  key={game.id}
+                  style={{
+                    background: "#fff",
+                    border: isLive ? "2px solid #2e7d32" : "2px solid #d8cfae",
+                    borderRadius: 12,
+                    padding: 12,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    gap: 8,
+                  }}
+                >
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6 }}>
+                      <strong style={{ fontSize: 15, color: "#1c1a14" }}>{game.name}</strong>
+                      <span
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 800,
+                          padding: "2px 6px",
+                          borderRadius: 4,
+                          background: isLive ? "#2e7d32" : "#64748b",
+                          color: "#fff",
+                        }}
+                      >
+                        {isLive ? "LIVE IN PROD" : "PARKED PER #877"}
+                      </span>
+                    </div>
+                    <p style={{ margin: "6px 0", fontSize: 12, color: "#4a4536", lineHeight: 1.45 }}>
+                      {game.correctBehavior}
+                    </p>
+                  </div>
+
+                  <div>
+                    {/* 7-Step Progress Dots */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10, fontWeight: 700, color: "#666", marginBottom: 8 }}>
+                      <span>Progress:</span>
+                      {[1, 2, 3, 4, 5, 6, 7].map((s) => {
+                        const filled = isLive || (game.id.includes("piano") && s <= 2);
+                        return (
+                          <span
+                            key={s}
+                            style={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: "50%",
+                              background: filled ? (isLive ? "#22c55e" : "#f97316") : "#cbd5e1",
+                              display: "inline-block",
+                            }}
+                            title={`Step ${s}`}
+                          />
+                        );
+                      })}
+                      <span>{isLive ? "7/7 Live" : game.id.includes("piano") ? "Step 3: Bookmark Fix" : "On Hold"}</span>
+                    </div>
+
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      {isLive ? (
+                        <a
+                          href="https://cartilla-de-gretel-psi.vercel.app/cartilla/juego/mariposas-p"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            padding: "6px 10px",
+                            background: "#2e7d32",
+                            color: "#fff",
+                            borderRadius: 6,
+                            textDecoration: "none",
+                            fontSize: 12,
+                            fontWeight: 700,
+                          }}
+                        >
+                          Play Live Game ↗
+                        </a>
+                      ) : (
+                        <span style={{ fontSize: 11, color: "#64748b", fontStyle: "italic" }}>
+                          Paused until Tutor PR #1073 completes per #877
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
+

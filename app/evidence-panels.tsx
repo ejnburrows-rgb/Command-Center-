@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useState} from "react";
 import {External} from "./hub-ui";
-export type Job={id:string|number;title:string;status:string;githubState?:string;sourceUrl:string;prUrl?:string;proofUrl?:string;updatedAt?:string;ownerDecision?:string;missingEvidence:string[]};
+export type Job={id:string|number;title:string;status:string;githubState?:string;headSha?:string;sourceUrl:string;prUrl?:string;proofUrl?:string;updatedAt?:string;ownerDecision?:string;missingEvidence:string[]};
 export type MediaProof={prNumber:number;type:'video'|'image';src:string;sourceUrl:string};
 export type Approval={id:string;title:string;project:string;sourceUrl:string;proofUrl:string;updatedAt:string;state:string};
 export type Execution={mode:'ORGANIZATION_ONLY'|'PRODUCT_DEVELOPMENT'|'TUTOR_1073_ONLY'|'UNKNOWN';productWorkAuthorized:boolean;authorizedJobIds?:number[];nextStep:string;sourceUrl:string;sourceUpdatedAt:string;agentActivity:'UNKNOWN';creditsRemaining:'UNKNOWN'};

@@ -4,7 +4,7 @@ import {serverSnapshot} from './server-snapshot';
 const repo='/repos/ejnburrows-rgb/cartilla-de-gretel';
 export const jobSource='https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877';
 export type JobStatus='NOT STARTED'|'IN PROGRESS'|'PR OPEN'|'VERIFIED'|'MERGED'|'LIVE'|'UNVERIFIED';
-export type Job={id:number;title:string;status:JobStatus;githubState?:'PR OPEN'|'MERGED'|'PR CLOSED';sourceUrl:string;prUrl?:string;proofUrl?:string;updatedAt?:string;ownerDecision?:string;missingEvidence:string[]};
+export type Job={id:number;title:string;status:JobStatus;githubState?:'PR OPEN'|'MERGED'|'PR CLOSED';headSha?:string;sourceUrl:string;prUrl?:string;proofUrl?:string;updatedAt?:string;ownerDecision?:string;missingEvidence:string[]};
 export type Approval={id:string;title:string;project:string;sourceUrl:string;proofUrl:string;updatedAt:string;state:string};
 export type Comment={id:number;body:string;html_url:string;updated_at:string;user?:{login:string}};
 export function canonicalJobs(body:string,updatedAt:string):Job[]{
@@ -134,6 +134,7 @@ export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-
     job.githubState=pr.merged_at?'MERGED':pr.state==='open'?'PR OPEN':'PR CLOSED';
     job.status=pr.merged_at?'MERGED':pr.state==='open'?'PR OPEN':'UNVERIFIED';
     job.prUrl=pr.html_url;
+    if(typeof pr.head?.sha==='string'&&/^[a-f0-9]{40}$/i.test(pr.head.sha))job.headSha=pr.head.sha;
     // An open/merged PR is not automatically verified, integrated into a release, or deployed.
     if(job.id===1203)media=publicProofMedia(pr.body||'',job.id);
    }catch{/* Keep source-derived queue visible; never invent a PR state. */}
