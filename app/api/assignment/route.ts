@@ -11,9 +11,9 @@ export async function GET() {
   try {
     const result = await serverSnapshot("nbo-jules-assignment-18-v1", 120_000, async () => {
       const [issueResult, timelineResult, commentsResult] = await Promise.all([
-        github(`${repo}/issues/18`),
-        github(`${repo}/issues/18/timeline?per_page=100`),
-        github(`${repo}/issues/18/comments?per_page=100`),
+        github<any>(`${repo}/issues/18`),
+        github<any>(`${repo}/issues/18/timeline?per_page=100`),
+        github<any>(`${repo}/issues/18/comments?per_page=100`),
       ]);
       const issue = issueResult.data;
       const timeline = timelineResult.data;
@@ -29,7 +29,7 @@ export async function GET() {
       let pullRequest: any = null;
       const linked = candidates[candidates.length - 1];
       if (linked?.number) {
-        const { data } = await github(`${repo}/pulls/${linked.number}`);
+        const { data } = await github<any>(`${repo}/pulls/${linked.number}`);
         pullRequest = data;
       } else if (expectedTaskUrl) {
         // Jules normally records the task URL in its issue acknowledgment and the

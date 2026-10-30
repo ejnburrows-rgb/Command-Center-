@@ -120,17 +120,17 @@ export function publicProofMedia(body:string,prNumber:number){
 }
 
 export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-v5',10*60*1000,async()=>{
- const {data:meta}=await github(repo);if(meta.private!==false)throw new Error('Public repository metadata unavailable');
- const {data:issue}=await github(repo+'/issues/877');
+ const {data:meta}=await github<{private?: boolean}>(repo);if(meta.private!==false)throw new Error('Public repository metadata unavailable');
+ const {data:issue}=await github<{body?: string; updated_at?: string; comments?: number}>(repo+'/issues/877');
  const authority=currentExecutionAuthority(issue.body||'');
  const execution={...authority,sourceUrl:jobSource,sourceUpdatedAt:issue.updated_at||'',agentActivity:'UNKNOWN' as const,creditsRemaining:'UNKNOWN' as const};
  if(!authority.productWorkAuthorized)return {jobs:[],approvals:[],media:[],execution};
  if(!/^##\\s+Jobs\\s*$/im.test(issue.body||'')){
-  const jobs=currentQueueJobs(issue.body||'',issue.updated_at||new Date().toISOString());
+  const jobs=currentQueueJobs(issue.body||'',issue.updated_at||''||new Date().toISOString());
   let media:ReturnType<typeof publicProofMedia>=[];
   for(const job of jobs.filter(j=>j.id===1073||j.id===1203)){
    try{
-    const {data:pr}=await github(repo+'/pulls/'+job.id);
+    const {data:pr}=await github<{merged_at?: string; state?: string; html_url?: string; body?: string}>(repo+'/pulls/'+job.id);
     job.githubState=pr.merged_at?'MERGED':pr.state==='open'?'PR OPEN':'PR CLOSED';
     job.status=pr.merged_at?'MERGED':pr.state==='open'?'PR OPEN':'UNVERIFIED';
     job.prUrl=pr.html_url;
@@ -142,6 +142,6 @@ export async function getJobEvidence(){return serverSnapshot('cartilla-jobs-877-
  }
  const comments=await allPages<Comment>(repo+'/issues/877/comments');
  if(comments.length!==issue.comments)throw new Error('Issue comments changed during pagination; evidence refresh required');
- const evidence=await buildEvidence(issue.body||'',issue.updated_at,comments,{pr:async number=>(await github(repo+'/pulls/'+number)).data,artifact:visualArtifact});
+ const evidence=await buildEvidence(issue.body||'',issue.updated_at||'',comments,{pr:async number=>(await github<GitHubRecord>(repo+'/pulls/'+number)).data,artifact:visualArtifact});
  return {...evidence,execution};
 });}

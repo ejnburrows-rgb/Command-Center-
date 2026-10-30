@@ -10,7 +10,7 @@ export async function GET(request:NextRequest){
   try{
    // Repository metadata is validated BEFORE reading work; no authenticated/private data source.
    const result=await serverSnapshot(`public-v2:${slug}`,slug==='cartilla-de-gretel'?15*60*1000:45*60*1000,async()=>{
-    const {data:meta}=await github(base);
+    const {data:meta}=await github<{html_url?: string; description?: string; language?: string; updated_at?: string; open_issues_count?: number}>(base);
     const [issues,pulls]=await Promise.all([allPages<GitHubRecord>(base+'/issues?state=open&sort=created&direction=asc'),allPages<GitHubRecord>(base+'/pulls?state=open&sort=created&direction=asc')]);
     const counts=summarize(issues,pulls);
     if(typeof meta.open_issues_count==='number'&&counts.issues+counts.prs!==meta.open_issues_count)throw new Error('GitHub totals changed during pagination; preserving last successful counts');
