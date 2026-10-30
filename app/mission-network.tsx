@@ -366,6 +366,67 @@ export default function MissionNetwork({
   const [selectedStep, setSelectedStep] = useState<number>(5);
   const [viewType, setViewType] = useState<"mind_graph" | "repo_cluster">("mind_graph");
   const [copiedHandoff, setCopiedHandoff] = useState(false);
+  const [isZoomFitting, setIsZoomFitting] = useState(false);
+  const [bouncingNodeId, setBouncingNodeId] = useState<string | null>(null);
+  const [nodePositions, setNodePositions] = useState<Record<string, { dx: number; dy: number }>>({});
+  const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
+  const dragOffsetRef = useRef<{ id: string; startX: number; startY: number; initDx: number; initDy: number } | null>(null);
+
+  function handleZoomToFit() {
+    setIsZoomFitting(true);
+    setTimeout(() => setIsZoomFitting(false), 520);
+  }
+
+  function triggerBounce(nodeId: string) {
+    setBouncingNodeId(nodeId);
+    setTimeout(() => setBouncingNodeId((curr) => (curr === nodeId ? null : curr)), 380);
+  }
+
+  function getNodePos(node: MindGraphNode) {
+    const offset = nodePositions[node.id] || { dx: 0, dy: 0 };
+    return { x: node.x + offset.dx, y: node.y + offset.dy };
+  }
+
+  function handleNodePointerDown(e: React.PointerEvent<SVGGElement>, nodeId: string) {
+    if ((e.target as HTMLElement)?.closest("a, button")) return;
+    (e.currentTarget as Element).setPointerCapture(e.pointerId);
+    const curr = nodePositions[nodeId] || { dx: 0, dy: 0 };
+    dragOffsetRef.current = {
+      id: nodeId,
+      startX: e.clientX,
+      startY: e.clientY,
+      initDx: curr.dx,
+      initDy: curr.dy,
+    };
+    setDraggingNodeId(nodeId);
+  }
+
+  function handleNodePointerMove(e: React.PointerEvent<SVGGElement>) {
+    const d = dragOffsetRef.current;
+    if (!d) return;
+    const dx = d.initDx + (e.clientX - d.startX);
+    const dy = d.initDy + (e.clientY - d.startY);
+    setNodePositions((prev) => ({
+      ...prev,
+      [d.id]: { dx, dy },
+    }));
+  }
+
+  function handleNodePointerUp(e: React.PointerEvent<SVGGElement>) {
+    if (dragOffsetRef.current) {
+      try {
+        (e.currentTarget as Element).releasePointerCapture(e.pointerId);
+      } catch {}
+      dragOffsetRef.current = null;
+      setDraggingNodeId(null);
+    }
+  }
+
+  function resetLayout() {
+    setNodePositions({});
+  }
+
+  const hasCustomLayout = Object.keys(nodePositions).length > 0;
 
   // Repo Cluster State
   const [focus, setFocus] = useState("");
@@ -560,6 +621,25 @@ export default function MissionNetwork({
                 >
                   Expand XL
                 </button>
+                <button
+                  type="button"
+                  className={"size-btn" + (isZoomFitting ? " is-zoom-fitting" : "")}
+                  onClick={handleZoomToFit}
+                  title="Zoom to Fit pulse animation"
+                >
+                  Fit 🎯
+                </button>
+                {hasCustomLayout && (
+                  <button
+                    type="button"
+                    className="size-btn"
+                    onClick={resetLayout}
+                    title="Reset node drag positions to default layout"
+                    style={{ color: "#fca5a5" }}
+                  >
+                    Reset Layout ↺
+                  </button>
+                )}
               </div>
               <div className="view-switch-pills" role="group" aria-label="Network View Modes" style={{ display: "inline-flex", gap: 4, marginLeft: 8 }}>
                 <button
@@ -616,79 +696,171 @@ export default function MissionNetwork({
                     </linearGradient>
                   </defs>
 
-                  {/* 3 Visual Time-Zone Columns */}
-                  <g className="time-zone-columns" aria-hidden="true">
-                    <rect x="10" y="8" width="235" height="414" rx="8" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-                    <text x="22" y="28" fill="#4ade80" fontSize="10" fontWeight="800" letterSpacing="0.08em">
-                      PAST · VERIFIED & DELIVERED
-                    </text>
+                  {/* Animated & Zoomable Camera Group */}
+                  <g className={"spider-camera-group" + (isZoomFitting ? " is-zoom-fitting" : "")}>
+                    {/* 3 Visual Time-Zone Columns */}
+                    <g className="time-zone-columns" aria-hidden="true">
+                      <rect x="10" y="8" width="235" height="414" rx="8" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                      <text x="22" y="28" fill="#4ade80" fontSize="10" fontWeight="800" letterSpacing="0.08em">
+                        PAST · VERIFIED & DELIVERED
+                      </text>
 
-                    <rect x="255" y="8" width="450" height="414" rx="8" fill="#0f172a" stroke="#334155" strokeWidth="1.5" />
-                    <text x="270" y="28" fill="#fb923c" fontSize="10" fontWeight="800" letterSpacing="0.08em">
-                      HAPPENING NOW · ACTIVE HEADQUARTERS
-                    </text>
+                      <rect x="255" y="8" width="450" height="414" rx="8" fill="#0f172a" stroke="#334155" strokeWidth="1.5" />
+                      <text x="270" y="28" fill="#fb923c" fontSize="10" fontWeight="800" letterSpacing="0.08em">
+                        HAPPENING NOW · ACTIVE HEADQUARTERS
+                      </text>
 
-                    <rect x="715" y="8" width="235" height="414" rx="8" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-                    <text x="727" y="28" fill="#f87171" fontSize="10" fontWeight="800" letterSpacing="0.08em">
-                      READY FIXES & FUTURE QUEUE
-                    </text>
-                  </g>
+                      <rect x="715" y="8" width="235" height="414" rx="8" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
+                      <text x="727" y="28" fill="#f87171" fontSize="10" fontWeight="800" letterSpacing="0.08em">
+                        READY FIXES & FUTURE QUEUE
+                      </text>
+                    </g>
 
-                  {/* Connecting Edges */}
-                  <g className="mind-edges" aria-hidden="true">
-                    <path d="M 235 110 C 290 110, 310 95, 375 95" stroke="url(#edge-active)" strokeWidth="2" fill="none" strokeDasharray="4 3" />
-                    <path d="M 485 95 L 530 95" stroke="#f97316" strokeWidth="2" fill="none" />
-                    <path d="M 235 280 C 290 280, 310 245, 375 245" stroke="url(#edge-delivered)" strokeWidth="2" fill="none" />
-                    <path d="M 485 245 L 530 245" stroke="#f97316" strokeWidth="2.5" fill="none" />
-                    <path d="M 690 95 C 740 95, 750 100, 805 100" stroke="url(#edge-blocker)" strokeWidth="2" fill="none" />
-                    <path d="M 690 245 C 740 245, 750 225, 805 225" stroke="url(#edge-blocker)" strokeWidth="2" fill="none" />
-                    <path d="M 690 245 C 740 245, 750 345, 805 345" stroke="#64748b" strokeWidth="1.5" fill="none" strokeDasharray="3 3" />
-                  </g>
+                    {/* Connecting Edges with Spider Edge Class & Dynamic Path Resolution */}
+                    <g className="mind-edges" aria-hidden="true">
+                      {(() => {
+                        const pMerged = getNodePos(OPTION_C_MIND_NODES[0]);
+                        const pMariposas = getNodePos(OPTION_C_MIND_NODES[1]);
+                        const pJules = getNodePos(OPTION_C_MIND_NODES[2]);
+                        const pPR28 = getNodePos(OPTION_C_MIND_NODES[3]);
+                        const pRules = getNodePos(OPTION_C_MIND_NODES[4]);
+                        const pTutor = getNodePos(OPTION_C_MIND_NODES[5]);
+                        const pVoice = getNodePos(OPTION_C_MIND_NODES[6]);
+                        const pPages = getNodePos(OPTION_C_MIND_NODES[7]);
+                        const pParked = getNodePos(OPTION_C_MIND_NODES[8]);
 
-                  {/* 9 Interactive Mind Graph Nodes */}
-                  <g className="mind-nodes">
-                    {OPTION_C_MIND_NODES.map((node) => {
-                      const isNodeActive = selectedMindNode === node.id;
-                      const isNodeStepActive = selectedStep === node.step;
-                      return (
-                        <g
-                          key={node.id}
-                          className={"mind-node-group tone-" + node.tone + (isNodeActive ? " active" : "")}
-                          transform={`translate(${node.x - 55}, ${node.y - 30})`}
-                          onClick={() => {
-                            setSelectedMindNode(node.id);
-                            setSelectedStep(node.step);
-                          }}
-                          style={{ cursor: "pointer" }}
-                          role="button"
-                          tabIndex={0}
-                          aria-label={node.title + " (" + node.tone + ")"}
-                          aria-pressed={isNodeActive}
-                        >
-                          <rect
-                            x="0"
-                            y="0"
-                            width="110"
-                            height="60"
-                            rx="8"
-                            className="node-box"
-                            strokeWidth={isNodeActive || isNodeStepActive ? "3" : "1.5"}
-                          />
-                          <text x="6" y="12" className="node-date-badge" fill="#94a3b8" fontSize="8" fontWeight="700">
-                            {node.dateBadge}
-                          </text>
-                          <text x="6" y="26" className="node-title" fill="#f8fafc" fontSize="9.5" fontWeight="800">
-                            {node.title.length > 17 ? node.title.slice(0, 16) + "…" : node.title}
-                          </text>
-                          <text x="6" y="38" className="node-subtitle" fill="#cbd5e1" fontSize="8">
-                            {node.subtitle.length > 20 ? node.subtitle.slice(0, 19) + "…" : node.subtitle}
-                          </text>
-                          <text x="6" y="52" className="node-agent-badge" fill="#38bdf8" fontSize="7.5" fontWeight="700">
-                            {node.agentBadge.length > 18 ? node.agentBadge.slice(0, 17) + "…" : node.agentBadge}
-                          </text>
-                        </g>
-                      );
-                    })}
+                        return (
+                          <>
+                            <path
+                              className="spider-edge-line"
+                              d={`M ${pMerged.x + 55} ${pMerged.y} C ${pMerged.x + 110} ${pMerged.y}, ${pJules.x - 70} ${pJules.y}, ${pJules.x - 55} ${pJules.y}`}
+                              stroke="url(#edge-active)"
+                              strokeWidth="2"
+                              fill="none"
+                              strokeDasharray="4 3"
+                            />
+                            <path
+                              className="spider-edge-line"
+                              d={`M ${pJules.x + 55} ${pJules.y} L ${pPR28.x - 55} ${pPR28.y}`}
+                              stroke="#f97316"
+                              strokeWidth="2"
+                              fill="none"
+                            />
+                            <path
+                              className="spider-edge-line"
+                              d={`M ${pMariposas.x + 55} ${pMariposas.y} C ${pMariposas.x + 110} ${pMariposas.y}, ${pRules.x - 70} ${pRules.y}, ${pRules.x - 55} ${pRules.y}`}
+                              stroke="url(#edge-delivered)"
+                              strokeWidth="2"
+                              fill="none"
+                            />
+                            <path
+                              className="spider-edge-line"
+                              d={`M ${pRules.x + 55} ${pRules.y} L ${pTutor.x - 55} ${pTutor.y}`}
+                              stroke="#f97316"
+                              strokeWidth="2.5"
+                              fill="none"
+                            />
+                            <path
+                              className="spider-edge-line"
+                              d={`M ${pPR28.x + 55} ${pPR28.y} C ${pPR28.x + 110} ${pPR28.y}, ${pVoice.x - 70} ${pVoice.y}, ${pVoice.x - 55} ${pVoice.y}`}
+                              stroke="url(#edge-blocker)"
+                              strokeWidth="2"
+                              fill="none"
+                            />
+                            <path
+                              className="spider-edge-line"
+                              d={`M ${pTutor.x + 55} ${pTutor.y} C ${pTutor.x + 110} ${pTutor.y}, ${pPages.x - 70} ${pPages.y}, ${pPages.x - 55} ${pPages.y}`}
+                              stroke="url(#edge-blocker)"
+                              strokeWidth="2"
+                              fill="none"
+                            />
+                            <path
+                              className="spider-edge-line"
+                              d={`M ${pTutor.x + 55} ${pTutor.y} C ${pTutor.x + 110} ${pTutor.y}, ${pParked.x - 70} ${pParked.y}, ${pParked.x - 55} ${pParked.y}`}
+                              stroke="#64748b"
+                              strokeWidth="1.5"
+                              fill="none"
+                              strokeDasharray="3 3"
+                            />
+                          </>
+                        );
+                      })()}
+                    </g>
+
+                    {/* 9 Interactive Mind Graph Nodes with Hover Tooltips, Drag & Drop, and Click Bounce */}
+                    <g className="mind-nodes">
+                      {OPTION_C_MIND_NODES.map((node) => {
+                        const isNodeActive = selectedMindNode === node.id;
+                        const isNodeStepActive = selectedStep === node.step;
+                        const isDragging = draggingNodeId === node.id;
+                        const isBouncing = bouncingNodeId === node.id;
+                        const pos = getNodePos(node);
+
+                        return (
+                          <g
+                            key={node.id}
+                            className={
+                              "spider-node-inner mind-node-group tone-" + node.tone +
+                              (isNodeActive ? " active is-selected" : "") +
+                              (isDragging ? " is-dragging" : "") +
+                              (isBouncing ? " is-bouncing" : "")
+                            }
+                            transform={`translate(${pos.x - 55}, ${pos.y - 30})`}
+                            onPointerDown={(e) => handleNodePointerDown(e, node.id)}
+                            onPointerMove={handleNodePointerMove}
+                            onPointerUp={handleNodePointerUp}
+                            onClick={() => {
+                              setSelectedMindNode(node.id);
+                              setSelectedStep(node.step);
+                              triggerBounce(node.id);
+                            }}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={node.title + " (" + node.tone + ")"}
+                            aria-pressed={isNodeActive}
+                          >
+                            <rect
+                              x="0"
+                              y="0"
+                              width="110"
+                              height="60"
+                              rx="8"
+                              className="node-box spider-node-border"
+                              strokeWidth={isNodeActive || isNodeStepActive ? "3.5" : "1.5"}
+                            />
+                            <text x="6" y="12" className="node-date-badge" fill="#94a3b8" fontSize="8" fontWeight="700">
+                              {node.dateBadge}
+                            </text>
+                            <text x="6" y="26" className="node-title" fill="#f8fafc" fontSize="9.5" fontWeight="800">
+                              {node.title.length > 17 ? node.title.slice(0, 16) + "…" : node.title}
+                            </text>
+                            <text x="6" y="38" className="node-subtitle" fill="#cbd5e1" fontSize="8">
+                              {node.subtitle.length > 20 ? node.subtitle.slice(0, 19) + "…" : node.subtitle}
+                            </text>
+                            <text x="6" y="52" className="node-agent-badge" fill="#38bdf8" fontSize="7.5" fontWeight="700">
+                              {node.agentBadge.length > 18 ? node.agentBadge.slice(0, 17) + "…" : node.agentBadge}
+                            </text>
+
+                            {/* Hover Tooltip Card */}
+                            <g className="spider-node-tooltip" transform="translate(55, -8)">
+                              <rect
+                                x="-68"
+                                y="-16"
+                                width="136"
+                                height="22"
+                                rx="5"
+                                fill="#030712"
+                                stroke="#334155"
+                                strokeWidth="1"
+                              />
+                              <text x="0" y="-2" textAnchor="middle" fill="#f8fafc" fontSize="8" fontWeight="700">
+                                {node.tone === "green" ? "● VERIFIED" : node.tone === "orange" ? "● ACTIVE" : node.tone === "red" ? "● BLOCKER" : "● PAUSED"} · Step {node.step}
+                              </text>
+                            </g>
+                          </g>
+                        );
+                      })}
+                    </g>
                   </g>
                 </svg>
               </div>
