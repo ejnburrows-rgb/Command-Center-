@@ -10,7 +10,7 @@
 .network-buttons>span{width:45px;text-align:center;color:#ecf9ff}
 .network-viewport{position:relative;width:100%;height:540px;overflow:hidden;touch-action:none;cursor:grab;background-image:radial-gradient(circle,#4c63834d 1px,transparent 1px);background-size:27px 27px}
 .network-viewport:active{cursor:grabbing}
-.network-stage{position:absolute;left:50%;top:50%;width:1500px;height:1220px;transform-origin:center center;will-change:transform}
+.network-stage{position:absolute;left:50%;top:50%;width:1580px;height:1280px;transform-origin:center center;will-change:transform}
 .network-edges{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .network-edge,.network-edge-active,.network-edge-task{fill:none;stroke-width:2.7;opacity:.82}
 .network-edge{stroke-dasharray:8 7}
@@ -22,6 +22,7 @@
 .network-hub small{font-size:10px;color:#c8fff2;font-weight:750}
 .network-hub span{font-size:10px;color:#b6dcdf}
 .network-project{width:192px;min-height:105px;padding:12px;background:#1c2943;border:2px solid #6a83ae;border-radius:16px;color:white;box-shadow:0 8px 25px #03071780}
+.network-project.stale{border-color:#d19b56;background:#2b2321}
 .network-project:hover,.network-project.expanded{background:#28445c;border-color:#80e5d9;box-shadow:0 0 0 5px #91eede23,0 8px 27px #03071788}
 .network-project-top{display:flex;align-items:center;gap:9px;align-self:flex-start}
 .network-project-top i{display:grid;place-items:center;font-style:normal;width:22px;height:22px;border-radius:6px;background:#2d797b;color:white;font-size:16px;font-weight:850}
@@ -30,6 +31,11 @@
 .network-project>span:last-child{font-size:10px;color:#b3c4e0}
 .network-work{width:174px;min-height:92px;padding:11px;background:#172f42;border:1.5px solid #63accb;border-radius:14px;color:#e8f7ff;box-shadow:0 8px 24px #030717aa}
 .network-work.draft{background:#362b41;border-color:#a88cc6}
+.network-work.failed{background:#3d1f28;border-color:#ea7b8c}
+.network-work.network-detail{width:186px;min-height:88px;background:#1d253d;border-color:#8b7ec8}
+.network-work.network-assignment{background:#232442;border-color:#9e8cfc}
+.network-work.network-evidence{background:#18333b;border-color:#5ec7b7}
+.network-work.network-deployment{background:#292c3e;border-color:#e2b86b}
 .network-work:hover,.network-work.chosen{border-color:#a2ffdf;background:#265066;box-shadow:0 0 0 4px #69e5ce36}
 .network-work small{font-size:9px;letter-spacing:.09em;color:#9aeddc}
 .network-work strong{font-size:11px;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
@@ -39,7 +45,7 @@
 .network-legend{display:flex;gap:11px;flex-wrap:wrap}
 .network-legend span{display:flex;align-items:center;gap:5px;font-size:10px;color:#b2c8d9}
 .network-key{display:inline-block;width:10px;height:10px;border-radius:50%}
-.network-key.repo{background:#8fe8d5}.network-key.task{background:#63accb}.network-key.draft{background:#a88cc6}
+.network-key.repo{background:#8fe8d5}.network-key.task{background:#63accb}.network-key.draft{background:#a88cc6}.network-key.meta{background:#9e8cfc}
 .network-project-inspector,.network-work-inspector{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #334764;padding:13px 15px;background:#101b2f}
 .network-project-inspector>div:first-child{min-width:180px;flex:1}
 .network-project-inspector small,.network-work-inspector small{display:block;font-size:10px;letter-spacing:.11em;color:#86e5d6;margin-bottom:5px;font-weight:700}

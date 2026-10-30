@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
-import MissionNetwork from "./mission-network";
+import MissionNetwork,{projectFreshness} from "./mission-network";
 import type {Project,Work} from "./hub-data";
 import {useJobs} from "./evidence-panels";
 import type {JulesAssignmentEvidence} from "@/lib/jules-assignment-contract";
@@ -37,7 +37,7 @@ function projectPrompt(project:Project,assignment:JulesAssignmentEvidence|null,a
  if(project.slug==="Command-Center-")return [
   "MISSION — Read-only review of NBO ownership and project evidence",
   "REPOSITORY: "+project.url,
-  "ASSIGNMENT SOURCE: "+(assignmentFresh?"Fresh GitHub evidence":"STALE / UNAVAILABLE — current Jules assignment state is UNKNOWN"),
+  "ASSIGNMENT SOURCE: "+(assignmentFresh?"Cached GitHub snapshot (observed "+new Date(assignment!.fetchedAt!).toLocaleString()+", not live provider telemetry)":"STALE / UNAVAILABLE — current Jules assignment state is UNKNOWN"),
   "LATEST VERIFIED STATUS: "+(assignmentFresh?assignment?.status||"UNKNOWN":"UNKNOWN"),
   "LATEST PROVIDER OUTCOME: "+(assignmentFresh?assignment?.latestOutcome||"No official update":"UNKNOWN — refresh the assignment source"),
   "Live provider session: UNKNOWN unless direct provider evidence proves otherwise.",
@@ -47,7 +47,7 @@ function projectPrompt(project:Project,assignment:JulesAssignmentEvidence|null,a
  return [
   "MISSION — Resume verified existing work in "+project.name,
   "REPOSITORY: "+project.url,
-  "SOURCE STATE: "+(project.stale||project.limited||!project.accessible?"STALE / PARTIAL — INSPECT ONLY":"GitHub source fetched "+(project.fetchedAt||"timestamp unknown")),
+  "SOURCE STATE: "+projectFreshness(project)+" (cached GitHub snapshot, not freshly verified live execution)",
   "NEXT EXISTING RECORD: "+(issue?issue.title+" — "+issue.url:"No current eligible work identified; verify assignments before proposing work."),
   "First identify current authorization, assignee, open PR, proof, and exact next eligible action. Do not create tasks or start product work solely from this copy.",
   "If work is authorized, continue the existing branch with focused tests and real proof. Do not duplicate work, merge, spend money or deploy without applicable permission.",
@@ -100,16 +100,16 @@ export default function MissionActionMap({projects,busy}:{projects:Project[];bus
  return <section className="next-mission" aria-labelledby="next-mission-title">
   <div className="next-mission-intro">
    <div><p className="next-mission-kicker">YOUR PROJECT NETWORK · START HERE</p><h2 id="next-mission-title">Project mind map <span>& next agent prompts</span></h2>
-    <p>Expand a project to see its real issues and PRs. Explore the connected network, then copy the next task prompt without leaving the Board.</p></div>
-   <span className="next-mission-source">{busy?"Checking GitHub…":available.length?available.length+" connected projects":"Project source unavailable"}</span>
+    <p>Expand a project to see its real issues, PRs, agent assignments, verification evidence, and deployments. Explore the connected network, then copy the next task prompt without leaving the Board.</p></div>
+   <span className="next-mission-source">{busy?"Checking GitHub…":available.length?available.length+" connected projects (cached snapshot)":"Project source unavailable"}</span>
   </div>
   <div className="next-mission-map-section">
-    <MissionNetwork projects={available} onSelectProject={(slug)=>{setSelected(slug);setSelectedPrompt(false);setCopied("");}}/>
+    <MissionNetwork projects={available} selectedProjectSlug={selected} onSelectProject={(slug)=>{setSelected(slug);setSelectedPrompt(false);setCopied("");}} jobs={jobs.jobs||[]} approvals={jobs.approvals||[]} execution={jobs.execution} assignment={assignment}/>
     <div className="next-mission-quicknodes" aria-label="Choose project">
      {available.map(p=><button type="button" key={p.slug} aria-pressed={chosen?.slug===p.slug} onClick={()=>{setSelected(p.slug);setSelectedPrompt(false)}}>{p.name}</button>)}
     </div>
     {chosen&&<div className="next-mission-selected">
-       <div><small>SELECTED PROJECT</small><strong>{chosen.name}</strong><span>{chosen.stale||chosen.limited?"Source is stale or partial":"Updated from GitHub: "+(chosen.fetchedAt?new Date(chosen.fetchedAt).toLocaleString():"Time unknown")}</span></div>
+       <div><small>SELECTED PROJECT · {projectFreshness(chosen)}</small><strong>{chosen.name}</strong><span>{chosen.stale||chosen.limited?"Source is stale or partial — do not treat as freshly verified":"Cached GitHub snapshot observed "+(chosen.fetchedAt?new Date(chosen.fetchedAt).toLocaleString():"Time unknown")+" (not live execution)"}</span></div>
        <button type="button" onClick={()=>{setSelectedPrompt(v=>!v);setCopied("");}}>{selectedPrompt?"Hide project handoff":chosen.slug==="Command-Center-"?"View read-only NBO review":"View project handoff"}</button>
        <button type="button" className="next-mission-copy" onClick={()=>void copy("project",projectCopy)}>{copied==="project"?"Copied project prompt":chosen.slug==="Command-Center-"?"Copy read-only NBO review":"Copy project prompt"}</button>
     </div>}
@@ -119,7 +119,7 @@ export default function MissionActionMap({projects,busy}:{projects:Project[];bus
    </div>
   <div className="next-mission-task-heading">
    <div><p className="next-mission-kicker">COPY · PASTE · CONTINUE EXISTING WORK</p><h3>Your next coding-agent prompts</h3></div>
-   <span>{sourceFresh?"GitHub and #877 checked":"Source refreshing / partially unavailable"}</span>
+   <span>{sourceFresh?"GitHub and #877 cached snapshots current":"Source refreshing / partially unavailable"}</span>
   </div>
   {!cards.length&&<div className="next-mission-no-tasks">{busy||jobs.loading?"Loading verified work and owner authorization…":"No eligible task identified from accessible records. Refresh sources before dispatch."}</div>}
   <div className="next-mission-tasks">

@@ -10,15 +10,22 @@ test("homepage uses a genuine expandable network rather than static project-name
  assert.doesNotMatch(host,/next-mission-map-scroll|nodes\.map\(n=><line/);
  assert.match(graph,/aria-expanded=\{expanded\}/);
  assert.match(graph,/setFocus\(isClosing\?"":n\.id\)/);
+ assert.match(graph,/collapseAll/);
  assert.match(graph,/workNodes\.map/);
+ assert.match(graph,/detailNodes\.map/);
  assert.match(graph,/onSelectProject\(n\.id\)/);
 });
-test("expanding projects reveals actual GitHub issues and PRs, not invented relationships",()=>{
+test("expanding projects reveals actual GitHub issues, PRs, assignments, evidence, and deployments, not invented relationships",()=>{
  const graph=read("app/mission-network.tsx");
  assert.match(graph,/selectedProject\?\.items/);
- assert.match(graph,/workKey\(activeNode\.project,work\)/);
+ assert.match(graph,/workKey\(/);
  assert.match(graph,/work\.kind|item\.kind/);
- assert.match(graph,/workStatus\(w\)/);
+ assert.match(graph,/workStatus\(/);
+ assert.match(graph,/projectFreshness\(/);
+ assert.match(graph,/buildConnectedNodes/);
+ assert.match(graph,/kind:"assignment"/);
+ assert.match(graph,/kind:"evidence"/);
+ assert.match(graph,/kind:"deployment"/);
  assert.match(graph,/sourceWork\.slice/);
  assert.match(graph,/More tasks/);
  assert.doesNotMatch(graph,/Math\.random\(|fakeStatus|setInterval\(/);
@@ -27,7 +34,7 @@ test("task drilldown stays in the map and has a copy-ready continuation prompt",
  const graph=read("app/mission-network.tsx");
  assert.match(graph,/setSelectedWork\(n\.id\)/);
  assert.match(graph,/navigator\.clipboard\.writeText\(prompt\)/);
- assert.match(graph,/taskHandoff\(chosen\.project,chosen\.work\)/);
+ assert.match(graph,/taskHandoff\(chosen\.project,chosen\.work/);
  assert.match(graph,/Agent activity UNKNOWN without provider evidence/);
  assert.match(graph,/CURRENT|EXISTING TASK/);
 });
