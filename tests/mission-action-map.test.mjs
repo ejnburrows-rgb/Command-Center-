@@ -2,11 +2,13 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 const read=path=>readFileSync(new URL("../"+path,import.meta.url),"utf8");
-test("the home route renders the project mind map before the existing mission dashboard",()=>{
+test("the home route renders Cartilla-First MissionHome first, followed by compact JulesAssignment and MissionActionMap",()=>{
  const entry=read("app/hub-content.tsx");
  assert.match(entry,/import MissionActionMap from "\.\/mission-action-map"/);
  assert.match(entry,/tab==="Hub"&&<MissionActionMap projects=\{feed\.projects\} busy=\{loading\}\/>/);
- assert.ok(entry.indexOf("<MissionActionMap")<entry.indexOf("<Home projects="));
+ assert.ok(entry.indexOf("<Home projects=")<entry.indexOf("<MissionActionMap"));
+ assert.doesNotMatch(entry,/PURPLE NIGHT|TEAL DAY/);
+ assert.doesNotMatch(entry,/div className="page-title"/);
 });
 test("mind map expands real GitHub task branches instead of static project label lines",()=>{
  const view=read("app/mission-action-map.tsx");
@@ -51,18 +53,20 @@ test("Jules task prompts require fresh assignment evidence and failure becomes r
  assert.match(source,/FAILED — PROVIDER REPORTED TASK FAILURE/);
  assert.match(source,/Do not resume or dispatch from this Board/);
 });
-test("interactive map is phone-accessible and reduced-motion safe",()=>{
+test("interactive map is phone-accessible, renders mobile tree < 640px, and is reduced-motion safe",()=>{
  const css=read("app/mission-network.css");
  const layout=read("app/layout.tsx");
  assert.match(layout,/mission-network\.css/);
  assert.match(css,/touch-action:none/);
  assert.match(css,/@media\(max-width:760px\)/);
+ assert.match(css,/@media\(max-width:639px\)/);
+ assert.match(css,/\.network-mobile-tree\{display:flex\}/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
 });
 
-test("never suggest stale PRs and hide the obsolete GitHub-only next-action cards",()=>{
+test("never suggest stale PRs and keep Cartilla priority cards visible in Cartilla-First header",()=>{
  const view=read("app/mission-action-map.tsx");
  const css=read("app/mission-action-map.css");
  assert.match(view,/p\.accessible&&!p\.stale&&!p\.limited/);
- assert.match(css,/:has\(\.next-mission\) \.mission-now\{display:none\}/);
+ assert.doesNotMatch(css,/:has\(\.next-mission\) \.mission-now\{display:none\}/);
 });

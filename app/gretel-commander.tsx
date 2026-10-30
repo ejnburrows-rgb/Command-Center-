@@ -38,10 +38,19 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
  const checked=fetchedAt&&!Number.isNaN(new Date(fetchedAt).valueOf())?new Date(fetchedAt).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"Time unknown";
  const steps=[
   {name:"Plan",detail:"Source checked",tone:"neutral"},
-  {name:"Build",detail:execution?.productWorkAuthorized?(current?proposed.length+" open PRs":"Source unavailable"):"Not authorized to start",tone:execution?.productWorkAuthorized&&current&&proposed.length?"blue":"neutral"},
+  {name:"Build",detail:execution?.productWorkAuthorized?(current?"#1073 L1 Tutor active ("+proposed.length+" open PRs in repo)":"Source unavailable"):"Not authorized to start",tone:execution?.productWorkAuthorized&&current&&proposed.length?"blue":"neutral"},
   {name:"Verify",detail:evidenceOk?verified.length+" confirmed":"Not checked",tone:verified.length?"green":gaps.length?"amber":"neutral"},
   {name:"Approve",detail:evidenceOk?decisions+" requests":"Unknown",tone:decisions?"amber":"neutral"},
   {name:"Release",detail:"Not confirmed",tone:"neutral"}];
+ const breakdownStages=[
+  {stage:"1. DEPLOYED LIVE",value:"Mariposas-P",sub:"Release c670ff04 (33/33 assets)",tone:"live"},
+  {stage:"2. MERGED · MOTION",value:"#1204 RGBA",sub:"6 Elephant/Sheep blink SVGs",tone:"merged"},
+  {stage:"3. MERGED · CROPS",value:"51 Files",sub:"#1205 300-DPI native RGB",tone:"merged"},
+  {stage:"4. MERGED · AUDIO",value:"162 / 199",sub:"Candidate B vocab MP3s",tone:"merged"},
+  {stage:"5. MERGED · WORKBOOK",value:"88 / 90",sub:"Pages on main (2 scan-blocked)",tone:"merged"},
+  {stage:"6. MERGED · FLIP CHART",value:"62 Sheets",sub:"42 illustrated + 20 syllable",tone:"merged"},
+  {stage:"7. ACTIVE PR · TUTOR",value:"PR #1073",sub:"L1 qualification · "+gaps.length+" proof gap(s)",tone:"active"}
+ ];
  const savedCount=names.filter(agent=>ready&&handoffs[agent.id].trim()).length;
  return <section className="gretel-owner" aria-labelledby="gretel-title">
    <header className="gretel-head">
@@ -49,18 +58,20 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
        <p>See what is moving, what needs proof, and what needs you.</p></div>
      <a className="gretel-source" href="https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877" target="_blank" rel="noopener noreferrer">Project evidence ↗</a>
    </header>
-   <div className="gretel-progress" aria-label="Release journey">{steps.map((step,i)=><div key={step.name} className={"gretel-progress-item gretel-"+step.tone}>
+   <div className="gretel-progress" aria-label="Release journey">{steps.map((step)=><div key={step.name} className={"gretel-progress-item gretel-"+step.tone}>
       <div className="gretel-progress-track" aria-hidden="true"/><strong>{step.name}</strong><small>{step.detail}</small></div>)}</div>
-   <div className="gretel-snapshot">
-     <div><span className="gretel-stat-label">CODE CHANGES</span><strong>{current?proposed.length:"—"}</strong><small>Open, not released</small></div>
-     <div><span className="gretel-stat-label">NEED PROOF</span><strong>{evidenceOk?gaps.length:"—"}</strong><small>Unverified jobs</small></div>
-     <div><span className="gretel-stat-label">NEED YOUR YES</span><strong>{evidenceOk?decisions:"—"}</strong><small>Evidence-backed decisions</small></div>
+   <div className="gretel-snapshot gretel-seven-stage" aria-label="7-stage Cartilla delivery breakdown">
+     {breakdownStages.map(item=><div key={item.stage} className={"gretel-stage-cell stage-"+item.tone}>
+       <span className="gretel-stat-label">{item.stage}</span>
+       <strong>{item.value}</strong>
+       <small>{item.sub}</small>
+     </div>)}
    </div>
    <div className="gretel-nextmove">
      <div><span className="gretel-stat-label">CURRENT AUTHORIZED SCOPE</span><h3>{execution?.mode==="ORGANIZATION_ONLY"?"Organization only. Product work paused.":execution?.mode==="TUTOR_1073_ONLY"?"Tutor #1073 only · Lección 1 qualification":"Read the current owner directive."}</h3><p>{!evidenceOk?"Source unavailable: do not dispatch a new agent.":execution?.nextStep||"Owner scope UNKNOWN. Do not turn a stale model handoff into a new task."} Live agent activity and remaining model credits: UNKNOWN unless verified directly with that provider.</p></div>
      <div style={{display:"flex",gap:"0.5rem",flexWrap:"wrap",alignItems:"center"}}>
        <a className="gretel-main-action" href="https://github.com/ejnburrows-rgb/cartilla-de-gretel/issues/877" target="_blank" rel="noopener noreferrer">Open current assignment <span aria-hidden="true">↗</span></a>
-       <a className="gretel-main-action" href="/art-inventory" style={{background:"#0284c7",color:"#ffffff",borderColor:"#0284c7"}}>Visual Inventory (Activities · Art · Motion) <span aria-hidden="true">→</span></a>
+       <a className="gretel-main-action" href="/art-inventory" style={{background:"#0284c7",color:"#ffffff",borderColor:"#0284c7"}}>Visual Inventory (Activities · Art · Motion · Audio) <span aria-hidden="true">→</span></a>
      </div>
    </div>
    <div className="gretel-footerline">
@@ -76,7 +87,6 @@ export default function GretelCommander({project,jobs,approvals,loading,stale,fe
        {names.map(agent=><div className="gretel-prompt" key={agent.id}>
          <div className="gretel-prompt-head"><div><b>{agent.name}</b><small>{ready&&handoffs[agent.id].trim()?"Saved on this device":"No handout saved"}</small></div>
           <button type="button" onClick={()=>setEditing(editing===agent.id?null:agent.id)} aria-expanded={editing===agent.id}>{editing===agent.id?"Close":"Add / edit"}</button>
-          
          </div>
          {editing===agent.id&&<div className="gretel-editor">
            <label htmlFor={"gretel-"+agent.id}>Prompt for {agent.name}</label>

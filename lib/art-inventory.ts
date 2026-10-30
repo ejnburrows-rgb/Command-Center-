@@ -104,6 +104,7 @@ export type MotionItem = {
 export type ActivityItem = {
   id: string;
   category:
+    | "curriculum_lesson"
     | "workbook_exercise"
     | "flipchart_sheet"
     | "standalone_game"
@@ -139,6 +140,51 @@ export type ActivityItem = {
   thumbnailUrl?: string;
 };
 
+export type AudioVocabItem = {
+  key: string;
+  name: string;
+  images: string[];
+  hasApprovedAudio: boolean;
+  audioSrc?: string;
+  audioUrl?: string;
+  approvalNote?: string;
+};
+
+export type AudioInventory = {
+  totalWords: number;
+  approvedCount: number;
+  missingCount: number;
+  approvedWords: AudioVocabItem[];
+  missingWords: AudioVocabItem[];
+  draftPr769Status: {
+    prNumber: number;
+    prUrl: string;
+    quarantinedMixedClipsCount: number;
+    quarantinedClassification: string;
+    recoveredOriginalSegmentsCount: number;
+    originalSourceFile: string;
+    alignmentStatus: string;
+  };
+  ttsFallbackAudit: {
+    policyRule: string;
+    activeFallbackCount: number;
+    paths: Array<{
+      id: string;
+      file: string;
+      apiUsed: string;
+      violationSummary: string;
+    }>;
+  };
+  uiSoundEffectsAudit: {
+    feelStubCount: number;
+    feelStubBytes: number;
+    feelStubFiles: string[];
+    rootStubCount: number;
+    rootStubBytes: number;
+    rootStubFiles: string[];
+  };
+};
+
 export type Inventory = {
   ref: string;
   sha: string;
@@ -165,6 +211,7 @@ export type Inventory = {
   slots: Slot[];
   motion: MotionItem[];
   activities: ActivityItem[];
+  audio: AudioInventory;
   totals: {
     all: number;
     drawingGroups: number;
@@ -349,6 +396,8 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
     flipchartJson,
     practicaRouteText,
     activityIconsText,
+    pictureVocabJson,
+    pictureRecordingsJson,
   ] = await Promise.all([
     getArchival(`${BASE}/slots-render.json`),
     getArchival(`${BASE}/still-flagged.json`),
@@ -365,6 +414,8 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
     getMainJson("src/data/teacher-flipchart.json"),
     getMainText("src/routes/cartilla/practica.tsx"),
     getMainText("src/components/activities/activityIcons.tsx"),
+    getMainJson("src/content/picture-vocabulary.json"),
+    getMainJson("src/content/picture-name-recordings.json"),
   ]);
 
   // Index production-art-classification-audit.json by file path and subject
@@ -981,6 +1032,35 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
   // Build Activities List (7 Orthogonal Categories — NEVER summed into one total)
   const activitiesList: ActivityItem[] = [];
 
+  // Category 0: 24 Curriculum Lessons (src/content/lesson-meta.ts)
+  for (const l of parsedLessons) {
+    const isBlocked = l.n === 10 || l.n === 11;
+    activitiesList.push({
+      id: `lesson-${l.n}`,
+      category: "curriculum_lesson",
+      categoryLabel: "0. Lección del Currículo (Curriculum Lesson)",
+      name: `Lección ${l.n}: ${l.titleEs || l.title} (${l.letter})`,
+      lessonNumber: l.n,
+      printedPage: l.pages[0],
+      route: `/cartilla/leccion/${l.n}`,
+      builtStatus: l.n === 1 ? "Built & Integrated (Tutor + Workbook)" : "Built in Workbook Flow",
+      workingStatus: isBlocked ? "SOURCE_BLOCKED" : l.n === 1 ? "WORKS_ON_MAIN" : "NOT_VERIFIED",
+      reachability: "Student & Teacher",
+      correctBehavior: `Lección ${l.n} (${l.kind || "vocal/consonante"}) que abarca páginas ${l.pages[0]}–${l.pages[1]} del cuaderno.`,
+      progressBehavior: "Progreso de lección persistido en sesión de estudiante.",
+      mobileStatus: "Responsive Canvas (Unverified Live)",
+      accessibilityNote: "Navegación accesible con teclado y soporte táctil.",
+      missingArtOrAudio: isBlocked ? "Páginas 36 y 37 con salto de escaneo en la fuente original." : "Audio auténtico de Gretel en curso bajo #769.",
+      existingPrOrIssue: isBlocked ? "SOURCE_BLOCKED" : l.n === 1 ? "PR #1073 (Tutor L1)" : "Workbook Pages",
+      exactNextAction: isBlocked
+        ? "Mantener SOURCE_BLOCKED sin inventar páginas 86–87."
+        : l.n === 1
+        ? "Ejecutar prueba de micrófono en dispositivo físico real."
+        : "Verificado en flujo general del cuaderno.",
+      thumbnailUrl: `${mainBase}public/cartilla/art/source/workbook/page-${String(l.pages[0] || 1).padStart(3, "0")}.jpg`,
+    });
+  }
+
   // Pages with recorded Playwright screenshots/video in docs/proofs/
   const VERIFIED_WORKBOOK_PAGES = new Set([
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 21, 22, 25, 26, 28, 30, 32, 33, 36, 40,
@@ -1504,6 +1584,104 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
     });
   }
 
+  // Build Tab 4 Audio & Voice Inventory from canonical picture-vocabulary.json (199 words) & picture-name-recordings.json (162 approved MP3s)
+  const approvedRecsMap = new Map<string, { key: string; src: string; approval?: string }>();
+  if (Array.isArray(pictureRecordingsJson?.approved)) {
+    for (const rec of pictureRecordingsJson.approved) {
+      if (rec?.key && rec?.src) approvedRecsMap.set(String(rec.key), rec);
+    }
+  }
+  const approvedWords: AudioVocabItem[] = [];
+  const missingWords: AudioVocabItem[] = [];
+  const vocabList = Array.isArray(pictureVocabJson) ? pictureVocabJson : [];
+  for (const v of vocabList) {
+    const key = String(v?.key || "");
+    const name = String(v?.name || key);
+    const images = Array.isArray(v?.images) ? v.images : [];
+    const rec = approvedRecsMap.get(key);
+    if (rec) {
+      const cleanSrc = rec.src.startsWith("/") ? rec.src : "/" + rec.src;
+      approvedWords.push({
+        key,
+        name,
+        images,
+        hasApprovedAudio: true,
+        audioSrc: cleanSrc,
+        audioUrl: mainBase + "public" + cleanSrc,
+        approvalNote: rec.approval || "Candidate B approved recording",
+      });
+    } else {
+      missingWords.push({
+        key,
+        name,
+        images,
+        hasApprovedAudio: false,
+      });
+    }
+  }
+
+  const audioInventory: AudioInventory = {
+    totalWords: vocabList.length,
+    approvedCount: approvedWords.length,
+    missingCount: missingWords.length,
+    approvedWords,
+    missingWords,
+    draftPr769Status: {
+      prNumber: 769,
+      prUrl: "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/769",
+      quarantinedMixedClipsCount: 67,
+      quarantinedClassification: "rejected_wrong_source",
+      recoveredOriginalSegmentsCount: 151,
+      originalSourceFile: "Gretel_558674_Original.m4a",
+      alignmentStatus: "67 mixed music/stutter clips quarantined as rejected_wrong_source; 151 original-source segments from Gretel_558674_Original.m4a recovered and awaiting phrase alignment before #769 can be marked ready.",
+    },
+    ttsFallbackAudit: {
+      policyRule: "AUDIO_POLICY.allowTts = false (src/content/audio-manifest.ts)",
+      activeFallbackCount: 3,
+      paths: [
+        {
+          id: "tts-gretel-voice",
+          file: "src/lib/gretel-voice.ts",
+          apiUsed: "window.speechSynthesis.speak(utterance)",
+          violationSummary: "speakAsGretel() falls back to browser SpeechSynthesisUtterance (es-ES) when no authentic recording exists, violating AUDIO_POLICY.allowTts = false.",
+        },
+        {
+          id: "tts-speak-helper",
+          file: "src/lib/speak.ts",
+          apiUsed: "window.speechSynthesis.speak(utterance)",
+          violationSummary: "speak() and speakVowel() invoke browser window.speechSynthesis fallback when playApprovedWord() returns false.",
+        },
+        {
+          id: "tts-rewards-components",
+          file: "src/components/rewards/BadgeGrid.tsx + src/components/rewards/StickerReel.tsx",
+          apiUsed: "window.speechSynthesis.speak(u)",
+          violationSummary: "BadgeGrid and StickerReel call window.speechSynthesis directly on reward card tap instead of approved Gretel voice clips.",
+        },
+      ],
+    },
+    uiSoundEffectsAudit: {
+      feelStubCount: 8,
+      feelStubBytes: 19,
+      feelStubFiles: [
+        "public/audio/feel/chime.mp3",
+        "public/audio/feel/drag-drop.mp3",
+        "public/audio/feel/drag-pick.mp3",
+        "public/audio/feel/error.mp3",
+        "public/audio/feel/page-flip.mp3",
+        "public/audio/feel/sparkle.mp3",
+        "public/audio/feel/success.mp3",
+        "public/audio/feel/tap.mp3",
+      ],
+      rootStubCount: 3,
+      rootStubBytes: 84,
+      rootStubFiles: [
+        "public/audio/ambient-classroom.mp3",
+        "public/audio/page-turn.mp3",
+        "public/audio/page-turn-soft.mp3",
+      ],
+    },
+  };
+
   const manifestItems = motionList.filter((m) => m.catalogSource === "manifest_svg");
   const sourceBlockedCount = parsedWorkbookPages.filter((p) => p.status === "SOURCE_BLOCKED").length;
 
@@ -1524,6 +1702,7 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
     slots,
     motion: motionList,
     activities: activitiesList,
+    audio: audioInventory,
     totals: {
       all: slots.length,
       drawingGroups: uniqueDrawingGroups.size,

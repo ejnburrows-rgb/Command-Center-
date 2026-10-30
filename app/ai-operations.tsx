@@ -8,6 +8,7 @@ import FileVault from "./file-vault";
 import {projectPath} from "./route-paths";
 
 type Focus="all"|"pr"|"issue"|"draft";
+const BOT_MICRO_PR_PATTERN=/^(🧹|⚡|🧪)/;
 function sourceTime(value?:string){if(!value)return "Not recorded";const d=new Date(value);return Number.isFinite(d.getTime())?d.toLocaleString():"Not recorded";}
 function status(p:Project){return !p.accessible?"Source unavailable":p.stale||p.limited?"Partial / stale GitHub data":"GitHub source";}
 function workLabel(w:Work){return w.kind==="pr"?(w.draft?"Draft PR":"Open PR"):"Open issue";}
@@ -40,8 +41,12 @@ export default function AIOperations({projects,view}:{projects:Project[];view:"o
  const jobs=useJobs();
  const [focus,setFocus]=useState<Focus>("all");
  const [term,setTerm]=useState("");
+ const [hideBotMicroPrs,setHideBotMicroPrs]=useState(true);
+ const [expandBotMicroPrs,setExpandBotMicroPrs]=useState(false);
  const all=useMemo(()=>entries(projects),[projects]);
- const work=all.filter(({project,work})=>(focus==="all"||focus==="draft"&&work.kind==="pr"&&work.draft||focus===work.kind)&&[project.name,work.title,String(work.number)].join(" ").toLowerCase().includes(term.trim().toLowerCase()));
+ const matchedWork=all.filter(({project,work})=>(focus==="all"||focus==="draft"&&work.kind==="pr"&&work.draft||focus===work.kind)&&[project.name,work.title,String(work.number)].join(" ").toLowerCase().includes(term.trim().toLowerCase()));
+ const botMicroPrs=matchedWork.filter(({work})=>work.kind==="pr"&&BOT_MICRO_PR_PATTERN.test(work.title.trim()));
+ const work=hideBotMicroPrs&&!expandBotMicroPrs?matchedWork.filter(({work})=>!(work.kind==="pr"&&BOT_MICRO_PR_PATTERN.test(work.title.trim()))):matchedWork;
  const isEvidence=view==="evidence",isKnowledge=view==="knowledge";
  const title=isKnowledge?"Knowledge & Memory":isEvidence?"Delivery evidence":"AI Operations";
  const description=isKnowledge?"Your local documents and the protected project-memory source.":isEvidence?"Check the evidence before accepting an AI completion claim.":"The live GitHub work queue and evidenced AI work. Agent presence is not inferred.";
@@ -62,7 +67,8 @@ export default function AIOperations({projects,view}:{projects:Project[];view:"o
    <div className="aop-maincol">
     <section className="aop-card aop-work">
      <div className="aop-headline"><div><p className="aop-eyebrow">01 / REAL WORK</p><h2>{isEvidence?"Open work and proof":"Across your repositories"}</h2></div><span>{projects.filter(p=>p.stale||p.limited||!p.accessible).length?"Some sources partial":"Source: GitHub"}</span></div>
-     <div className="aop-toolbar"><label className="aop-search"><span className="sr-only">Search GitHub work</span><input value={term} onChange={e=>setTerm(e.target.value)} placeholder="Find work, project or issue number" /></label><label><span className="sr-only">Filter work</span><select value={focus} onChange={e=>setFocus(e.target.value as Focus)}><option value="all">All open work</option><option value="issue">Issues</option><option value="pr">Pull requests</option><option value="draft">Draft PRs</option></select></label></div>
+     <div className="aop-toolbar"><label className="aop-search"><span className="sr-only">Search GitHub work</span><input value={term} onChange={e=>setTerm(e.target.value)} placeholder="Find work, project or issue number" /></label><label><span className="sr-only">Filter work</span><select value={focus} onChange={e=>setFocus(e.target.value as Focus)}><option value="all">All open work</option><option value="issue">Issues</option><option value="pr">Pull requests</option><option value="draft">Draft PRs</option></select></label><label className="aop-bot-toggle"><input type="checkbox" checked={hideBotMicroPrs} onChange={e=>{setHideBotMicroPrs(e.target.checked);if(e.target.checked)setExpandBotMicroPrs(false);}}/><span>Hide unapproved bot micro-PRs</span></label></div>
+     {hideBotMicroPrs&&botMicroPrs.length>0&&<div className="aop-bot-summary"><span>🤖 <b>{botMicroPrs.length} automated code-health micro-PRs</b> matching <code>/^(🧹|⚡|🧪)/</code> (#19–#24, #29–#44) collapsed.</span><button type="button" onClick={()=>setExpandBotMicroPrs(v=>!v)} aria-expanded={expandBotMicroPrs}>{expandBotMicroPrs?"Collapse bot micro-PRs ▴":`Show ${botMicroPrs.length} bot micro-PRs ▾`}</button></div>}
      <p className="aop-subtle">Open GitHub records are not proof of successful delivery. Results may be partial where GitHub reports a limit or stale source.</p>
      {work.slice(0,35).map(({project:p,work:w})=><article className="aop-task" key={p.slug+":"+w.kind+":"+w.number}><span className={"aop-flag "+(w.draft?"aop-flag-draft":"")}>{workLabel(w)}</span><div><External href={w.url}>{w.title}</External><p><Link href={projectPath(p.slug)}>{p.name}</Link> · #{w.number} · Updated {sourceTime(w.updatedAt)}</p></div></article>)}
      {!work.length&&<p className="aop-empty">{projects.length?"No matching records were returned.":"Loading projects or no accessible GitHub source."}</p>}

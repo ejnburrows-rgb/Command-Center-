@@ -1,7 +1,8 @@
 import { loadInventory } from "../../lib/art-inventory";
 import InventoryView from "./inventory-view";
+import ArtInventoryShell from "./art-inventory-shell";
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Cartilla Visual Inventory — Activities, Artwork & Motion" };
+export const metadata = { title: "Cartilla Visual Studio — Lessons, Artwork, Motion, Audio & Games" };
 
 export default async function Page({
   searchParams,
@@ -11,20 +12,22 @@ export default async function Page({
     slot?: string;
     book?: string;
     f?: string;
-    tab?: "activities" | "artwork" | "motion";
+    tab?: "lessons" | "activities" | "artwork" | "motion" | "audio" | "games";
   }>;
 }) {
   const { ref, slot, book, f, tab } = await searchParams;
   try {
     const inv = await loadInventory(ref);
     return (
-      <InventoryView
-        inv={inv}
-        openSlot={slot}
-        initBook={book}
-        initFilter={f}
-        initTab={tab || "activities"}
-      />
+      <ArtInventoryShell>
+        <InventoryView
+          inv={inv}
+          openSlot={slot}
+          initBook={book}
+          initFilter={f}
+          initTab={(tab === "lessons" || tab === "activities") ? "lessons" : (tab || "lessons")}
+        />
+      </ArtInventoryShell>
     );
   } catch (e) {
     return (

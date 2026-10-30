@@ -31,11 +31,13 @@ test("art-inventory tracks the ten flagged workbook subjects (including ala/alas
   assert.match(lib, /RECONCILED_1204/);
 });
 
-test("inventory view provides phone-friendly 3-tab layout, all 11 Part 4 fields, all 10 Part 5 fields, and orthogonal category separation", () => {
+test("inventory view provides phone-friendly 4-tab layout (Activities, Artwork, Motion, Audio & Voice), all 11 Part 4 fields, all 10 Part 5 fields, and orthogonal category separation", () => {
   const view = read("app/art-inventory/inventory-view.tsx");
   assert.match(view, /tab === "activities"/);
   assert.match(view, /tab === "artwork"/);
   assert.match(view, /tab === "motion"/);
+  assert.match(view, /tab === "audio"/);
+  assert.match(view, /4\. AUDIO & VOICE/);
   // Ensure activities tab never renders inv.activities.length as a combined sum badge
   assert.doesNotMatch(view, /tabBtn\("activities",\s*"1\. ACTIVITIES",\s*inv\.activities\.length\)/);
   // Mariposas parity & PR #1010 comparison
@@ -55,12 +57,23 @@ test("inventory view provides phone-friendly 3-tab layout, all 11 Part 4 fields,
   assert.match(view, /simulateReducedMotion/);
   assert.match(view, /whatPhysicallyMoves/);
   assert.match(view, /sameApprovedSource/);
+  // Tab 4 Audio & Voice checks
+  const lib = read("lib/art-inventory.ts");
+  assert.match(lib, /src\/content\/picture-vocabulary\.json/);
+  assert.match(lib, /src\/content\/picture-name-recordings\.json/);
+  assert.match(lib, /Gretel_558674_Original\.m4a/);
+  assert.match(lib, /rejected_wrong_source/);
+  assert.match(lib, /AUDIO_POLICY\.allowTts = false/);
+  assert.match(view, /<audio controls preload="none"/);
 });
 
-test("NBO navigation routes expose Visual Inventory across Commander, LiveStatus and ProjectView", () => {
+test("NBO navigation routes expose Visual Inventory across HubShell, Commander, LiveStatus and ProjectView, and remove legacy /visualizer from mainNav", () => {
+  const shell = read("app/hub-shell.tsx");
   const commander = read("app/gretel-commander.tsx");
   const live = read("app/live-status.tsx");
   const project = read("app/project-view.tsx");
+  assert.match(shell, /Cartilla Studio/);
+  assert.doesNotMatch(shell, /const mainNav:Section\[\]=\[[^\]]*"Visualizer"/);
   assert.match(commander, /\/art-inventory/);
   assert.match(live, /\/art-inventory/);
   assert.match(project, /\/art-inventory/);

@@ -55,3 +55,12 @@
 @media(max-width:760px){.gretel-owner{margin-bottom:27px}.gretel-head{gap:12px}.gretel-source{font-size:11px}.gretel-progress{margin-top:25px}.gretel-nextmove{align-items:flex-start;flex-direction:column;gap:14px}.gretel-main-action{width:100%;justify-content:space-between}.gretel-footerline{display:grid;gap:6px}}
 @media(max-width:430px){.gretel-eyebrow{font-size:9px}.gretel-head h2{font-size:30px}.gretel-headline>p:last-child{font-size:12px}.gretel-source{font-size:10px}.gretel-progress-item strong{font-size:10px}.gretel-progress-item small{font-size:9px}.gretel-progress{gap:4px}.gretel-progress-track{height:8px}.gretel-snapshot>div{padding:0 10px}.gretel-stat-label{font-size:9px;letter-spacing:.03em}.gretel-snapshot strong{font-size:30px}.gretel-snapshot small{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.gretel-main-action:hover{transform:none}}
+
+.gretel-snapshot.gretel-seven-stage{grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;padding:14px 0}
+.gretel-snapshot.gretel-seven-stage>div{padding:10px;border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-panel)}
+.gretel-snapshot.gretel-seven-stage strong{font-size:clamp(16px,1.6vw,22px)}
+.gretel-stage-cell.stage-live{border-top:3px solid #22c55e!important}
+.gretel-stage-cell.stage-merged{border-top:3px solid #38bdf8!important}
+.gretel-stage-cell.stage-active{border-top:3px solid #f97316!important}
+@media(max-width:1100px){.gretel-snapshot.gretel-seven-stage{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:640px){.gretel-snapshot.gretel-seven-stage{grid-template-columns:repeat(2,minmax(0,1fr))}}

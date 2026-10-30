@@ -6,7 +6,7 @@ import type {Section,Project} from "./hub-data";
 import {usePins} from "./project-preferences";
 import {usePremium,workspaceLabels,paletteLabels,type Palette,type Appearance,type WorkspaceMode} from "./premium-preferences";
 import {Icon,External} from "./hub-ui";
-const mainNav:Section[]=["Hub","Projects","AI Operations","GitHub","Evidence","Knowledge","Visualizer"];
+const mainNav:Section[]=["Hub","Projects","AI Operations","GitHub","Evidence","Knowledge"];
 const secondaryNav:Section[]=["Prompts","Best Practices","Tools","Assets","Settings"];
 const modes:WorkspaceMode[]=["overview","coding","review","focus"];
 const colors:Palette[]=["blue","purple","teal","mono"];
@@ -18,7 +18,7 @@ export default function HubShell({tab,current,projects,menu,setMenu,loading,erro
  return <div className="shell mission-shell premium-shell">
   <aside className={"sidebar "+(menu?"expanded":"")}>
    <Link className="brand" href="/" onClick={()=>setMenu(false)} aria-label="NBO home"><span className="brand-line"><svg viewBox="0 0 24 38" aria-hidden="true"><path d="M15.1 0 2.7 21.4h8.1L7.7 38 21.3 15.2h-8.1z"/></svg>NBO <span style={{fontSize:12,letterSpacing:".02em",marginLeft:9,fontWeight:650,color:"var(--ui-subtle)"}}>STUDIO</span></span><small>AI DEVELOPMENT CONTROL</small></Link>
-   <p className="side-label">WORKSPACE</p><nav aria-label="Primary navigation">{nav(mainNav)}</nav>
+   <p className="side-label">WORKSPACE</p><nav aria-label="Primary navigation">{nav(mainNav)}<Link href="/art-inventory" className="navlink" onClick={()=>setMenu(false)}><Icon name="Cartilla Studio"/><span>Cartilla Studio</span></Link></nav>
    <div className="mission-pinned"><p className="side-label">YOUR PROJECTS</p>{(projects||[]).filter(p=>prefs.value.includes(p.slug)).slice(0,4).map(p=><Link href={projectPath(p.slug)} key={p.slug} onClick={()=>setMenu(false)}><span>{p.name}</span><small>{p.stale?"Source partial":p.issues===null?"Source unavailable":p.issues+" issues · "+(p.prs??"—")+" PRs"}</small></Link>)}{!prefs.value.length&&<Link href="/projects" onClick={()=>setMenu(false)}><span>Pin favorite projects</span><small>Quick access from every page →</small></Link>}</div>
    <p className="side-label">LIBRARY & TOOLS</p><nav aria-label="Secondary navigation">{nav(secondaryNav)}</nav>
    <div className="sidebar-bottom"><p className="side-label">CONNECTED SOURCE</p><External href="https://github.com/ejnburrows-rgb" className="side-source"><Icon name="github"/> GitHub · Read only</External><small>Owner decisions always require proof</small></div>
