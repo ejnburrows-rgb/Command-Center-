@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { github, errorText } from "@/lib/public-github";
 import { serverSnapshot } from "@/lib/server-snapshot";
-import { deriveJulesAssignment } from "@/lib/jules-assignment.mjs";
+import { deriveJulesAssignment, julesTaskUrl, julesPullRequestNumber } from "@/lib/jules-assignment.mjs";
 
 export const dynamic = "force-dynamic";
 const repo = "/repos/ejnburrows-rgb/Command-Center-";
@@ -20,10 +20,12 @@ export async function GET() {
       const comments = commentsResult.data;
       if (!Array.isArray(timeline) || !Array.isArray(comments)) throw new Error("Jules assignment evidence is incomplete");
 
+      const acceptedTask = [...comments].reverse().find((comment: any) => comment?.user?.login === "google-labs-jules[bot]" && julesTaskUrl(String(comment.body || "")));
+      const expectedTaskUrl = acceptedTask ? julesTaskUrl(String(acceptedTask.body || "")) : null;
       const candidates = comments
         .filter((comment: any) => comment?.user?.login === "google-labs-jules[bot]")
-        .flatMap((comment: any) => [...String(comment.body || "").matchAll(/https:\/\/github\.com\/ejnburrows-rgb\/Command-Center-\/pull\/(\d+)/gi)]
-          .map(match => ({ number: Number(match[1]), comment })));
+        .map((comment: any) => ({ number: julesPullRequestNumber(String(comment.body || ""), expectedTaskUrl), comment }))
+        .filter((candidate: any) => Number.isInteger(candidate.number));
       let pullRequest: any = null;
       const linked = candidates[candidates.length - 1];
       if (linked?.number) {

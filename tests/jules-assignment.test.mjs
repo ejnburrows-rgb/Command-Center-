@@ -51,6 +51,14 @@ test("only a task-linked PR is classified, with merge separate from deployment",
  assert.match(result.nextAction,/not merged or live/i);
 });
 
+test("an unrelated PR mentioned by the official bot is not correlated to this task",()=>{
+ const unrelated={...accepted,body:"Another task finished: https://jules.google.com/task/999999999999 and PR https://github.com/ejnburrows-rgb/Command-Center-/pull/31"};
+ const open={number:31,title:"Other task",html_url:"https://github.com/ejnburrows-rgb/Command-Center-/pull/31",state:"open",draft:false,head:{sha:"c".repeat(40)}};
+ const result=deriveJulesAssignment({issue,timeline,comments:[accepted,unrelated],pullRequest:open,fetchedAt:"2026-10-30T03:40:00Z"});
+ assert.equal(result.pullRequest,null);
+ assert.equal(result.status,"ACCEPTED — LIVE SESSION STATUS UNKNOWN");
+});
+
 test("a draft PR is not shown as ready for review",()=>{
  const comment={...accepted,body:"Jules task update: https://jules.google.com/task/10892341679603989202 and PR https://github.com/ejnburrows-rgb/Command-Center-/pull/31"};
  const draft={number:31,title:"Draft result",html_url:"https://github.com/ejnburrows-rgb/Command-Center-/pull/31",state:"open",draft:true,head:{sha:"b".repeat(40)}};
