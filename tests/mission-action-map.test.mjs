@@ -8,13 +8,15 @@ test("the home route renders the project mind map before the existing mission da
  assert.match(entry,/tab==="Hub"&&<MissionActionMap projects=\{feed\.projects\} busy=\{loading\}\/>/);
  assert.ok(entry.indexOf("<MissionActionMap")<entry.indexOf("<Home projects="));
 });
-test("mind map connects real loaded repositories, not decorative hardcoded project counts",()=>{
+test("mind map expands real GitHub task branches instead of static project label lines",()=>{
  const view=read("app/mission-action-map.tsx");
+ const graph=read("app/mission-network.tsx");
  assert.match(view,/projects\.filter\(p=>p\.accessible\)/);
- assert.match(view,/nodes\.map\(n=><line/);
- assert.match(view,/aria-pressed=\{chosen\?\.slug===n\.project\.slug\}/);
- assert.match(view,/GitHub project data unavailable/);
- assert.doesNotMatch(view,/Math\.random|setInterval|fakeProgress/);
+ assert.match(view,/<MissionNetwork projects=\{available\}/);
+ assert.match(graph,/repoNodes\.map/);
+ assert.match(graph,/workNodes\.map/);
+ assert.match(graph,/aria-expanded=\{expanded\}/);
+ assert.doesNotMatch(graph,/Math\.random|setInterval|fakeProgress/);
 });
 test("next tasks have real source records, copy-ready prompts and inspectable full text",()=>{
  const view=read("app/mission-action-map.tsx");
@@ -33,11 +35,11 @@ test("existing Tutor permission and Jules duplicate guard prevent blind dispatch
  assert.match(view,/Copying a prompt does not assign work or start an agent/);
  assert.doesNotMatch(view,/api\/dispatch|api\/jules\/start/);
 });
-test("map CSS is phone-accessible and reduced-motion safe",()=>{
- const css=read("app/mission-action-map.css");
+test("interactive map is phone-accessible and reduced-motion safe",()=>{
+ const css=read("app/mission-network.css");
  const layout=read("app/layout.tsx");
- assert.match(layout,/mission-action-map\.css/);
- assert.match(css,/overflow-x:auto/);
+ assert.match(layout,/mission-network\.css/);
+ assert.match(css,/touch-action:none/);
  assert.match(css,/@media\(max-width:760px\)/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
 });
