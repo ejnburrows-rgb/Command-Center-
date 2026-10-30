@@ -1,0 +1,56 @@
+.next-mission{color:#eef3ff;background:#101625;border:1px solid #35445d;border-radius:18px;margin:14px clamp(12px,2vw,30px) 12px;padding:20px clamp(14px,2vw,24px);font-family:"Segoe UI",system-ui,sans-serif}
+.next-mission *{box-sizing:border-box}
+.next-mission button{cursor:pointer;font-family:inherit}
+.next-mission button:focus-visible,.next-mission textarea:focus-visible,.next-mission [tabindex]:focus-visible{outline:3px solid #81e8ce;outline-offset:3px}
+.next-mission-intro,.next-mission-task-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.next-mission-kicker{font-size:10px;font-weight:750;letter-spacing:.14em;color:#7ee4d0!important;margin:0 0 6px!important}
+.next-mission-intro h2{font-size:clamp(19px,2.5vw,29px);color:#fff;letter-spacing:-.035em;line-height:1.22;margin:0}
+.next-mission-intro h2 span{color:#c2b4ff}
+.next-mission-intro p:last-child{color:#b0bdd2;font-size:12px;line-height:1.6;margin:9px 0 0;max-width:72ch}
+.next-mission-source,.next-mission-task-heading>span{font-size:11px;color:#a5b5cf;padding:8px 12px;border:1px solid #35455d;border-radius:999px;white-space:normal}
+.next-mission-map-section{margin-top:15px;border:1px solid #2d3952;border-radius:15px;background:#0c1321;padding:8px 12px 12px;overflow:hidden}
+.next-mission-map-scroll{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-color:#64748b #162033}
+.next-mission-stage{min-width:770px;width:100%;height:340px;position:relative;isolation:isolate}
+.next-mission-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.next-mission-center-node{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid #8ce8d7;border-radius:50%;width:103px;height:103px;background:#153b41;box-shadow:0 0 0 8px #183d4342;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2}
+.next-mission-center-node strong{font-size:22px;color:#e3fffa;letter-spacing:-.05em}
+.next-mission-center-node span{color:#b3e8de;font-size:9px;letter-spacing:.1em;margin-top:4px}
+.next-mission-map-node{position:absolute;transform:translate(-50%,-50%);width:148px;min-height:68px;padding:10px 9px;border:1px solid #51617d;border-radius:12px;background:#182238;text-align:center;color:#f3f6ff;z-index:1;display:flex;flex-direction:column;justify-content:center;gap:6px;transition:border-color .15s,background .15s}
+.next-mission-map-node:hover,.next-mission-map-node.selected{border-color:#88e2d0;background:#1b4050;box-shadow:0 0 0 2px #79d9c033}
+.next-mission-map-node strong{font-size:11px;line-height:1.3;overflow-wrap:anywhere}
+.next-mission-map-node span{color:#b7c4d8;font-size:9px}
+.next-mission-map-empty{position:absolute;left:50%;top:25%;transform:translateX(-50%);text-align:center;font-size:12px;color:#c3cfe1;max-width:250px}
+.next-mission-quicknodes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.next-mission-quicknodes button{border-radius:999px;border:1px solid #344357;background:#192337;color:#b8c8e1;padding:7px 10px;font-size:10px}
+.next-mission-quicknodes button[aria-pressed="true"]{color:#eafffa;background:#24505a;border-color:#79dcca}
+.next-mission-selected{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid #2e3d55;margin-top:11px;padding-top:12px}
+.next-mission-selected>div{display:flex;flex-direction:column;gap:4px;margin-right:auto}
+.next-mission-selected small{font-size:9px;letter-spacing:.1em;color:#7bdccb}
+.next-mission-selected strong{font-size:13px;color:#fff}
+.next-mission-selected span{font-size:10px;color:#aabbd2}
+.next-mission-selected button,.next-mission-toggle{color:#dce7fa;border:1px solid #586582;border-radius:9px;background:#252f48;min-height:41px;padding:10px 12px;font-size:11px;font-weight:750}
+.next-mission-copy{color:#0f252a!important;background:#8df0da!important;border:1px solid #8df0da!important;border-radius:9px;min-height:42px;padding:9px 14px;font-weight:800;font-size:12px}
+.next-mission-copy:hover{background:#b5fff0!important}
+.next-mission-task-heading{margin:20px 0 12px}
+.next-mission-task-heading h3{font-size:19px;color:#fff;letter-spacing:-.025em;margin:0}
+.next-mission-tasks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.next-mission-task{display:flex;flex-direction:column;gap:11px;min-width:0;border:1px solid #3a4863;border-radius:13px;padding:15px;background:#192238}
+.next-mission-task-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.next-mission-task-number{font-size:14px;color:#93eadd;font-weight:800;font-family:monospace}
+.next-mission-state{font-size:9px;color:#d3c5fc;letter-spacing:.04em;text-align:right}
+.next-mission-task h4{font-size:15px;color:#fff;margin:0;line-height:1.3}
+.next-mission-agent{font-size:11px;color:#84e9d5!important;font-weight:700;margin:0!important;line-height:1.5}
+.next-mission-task-context{font-size:11px;color:#bdc9db!important;line-height:1.55;margin:0!important;flex:1}
+.next-mission-item{font-size:10px;color:#8295b0!important;line-height:1.6;margin:0!important}
+.next-mission-task-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.next-mission-task-controls button{flex:1;min-width:115px}
+.next-mission-prompt-text{display:block;resize:vertical;width:100%;margin-top:8px;min-height:105px;color:#eaf4fc;background:#080f1d;border:1px solid #6b7790;border-radius:10px;padding:12px;font:11px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap}
+.next-mission-error{color:#f9c58c;font-size:11px}
+.next-mission-no-tasks{border:1px dashed #65748b;border-radius:12px;padding:20px;color:#b6c5d7;font-size:12px}
+.next-mission-disclaimer{color:#9aaac0;font-size:11px;line-height:1.5;margin:14px 2px 0}
+@media(max-width:1250px){.next-mission-tasks{grid-template-columns:1fr 1fr}.next-mission-task:last-child:nth-child(odd){grid-column:1/-1}}
+@media(max-width:760px){.next-mission{margin:10px 10px 8px;padding:14px 11px}.next-mission-stage{min-width:760px}.next-mission-tasks{grid-template-columns:1fr}.next-mission-task:last-child:nth-child(odd){grid-column:auto}.next-mission-selected>div{flex:1 1 100%}.next-mission-task-controls button{min-height:46px}.next-mission-task-heading>span{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.next-mission *{transition:none!important;animation:none!important}}
+
+/* Superseded click-through priority cards: direct copy-first actions are now above the old dashboard. */
+.mission-shell:has(.next-mission) .mission-now{display:none}
