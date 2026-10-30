@@ -283,7 +283,7 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
   // 1. Commit lookup for archival render ref (slots-render.json)
   const c = await fetch(
     `https://api.github.com/repos/${OWNER}/${REPO}/commits/${encodeURIComponent(ref).replace(/%2F/g, "/")}`,
-    { headers: headers(), next: { revalidate: process.env.GITHUB_TOKEN_READ ? 60 : 120 } }
+    { headers: headers(), next: { revalidate: process.env.GITHUB_TOKEN_READ ? 60 : 120 } } as RequestInit
   );
   if (!c.ok) throw new Error(`GitHub commit lookup failed for archival ref "${ref}" (${c.status})`);
   const cj = await c.json();
@@ -293,7 +293,7 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
   // 2. Commit lookup for main (canonical files)
   const mc = await fetch(
     `https://api.github.com/repos/${OWNER}/${REPO}/commits/${DEFAULT_MAIN_REF}`,
-    { headers: headers(), next: { revalidate: process.env.GITHUB_TOKEN_READ ? 60 : 120 } }
+    { headers: headers(), next: { revalidate: process.env.GITHUB_TOKEN_READ ? 60 : 120 } } as RequestInit
   );
   if (!mc.ok) throw new Error(`GitHub commit lookup failed for main branch (${mc.status})`);
   const mcj = await mc.json();
@@ -302,19 +302,19 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
   const tutorBase = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${TUTOR_PR_REF}/`;
 
   const getArchival = async (p: string) => {
-    const r = await fetch(base + p, { next: { revalidate: 3600 } });
+    const r = await fetch(base + p, { next: { revalidate: 3600 } } as RequestInit);
     if (!r.ok) throw new Error(`Could not read archival ${p} at ${sha.slice(0, 7)} (${r.status})`);
     return r.json();
   };
 
   const getMainText = async (p: string) => {
-    const r = await fetch(mainBase + p, { next: { revalidate: 3600 } });
+    const r = await fetch(mainBase + p, { next: { revalidate: 3600 } } as RequestInit);
     if (!r.ok) throw new Error(`Could not read main ${p} at ${mainSha.slice(0, 7)} (${r.status})`);
     return r.text();
   };
 
   const getMainJson = async (p: string) => {
-    const r = await fetch(mainBase + p, { next: { revalidate: 3600 } });
+    const r = await fetch(mainBase + p, { next: { revalidate: 3600 } } as RequestInit);
     if (!r.ok) throw new Error(`Could not read main ${p} at ${mainSha.slice(0, 7)} (${r.status})`);
     return r.json();
   };
