@@ -51,3 +51,6 @@
 @media(max-width:1250px){.next-mission-tasks{grid-template-columns:1fr 1fr}.next-mission-task:last-child:nth-child(odd){grid-column:1/-1}}
 @media(max-width:760px){.next-mission{margin:10px 10px 8px;padding:14px 11px}.next-mission-stage{min-width:760px}.next-mission-tasks{grid-template-columns:1fr}.next-mission-task:last-child:nth-child(odd){grid-column:auto}.next-mission-selected>div{flex:1 1 100%}.next-mission-task-controls button{min-height:46px}.next-mission-task-heading>span{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.next-mission *{transition:none!important;animation:none!important}}
+
+/* Superseded click-through priority cards: direct copy-first actions are now above the old dashboard. */
+.mission-shell:has(.next-mission) .mission-now{display:none}

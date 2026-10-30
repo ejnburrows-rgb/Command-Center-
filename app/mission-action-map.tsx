@@ -71,7 +71,7 @@ export default function MissionActionMap({projects,busy}:{projects:Project[];bus
  if(policy)cards.push({id:"policy1218",title:"Review current Tutor operating instructions",project:cartilla?.name||"La Cartilla de Gretel",agent:"Codex reviewer / independent reviewer",kind:"review",item:policy,context:"Review existing documentation-only PR #1218 for obsolete organization-only instructions versus the latest #877 scope. Correct only proven contradictions; no product implementation.",rules:["Respect independent review and repository branch protection before a merge.","Ensure documentation changes cannot automatically trigger an unauthorized Cartilla production release."]});
  if(cards.length<3){
   const prior=projects.flatMap(p=>p.items.filter(i=>i.kind==="pr"&&!i.draft&&p.slug==="Command-Center-").map(i=>({p,i})))
-   .filter(({i})=>i.number!==17&&i.number!==15).sort((a,b)=>String(b.i.updatedAt).localeCompare(String(a.i.updatedAt)));
+   .filter(({p,i})=>p.accessible&&!p.stale&&!p.limited&&i.number!==17&&i.number!==15).sort((a,b)=>String(b.i.updatedAt).localeCompare(String(a.i.updatedAt)));
   for(const {p,i} of prior){if(cards.length>=3)break;cards.push({id:"review"+i.number,title:"Review existing NBO PR #"+i.number,project:p.name,agent:"Codex independent reviewer",kind:"review",item:i,context:"Check existing NBO PR #"+i.number+" against current main, task priority, overlap and real acceptance evidence. Avoid unnecessary merges or optimization-only distractions.",rules:["Reject security regressions, stale branches, and changes that replace verified current Board functionality."]});}
  }
  async function copy(id:string,value:string){

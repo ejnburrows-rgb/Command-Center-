@@ -41,3 +41,10 @@ test("map CSS is phone-accessible and reduced-motion safe",()=>{
  assert.match(css,/@media\(max-width:760px\)/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
 });
+
+test("never suggest stale PRs and hide the obsolete GitHub-only next-action cards",()=>{
+ const view=read("app/mission-action-map.tsx");
+ const css=read("app/mission-action-map.css");
+ assert.match(view,/p\.accessible&&!p\.stale&&!p\.limited/);
+ assert.match(css,/:has\(\.next-mission\) \.mission-now\{display:none\}/);
+});
