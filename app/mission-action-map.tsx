@@ -1,10 +1,10 @@
 "use client";
-import {useMemo,useState} from "react";
+import {useState} from "react";
+import MissionNetwork from "./mission-network";
 import type {Project,Work} from "./hub-data";
 import {useJobs} from "./evidence-panels";
 
 type Task={id:string;title:string;project:string;agent:string;kind:"resume"|"review";item:Work;context:string;rules:string[]};
-type MapNode={project:Project;x:number;y:number};
 
 function taskPrompt(task:Task,sourceFresh:boolean,authority:string):string{
  const warning=sourceFresh?"Check the latest head, exact ownership and test evidence before changing anything.":"SOURCE NOT VERIFIED FRESH: first recover the current GitHub state. Do not edit or dispatch until verified.";
@@ -54,10 +54,6 @@ export default function MissionActionMap({projects,busy}:{projects:Project[];bus
  const [selectedPrompt,setSelectedPrompt]=useState(false);
  const available=projects.filter(p=>p.accessible).slice(0,9);
  const chosen=available.find(p=>p.slug===selected)||available[0];
- const nodes:MapNode[]=useMemo(()=>available.map((project,i)=>{
-   const angle=(-Math.PI/2)+(i*Math.PI*2/Math.max(available.length,1));
-   return {project,x:50+Math.cos(angle)*39,y:50+Math.sin(angle)*36};
- }),[available]);
  const sourceFresh=!busy&&!jobs.loading&&!jobs.stale&&!jobs.error;
  const scope=jobs.execution?.mode==="TUTOR_1073_ONLY"?"Tutor #1073 development/qualification only; other Cartilla product lanes parked":jobs.execution?.mode==="PRODUCT_DEVELOPMENT"?"Confirm exact currently authorized job with #877 before product edits":jobs.execution?.mode==="ORGANIZATION_ONLY"?"Product changes paused; source/review work only":"Authorization UNKNOWN — inspect only; no new product dispatch";
  const nbo=projects.find(p=>p.slug==="Command-Center-");
@@ -82,22 +78,11 @@ export default function MissionActionMap({projects,busy}:{projects:Project[];bus
  return <section className="next-mission" aria-labelledby="next-mission-title">
   <div className="next-mission-intro">
    <div><p className="next-mission-kicker">YOUR PROJECT NETWORK · START HERE</p><h2 id="next-mission-title">Project mind map <span>& next agent prompts</span></h2>
-    <p>Select a connected project, or copy an actual next-task handoff below. No GitHub navigation required to obtain the prompt.</p></div>
+    <p>Expand a project to see its real issues and PRs. Explore the connected network, then copy the next task prompt without leaving the Board.</p></div>
    <span className="next-mission-source">{busy?"Checking GitHub…":available.length?available.length+" connected projects":"Project source unavailable"}</span>
   </div>
   <div className="next-mission-map-section">
-    <div className="next-mission-map-scroll" role="region" aria-label="Interactive project mind map; scroll horizontally on narrow screens" tabIndex={0}>
-     <div className="next-mission-stage">
-      <svg className="next-mission-lines" aria-hidden="true" viewBox="0 0 1000 380" preserveAspectRatio="none">
-       {nodes.map(n=><line key={n.project.slug} x1="500" y1="190" x2={n.x*10} y2={n.y*3.8} stroke={selected===n.project.slug?"#7ce6d0":"#505e83"} strokeWidth={selected===n.project.slug?3:1.6} strokeDasharray={n.project.stale?"5 7":undefined}/>)}
-      </svg>
-      <div className="next-mission-center-node"><strong>NBO</strong><span>CONTROL HUB</span></div>
-      {nodes.map(n=><button key={n.project.slug} type="button" className={"next-mission-map-node"+(chosen?.slug===n.project.slug?" selected":"")} style={{left:n.x+"%",top:n.y+"%"}} aria-pressed={chosen?.slug===n.project.slug} onClick={()=>{setSelected(n.project.slug);setSelectedPrompt(false);setCopied("");}}>
-       <strong>{n.project.name}</strong><span>{n.project.stale||n.project.limited?"STALE / PARTIAL":n.project.prs===null?"SOURCE UNKNOWN":n.project.prs+" PRs · "+(n.project.issues??"—")+" issues"}</span>
-      </button>)}
-      {!available.length&&<div className="next-mission-map-empty">{busy?"Loading connected projects…":"GitHub project data unavailable. No project statuses have been invented."}</div>}
-     </div>
-    </div>
+    <MissionNetwork projects={available} onSelectProject={(slug)=>{setSelected(slug);setSelectedPrompt(false);setCopied("");}}/>
     <div className="next-mission-quicknodes" aria-label="Choose project">
      {available.map(p=><button type="button" key={p.slug} aria-pressed={chosen?.slug===p.slug} onClick={()=>{setSelected(p.slug);setSelectedPrompt(false)}}>{p.name}</button>)}
     </div>
