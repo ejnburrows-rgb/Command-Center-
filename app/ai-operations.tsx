@@ -11,7 +11,11 @@ type Focus="all"|"pr"|"issue"|"draft";
 function sourceTime(value?:string){if(!value)return "Not recorded";const d=new Date(value);return Number.isFinite(d.getTime())?d.toLocaleString():"Not recorded";}
 function status(p:Project){return !p.accessible?"Source unavailable":p.stale||p.limited?"Partial / stale GitHub data":"GitHub source";}
 function workLabel(w:Work){return w.kind==="pr"?(w.draft?"Draft PR":"Open PR"):"Open issue";}
-function entries(projects:Project[]){return projects.flatMap(p=>p.items.map(w=>({project:p,work:w}))).sort((a,b)=>b.work.updatedAt.localeCompare(a.work.updatedAt));}
+function entries(projects:Project[]){
+ const res:{project:Project,work:Work}[]=[];
+ for(const p of projects)for(const w of p.items)res.push({project:p,work:w});
+ return res.sort((a,b)=>a.work.updatedAt<b.work.updatedAt?1:a.work.updatedAt>b.work.updatedAt?-1:0);
+}
 
 export function OperationsBrief({projects,loading}:{projects:Project[];loading:boolean}){
  const jobs=useJobs();
