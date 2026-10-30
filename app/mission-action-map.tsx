@@ -1,8 +1,9 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import MissionNetwork from "./mission-network";
 import type {Project,Work} from "./hub-data";
 import {useJobs} from "./evidence-panels";
+import type {JulesAssignmentEvidence} from "@/lib/jules-assignment-contract";
 
 type Task={id:string;title:string;project:string;agent:string;kind:"resume"|"review";item:Work;context:string;rules:string[]};
 
@@ -21,9 +22,9 @@ function taskPrompt(task:Task,sourceFresh:boolean,authority:string):string{
   "",
   "REQUIRED EXECUTION:",
   "1. "+warning,
-  "2. Recover the existing branch, task/session owner and applicable AGENTS.md. Continue the existing work; no new duplicate branch, agent or controller.",
+  task.kind==="review"?"2. Inspect the current source evidence and applicable AGENTS.md only. Do not resume, edit, or dispatch an agent.":"2. Recover the existing branch, task/session owner and applicable AGENTS.md. Continue the existing work; no new duplicate branch, agent or controller.",
   "3. Inspect only the files and behavior needed for this specific outcome. Reuse verified earlier work and do not repeat broad audits.",
-  "4. Make and test the smallest eligible fix, document real device/browser proof when visual, and obtain independent review where required.",
+  task.kind==="review"?"4. Report the verified state, evidence gaps, and one safe next action. Keep provider session state UNKNOWN unless directly verified.":"4. Make and test the smallest eligible fix, document real device/browser proof when visual, and obtain independent review where required.",
   "5. Preserve unrelated Cartilla, LANY and NBO functionality. Do not auto-merge, deploy production, spend money, weaken security or launch additional workers.",
   ...task.rules.map((rule,index)=>String(index+6)+". "+rule),
   "",
@@ -32,7 +33,16 @@ function taskPrompt(task:Task,sourceFresh:boolean,authority:string):string{
  ].join("\n");
 }
 
-function projectPrompt(project:Project):string{
+function projectPrompt(project:Project,assignment:JulesAssignmentEvidence|null,assignmentFresh:boolean):string{
+ if(project.slug==="Command-Center-")return [
+  "MISSION — Read-only review of NBO ownership and project evidence",
+  "REPOSITORY: "+project.url,
+  "ASSIGNMENT SOURCE: "+(assignmentFresh?"Fresh GitHub evidence":"STALE / UNAVAILABLE — current Jules assignment state is UNKNOWN"),
+  "LATEST VERIFIED STATUS: "+(assignmentFresh?assignment?.status||"UNKNOWN":"UNKNOWN"),
+  "LATEST PROVIDER OUTCOME: "+(assignmentFresh?assignment?.latestOutcome||"No official update":"UNKNOWN — refresh the assignment source"),
+  "Live provider session: UNKNOWN unless direct provider evidence proves otherwise.",
+  "Do not resume, edit, or dispatch an agent from this prompt. Review GitHub records only; the #18 assignment panel contains the source links.",
+ ].join("\n");
  const issue=project.items.find(item=>item.kind==="issue")||project.items.find(item=>item.kind==="pr");
  return [
   "MISSION — Resume verified existing work in "+project.name,
@@ -47,6 +57,13 @@ function projectPrompt(project:Project):string{
 
 export default function MissionActionMap({projects,busy}:{projects:Project[];busy:boolean}){
  const jobs=useJobs();
+ const [assignment,setAssignment]=useState<JulesAssignmentEvidence|null>(null);
+ useEffect(()=>{let active=true;fetch("/api/assignment",{cache:"no-store"}).then(async response=>{
+   const data=await response.json();
+   if(active)setAssignment({...data,error:response.ok?data.error||null:data.error||"Assignment source is unavailable."});
+  }).catch(()=>{if(active)setAssignment({status:"UNKNOWN",stale:true,error:"Assignment source is unavailable."})});
+  return ()=>{active=false};
+ },[]);
  const [selected,setSelected]=useState("");
  const [expanded,setExpanded]=useState("");
  const [copied,setCopied]=useState("");
@@ -59,10 +76,15 @@ export default function MissionActionMap({projects,busy}:{projects:Project[];bus
  const nbo=projects.find(p=>p.slug==="Command-Center-");
  const cartilla=projects.find(p=>p.slug==="cartilla-de-gretel");
  const assigned=nbo?.items.find(i=>i.kind==="issue"&&i.number===18);
+ const assignmentFresh=Boolean(assignment?.fetchedAt&&!assignment.stale&&!assignment.error);
  const tutor=cartilla?.items.find(i=>i.kind==="pr"&&i.number===1073);
  const policy=cartilla?.items.find(i=>i.kind==="pr"&&i.number===1218);
  const cards:Task[]=[];
- if(assigned)cards.push({id:"jules18",title:"Finish real agent ownership on the Board",project:nbo?.name||"NBO Operations Hub",agent:"Jules — resume existing task, do not dispatch another",kind:"resume",item:assigned,context:"Continue NBO issue #18. Make the Board display who assigned a task, its actual Jules acceptance, worker, PR and source freshness. Show unverified session status as UNKNOWN. Preserve this new mind map and prompt panel; coordinate file ownership.",rules:["Check Jules task 10892341679603989202 and the bot acceptance in issue #18 before resuming. Do not treat issue labels as proof of execution.","Because Jules is winding down, preserve task and PR evidence in GitHub; do not create a new Jules-only dependency."]});
+ const assignmentEvidence=assignment;
+ if(assigned&&assignmentFresh&&assignmentEvidence){
+  const failed=assignmentEvidence.status.startsWith("FAILED");
+  cards.push({id:"jules18",title:failed?"Review Jules task failure (not active)":"Review existing Jules assignment evidence",project:nbo?.name||"NBO Operations Hub",agent:"Read-only owner review — no dispatch",kind:"review",item:assigned,context:failed?"The official Jules bot reported task 10892341679603989202 failed. Keep its earlier acceptance as historical evidence; the live session is UNKNOWN. Inspect the linked source and any verified task-linked PR. Do not resume or create another Jules task.":"Review issue #18 and the official bot comments. Acceptance is not proof of an active session; inspect provider status only if direct access is available. Do not resume or dispatch from this Board.",rules:["Never treat a Jules label or earlier acceptance as active execution; preserve the provider's latest outcome.","Do not launch, resume, or duplicate a Jules task. Keep session status UNKNOWN unless directly verified."]});
+ }
  if(tutor&&jobs.execution?.productWorkAuthorized)cards.push({id:"tutor1073",title:"Prove Gretel Tutor Lección 1 on a real device",project:cartilla?.name||"La Cartilla de Gretel",agent:"Codex — existing Tutor worker only",kind:"resume",item:tutor,context:"Qualify existing Gretel Tutor PR #1073, first Lección 1. Focus on actual phone-width interaction and real microphone/approved voice behavior; preserve the existing Tutor branch.",rules:["Use Cartilla queue #877; no replacement Tutor, cloud AI ears, TTS fallback, art regeneration or unrelated lesson changes.","Keep Tutor draft until required speech, offline, privacy and owner acceptance proof exists."]});
  if(policy)cards.push({id:"policy1218",title:"Review current Tutor operating instructions",project:cartilla?.name||"La Cartilla de Gretel",agent:"Codex reviewer / independent reviewer",kind:"review",item:policy,context:"Review existing documentation-only PR #1218 for obsolete organization-only instructions versus the latest #877 scope. Correct only proven contradictions; no product implementation.",rules:["Respect independent review and repository branch protection before a merge.","Ensure documentation changes cannot automatically trigger an unauthorized Cartilla production release."]});
  if(cards.length<3){
@@ -74,7 +96,7 @@ export default function MissionActionMap({projects,busy}:{projects:Project[];bus
   try{await navigator.clipboard.writeText(value);setCopied(id);setCopyFailure("");}
   catch{setCopyFailure(id);setCopied("");}
  }
- const projectCopy=chosen?projectPrompt(chosen):"No verified project source. Refresh GitHub before assigning work.";
+ const projectCopy=chosen?projectPrompt(chosen,assignment,assignmentFresh):"No verified project source. Refresh GitHub before assigning work.";
  return <section className="next-mission" aria-labelledby="next-mission-title">
   <div className="next-mission-intro">
    <div><p className="next-mission-kicker">YOUR PROJECT NETWORK · START HERE</p><h2 id="next-mission-title">Project mind map <span>& next agent prompts</span></h2>
@@ -88,8 +110,8 @@ export default function MissionActionMap({projects,busy}:{projects:Project[];bus
     </div>
     {chosen&&<div className="next-mission-selected">
        <div><small>SELECTED PROJECT</small><strong>{chosen.name}</strong><span>{chosen.stale||chosen.limited?"Source is stale or partial":"Updated from GitHub: "+(chosen.fetchedAt?new Date(chosen.fetchedAt).toLocaleString():"Time unknown")}</span></div>
-       <button type="button" onClick={()=>{setSelectedPrompt(v=>!v);setCopied("");}}>{selectedPrompt?"Hide project handoff":"View project handoff"}</button>
-       <button type="button" className="next-mission-copy" onClick={()=>void copy("project",projectCopy)}>{copied==="project"?"Copied project prompt":"Copy project prompt"}</button>
+       <button type="button" onClick={()=>{setSelectedPrompt(v=>!v);setCopied("");}}>{selectedPrompt?"Hide project handoff":chosen.slug==="Command-Center-"?"View read-only NBO review":"View project handoff"}</button>
+       <button type="button" className="next-mission-copy" onClick={()=>void copy("project",projectCopy)}>{copied==="project"?"Copied project prompt":chosen.slug==="Command-Center-"?"Copy read-only NBO review":"Copy project prompt"}</button>
     </div>}
     {selectedPrompt&&chosen&&<textarea className="next-mission-prompt-text" aria-label="Project prompt ready to copy" readOnly value={projectCopy} rows={7}/>}
     {copyFailure==="project"&&<p className="next-mission-error">Clipboard permission unavailable. Select and copy the visible prompt text below.</p>}

@@ -424,10 +424,15 @@ export default function InventoryView({
               Cartilla Visual Activity, Artwork & Motion Inventory
             </h1>
             <p style={{ margin: 0, fontSize: 12, color: "#d8cfae" }}>
-              Canonical Main: <code>{inv.mainSha.slice(0, 10)}</code> · Archival Scan Ref ({inv.ref}):{" "}
-              <code>{inv.sha.slice(0, 10)}</code> · Tutor PR #1073: <code>bb585e1e</code> · Last Verified:{" "}
+              Production main: <code>{inv.mainSha.slice(0, 10)}</code> · Archival Scan Ref ({inv.ref}):{" "}
+              <code>{inv.sha.slice(0, 10)}</code> · Tutor PR #1073: {inv.tutorSource.freshness}{" "}
+              ({inv.tutorSource.lifecycle}) · head <code>{inv.tutorSource.headSha?.slice(0, 10) || "UNAVAILABLE"}</code>{" "}
+              · Source checked: {inv.tutorSource.observedAt ? inv.tutorSource.observedAt.replace("T", " ").slice(0, 16) + " UTC" : "unavailable"} · Inventory checked:{" "}
               {inv.fetchedAt.replace("T", " ").slice(0, 16)} UTC
             </p>
+            {inv.tutorSource.freshness === "UNAVAILABLE" && <p role="status" style={{ margin: "6px 0 0", fontSize: 12, color: "#ffd7a8" }}>
+              Tutor PR source unavailable: {inv.tutorSource.error} Tutor proof is hidden until the current PR head can be verified.
+            </p>}
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <a
