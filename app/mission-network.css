@@ -1,0 +1,60 @@
+/* Interactive GitHub-backed expandable network — replaces the static name ring. */
+.network-explorer{margin-top:14px;border:1px solid #354662;border-radius:15px;background:radial-gradient(circle at 47% 43%,#162943 0%,#101929 44%,#0a1120 100%);min-width:0;overflow:hidden}
+.network-toolbar{padding:13px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:#132034d9;border-bottom:1px solid #374764}
+.network-toolbar>div:first-child{display:flex;flex-direction:column;gap:4px}
+.network-toolbar strong{font-size:11px;letter-spacing:.08em;color:#9bf0df}
+.network-toolbar span{font-size:10px;color:#a5b7d2}
+.network-buttons{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.network-buttons button,.network-task-actions button,.network-task-actions a,.network-pagination button{border:1px solid #526984;background:#22314c;color:#effaff;border-radius:8px;min-height:39px;padding:7px 11px;font-size:11px;font-weight:730;text-align:center}
+.network-buttons button:hover,.network-task-actions button:hover,.network-pagination button:hover:not(:disabled){border-color:#8de4d8;background:#294562}
+.network-buttons>span{width:45px;text-align:center;color:#ecf9ff}
+.network-viewport{position:relative;width:100%;height:540px;overflow:hidden;touch-action:none;cursor:grab;background-image:radial-gradient(circle,#4c63834d 1px,transparent 1px);background-size:27px 27px}
+.network-viewport:active{cursor:grabbing}
+.network-stage{position:absolute;left:50%;top:50%;width:1500px;height:1220px;transform-origin:center center;will-change:transform}
+.network-edges{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.network-edge,.network-edge-active,.network-edge-task{fill:none;stroke-width:2.7;opacity:.82}
+.network-edge{stroke-dasharray:8 7}
+.network-edge-active{stroke-width:4;opacity:1}
+.network-edge-task{stroke-width:2.5;stroke-dasharray:3 5;opacity:.94}
+.network-hub,.network-project,.network-work{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;word-break:break-word;line-height:1.3;z-index:1}
+.network-hub{width:145px;height:145px;border-radius:50%;border:3px solid #8fe8d5;background:#123f4d;box-shadow:0 0 0 13px #326d7050,0 0 55px #6de2dc41;pointer-events:none}
+.network-hub b{font-size:31px;color:white;letter-spacing:-.05em}
+.network-hub small{font-size:10px;color:#c8fff2;font-weight:750}
+.network-hub span{font-size:10px;color:#b6dcdf}
+.network-project{width:192px;min-height:105px;padding:12px;background:#1c2943;border:2px solid #6a83ae;border-radius:16px;color:white;box-shadow:0 8px 25px #03071780}
+.network-project:hover,.network-project.expanded{background:#28445c;border-color:#80e5d9;box-shadow:0 0 0 5px #91eede23,0 8px 27px #03071788}
+.network-project-top{display:flex;align-items:center;gap:9px;align-self:flex-start}
+.network-project-top i{display:grid;place-items:center;font-style:normal;width:22px;height:22px;border-radius:6px;background:#2d797b;color:white;font-size:16px;font-weight:850}
+.network-project-top small{font-size:9px;color:#9be2dd;letter-spacing:.11em}
+.network-project strong{font-size:14px;line-height:1.22;color:#fff}
+.network-project>span:last-child{font-size:10px;color:#b3c4e0}
+.network-work{width:174px;min-height:92px;padding:11px;background:#172f42;border:1.5px solid #63accb;border-radius:14px;color:#e8f7ff;box-shadow:0 8px 24px #030717aa}
+.network-work.draft{background:#362b41;border-color:#a88cc6}
+.network-work:hover,.network-work.chosen{border-color:#a2ffdf;background:#265066;box-shadow:0 0 0 4px #69e5ce36}
+.network-work small{font-size:9px;letter-spacing:.09em;color:#9aeddc}
+.network-work strong{font-size:11px;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.network-work span{font-size:9px;color:#b3c6d9}
+.network-below{padding:10px 14px 14px;display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-top:1px solid #283e57}
+.network-below p{font-size:10px!important;color:#bac8da!important;line-height:1.5;margin:0!important;flex:1 1 270px}
+.network-legend{display:flex;gap:11px;flex-wrap:wrap}
+.network-legend span{display:flex;align-items:center;gap:5px;font-size:10px;color:#b2c8d9}
+.network-key{display:inline-block;width:10px;height:10px;border-radius:50%}
+.network-key.repo{background:#8fe8d5}.network-key.task{background:#63accb}.network-key.draft{background:#a88cc6}
+.network-project-inspector,.network-work-inspector{display:flex;flex-wrap:wrap;gap:12px;align-items:center;border-top:1px solid #334764;padding:13px 15px;background:#101b2f}
+.network-project-inspector>div:first-child{min-width:180px;flex:1}
+.network-project-inspector small,.network-work-inspector small{display:block;font-size:10px;letter-spacing:.11em;color:#86e5d6;margin-bottom:5px;font-weight:700}
+.network-project-inspector strong{display:block;font-size:16px;color:white}
+.network-project-inspector p,.network-work-inspector p{color:#acbed7;font-size:11px;line-height:1.5;margin:6px 0 0}
+.network-pagination{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.network-pagination span{font-size:11px;color:#c0d2e4}
+.network-pagination button:disabled{opacity:.35;cursor:default}
+.network-work-inspector{border-top-color:#477c92;align-items:flex-start;display:block}
+.network-work-inspector h3{margin:0;color:#fff;font-size:16px;line-height:1.3}
+.network-task-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.network-task-actions a{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.network-work-inspector textarea{margin-top:12px;width:100%;min-height:150px;resize:vertical;border:1px solid #547393;border-radius:8px;padding:12px;background:#081425;color:#eff7ff;font:11px/1.6 monospace}
+.network-fullscreen{position:fixed;inset:14px;z-index:200;display:flex;flex-direction:column;border:2px solid #6cdac8;box-shadow:0 0 0 20px #020611e6}
+.network-fullscreen .network-viewport{flex:1;min-height:230px;height:auto}
+.network-fullscreen .network-project-inspector,.network-fullscreen .network-work-inspector{flex-shrink:0;max-height:24vh;overflow-y:auto}
+@media(max-width:760px){.network-viewport{height:490px}.network-buttons button{min-height:44px;padding:9px 12px}.network-toolbar{padding:11px}.network-below{padding:11px}.network-project-inspector{align-items:stretch}.network-pagination{width:100%;justify-content:space-between}.network-fullscreen{inset:4px}.network-fullscreen .network-viewport{height:auto}}
+@media(prefers-reduced-motion:reduce){.network-explorer *{animation:none!important;transition:none!important}}
