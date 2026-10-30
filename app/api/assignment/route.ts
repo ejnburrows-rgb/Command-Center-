@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { github, errorText } from "@/lib/public-github";
+import { github, allPages, errorText } from "@/lib/public-github";
 import { serverSnapshot } from "@/lib/server-snapshot";
-import { deriveJulesAssignment, julesTaskUrl, julesPullRequestNumber } from "@/lib/jules-assignment.mjs";
+import { deriveJulesAssignment, julesTaskUrl, julesPullRequestNumber, findJulesTaskPR } from "@/lib/jules-assignment.mjs";
 
 export const dynamic = "force-dynamic";
 const repo = "/repos/ejnburrows-rgb/Command-Center-";
@@ -20,7 +20,7 @@ export async function GET() {
       const comments = commentsResult.data;
       if (!Array.isArray(timeline) || !Array.isArray(comments)) throw new Error("Jules assignment evidence is incomplete");
 
-      const acceptedTask = [...comments].reverse().find((comment: any) => comment?.user?.login === "google-labs-jules[bot]" && julesTaskUrl(String(comment.body || "")));
+      const acceptedTask = comments.find((comment: any) => comment?.user?.login === "google-labs-jules[bot]" && julesTaskUrl(String(comment.body || "")));
       const expectedTaskUrl = acceptedTask ? julesTaskUrl(String(acceptedTask.body || "")) : null;
       const candidates = comments
         .filter((comment: any) => comment?.user?.login === "google-labs-jules[bot]")
@@ -31,6 +31,12 @@ export async function GET() {
       if (linked?.number) {
         const { data } = await github(`${repo}/pulls/${linked.number}`);
         pullRequest = data;
+      } else if (expectedTaskUrl) {
+        // Jules normally records the task URL in its issue acknowledgment and the
+        // task ID in the resulting PR description. Require that exact ID to avoid
+        // attaching an unrelated Jules PR to this assignment.
+        const pullRequests = await allPages<any>(`${repo}/pulls?state=all&sort=updated&direction=desc`);
+        pullRequest = findJulesTaskPR(pullRequests, expectedTaskUrl);
       }
       return deriveJulesAssignment({ issue, timeline, comments, pullRequest });
     });

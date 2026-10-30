@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { deriveJulesAssignment } from "../lib/jules-assignment.mjs";
+import { findJulesTaskPR } from "../lib/jules-assignment.mjs";
 const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
 
 const issue={number:18,title:"Track Jules task ownership",html_url:"https://github.com/ejnburrows-rgb/Command-Center-/issues/18",created_at:"2026-10-30T03:12:38Z",updated_at:"2026-10-30T03:36:05Z",user:{login:"ejnburrows-rgb"},labels:[{name:"jules"}],assignees:[]};
@@ -57,6 +58,16 @@ test("an unrelated PR mentioned by the official bot is not correlated to this ta
  const result=deriveJulesAssignment({issue,timeline,comments:[accepted,unrelated],pullRequest:open,fetchedAt:"2026-10-30T03:40:00Z"});
  assert.equal(result.pullRequest,null);
  assert.equal(result.status,"ACCEPTED — LIVE SESSION STATUS UNKNOWN");
+});
+
+test("a PR description can link to the accepted task ID even when the bot posted its links separately",()=>{
+ const acceptedOnly=accepted;
+ const linked={number:31,title:"Task result",html_url:"https://github.com/ejnburrows-rgb/Command-Center-/pull/31",state:"open",draft:false,updated_at:"2026-10-30T03:45:00Z",body:"Jules task https://jules.google.com/task/10892341679603989202",head:{sha:"d".repeat(40)}};
+ const unrelated={...linked,number:32,body:"Jules task https://jules.google.com/task/999999999999"};
+ assert.equal(findJulesTaskPR([unrelated,linked],acceptedOnly.body)?.number,31);
+ const result=deriveJulesAssignment({issue,timeline,comments:[acceptedOnly],pullRequest:linked,fetchedAt:"2026-10-30T03:40:00Z"});
+ assert.equal(result.status,"REVIEW-READY — PR OPEN");
+ assert.equal(result.pullRequest.number,31);
 });
 
 test("a draft PR is not shown as ready for review",()=>{
