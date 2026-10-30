@@ -5,7 +5,7 @@ const snapshots=new Map<string,Cached<unknown>>();
 const pending=new Map<string,Promise<Snapshot<unknown>>>();
 export type Snapshot<T>={value:T;fetchedAt:string;stale:boolean;error?:string};
 export function errorText(e:unknown){return e instanceof Error?e.message:'GitHub unavailable';}
-export async function github(path:string):Promise<{data:any;headers:Headers}>{
+export async function github<T = unknown>(path:string):Promise<{data:T;headers:Headers}>{
  if(!path.startsWith('/repos/ejnburrows-rgb/'))throw new Error('Repository outside public hub scope');
  const response=await fetch('https://api.github.com'+path,{headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},signal:AbortSignal.timeout(15000),cache:'no-store'});
  if(!response.ok)throw new Error(response.status===403||response.status===429?'GitHub rate limit or access restriction; showing last successful data when available':`GitHub HTTP ${response.status}`);
