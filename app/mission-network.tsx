@@ -333,6 +333,67 @@ export const OPTION_C_MIND_NODES: MindGraphNode[] = [
   },
 ];
 
+
+export type MindGraphEdge = {
+  id: string;
+  from: string;
+  to: string;
+  stroke: string;
+  strokeWidth: number;
+  dashArray?: string;
+};
+
+export const OPTION_C_MIND_EDGES: MindGraphEdge[] = [
+  { id: "e-merged-jules", from: "merged-assets", to: "jules-stopped", stroke: "url(#edge-active)", strokeWidth: 2, dashArray: "4 3" },
+  { id: "e-jules-pr28", from: "jules-stopped", to: "command-center-pr28", stroke: "#f97316", strokeWidth: 2 },
+  { id: "e-mariposas-rules", from: "mariposas-live", to: "cartilla-rules-pr1218", stroke: "url(#edge-delivered)", strokeWidth: 2 },
+  { id: "e-rules-tutor", from: "cartilla-rules-pr1218", to: "tutor-l1-1073", stroke: "#f97316", strokeWidth: 2.5 },
+  { id: "e-pr28-voice", from: "command-center-pr28", to: "voice-alignment-769", stroke: "url(#edge-blocker)", strokeWidth: 2 },
+  { id: "e-tutor-pages", from: "tutor-l1-1073", to: "workbook-pages-36-37", stroke: "url(#edge-blocker)", strokeWidth: 2 },
+  { id: "e-tutor-parked", from: "tutor-l1-1073", to: "parked-games-lany", stroke: "#64748b", strokeWidth: 1.5, dashArray: "3 3" },
+];
+
+export function getCartillaRootPath(targetId: string | null): { activeNodes: Set<string>; activeEdges: Set<string> } {
+  if (!targetId) {
+    return { activeNodes: new Set(), activeEdges: new Set() };
+  }
+  const activeNodes = new Set<string>([targetId]);
+  const activeEdges = new Set<string>();
+  const queue: string[] = [targetId];
+
+  while (queue.length > 0) {
+    const curr = queue.shift()!;
+    for (const edge of OPTION_C_MIND_EDGES) {
+      if (edge.to === curr) {
+        activeEdges.add(edge.id);
+        if (!activeNodes.has(edge.from)) {
+          activeNodes.add(edge.from);
+          queue.push(edge.from);
+        }
+      }
+    }
+  }
+
+  return { activeNodes, activeEdges };
+}
+
+export function getHiddenDescendants(collapsedSet: Set<string>): Set<string> {
+  const hidden = new Set<string>();
+  for (const collapsedId of collapsedSet) {
+    const queue = [collapsedId];
+    while (queue.length > 0) {
+      const curr = queue.shift()!;
+      for (const edge of OPTION_C_MIND_EDGES) {
+        if (edge.from === curr) {
+          hidden.add(edge.to);
+          queue.push(edge.to);
+        }
+      }
+    }
+  }
+  return hidden;
+}
+
 export const OPTION_C_TIMELINE_STEPS = [
   { step: 1, tone: "green", nodeId: "merged-assets", label: "DELIVERED", desc: "Oct 28–29: 162 Word MP3s (#503) + 51 Art Crops (#1205) + 6 Blinks (#1204)" },
   { step: 2, tone: "green", nodeId: "mariposas-live", label: "DELIVERED", desc: "Oct 29: Butterfly Game (Mariposas) Deployed Live (#1079)" },
@@ -370,6 +431,24 @@ export default function MissionNetwork({
   const [bouncingNodeId, setBouncingNodeId] = useState<string | null>(null);
   const [nodePositions, setNodePositions] = useState<Record<string, { dx: number; dy: number }>>({});
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
+  const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+
+  function toggleCollapse(nodeId: string) {
+    setCollapsedNodes((prev) => {
+      const next = new Set(prev);
+      if (next.has(nodeId)) {
+        next.delete(nodeId);
+      } else {
+        next.add(nodeId);
+      }
+      return next;
+    });
+  }
+
+  const hiddenNodes = useMemo(() => getHiddenDescendants(collapsedNodes), [collapsedNodes]);
+  const { activeNodes, activeEdges } = useMemo(() => getCartillaRootPath(hoveredNodeId), [hoveredNodeId]);
+  const isHoverActive = Boolean(hoveredNodeId);
   const dragOffsetRef = useRef<{ id: string; startX: number; startY: number; initDx: number; initDy: number } | null>(null);
 
   function handleZoomToFit() {
@@ -629,6 +708,17 @@ export default function MissionNetwork({
                 >
                   Fit 🎯
                 </button>
+                {collapsedNodes.size > 0 && (
+                  <button
+                    type="button"
+                    className="size-btn"
+                    onClick={() => setCollapsedNodes(new Set())}
+                    title="Expand all collapsed nodes"
+                    style={{ color: "#38bdf8" }}
+                  >
+                    Expand All ⊞
+                  </button>
+                )}
                 {hasCustomLayout && (
                   <button
                     type="button"
@@ -718,83 +808,64 @@ export default function MissionNetwork({
 
                     {/* Connecting Edges with Spider Edge Class & Dynamic Path Resolution */}
                     <g className="mind-edges" aria-hidden="true">
-                      {(() => {
-                        const pMerged = getNodePos(OPTION_C_MIND_NODES[0]);
-                        const pMariposas = getNodePos(OPTION_C_MIND_NODES[1]);
-                        const pJules = getNodePos(OPTION_C_MIND_NODES[2]);
-                        const pPR28 = getNodePos(OPTION_C_MIND_NODES[3]);
-                        const pRules = getNodePos(OPTION_C_MIND_NODES[4]);
-                        const pTutor = getNodePos(OPTION_C_MIND_NODES[5]);
-                        const pVoice = getNodePos(OPTION_C_MIND_NODES[6]);
-                        const pPages = getNodePos(OPTION_C_MIND_NODES[7]);
-                        const pParked = getNodePos(OPTION_C_MIND_NODES[8]);
+                      {OPTION_C_MIND_EDGES.map((edge) => {
+                        const isHidden = collapsedNodes.has(edge.from) || hiddenNodes.has(edge.from) || hiddenNodes.has(edge.to);
+                        if (isHidden) return null;
+
+                        const fromNode = OPTION_C_MIND_NODES.find((n) => n.id === edge.from)!;
+                        const toNode = OPTION_C_MIND_NODES.find((n) => n.id === edge.to)!;
+                        const pFrom = getNodePos(fromNode);
+                        const pTo = getNodePos(toNode);
+
+                        const isPathHighlighted = isHoverActive && activeEdges.has(edge.id);
+                        const isEdgeDimmed = isHoverActive && !activeEdges.has(edge.id);
+
+                        const x1 = pFrom.x + 55;
+                        const y1 = pFrom.y;
+                        const x2 = pTo.x - 55;
+                        const y2 = pTo.y;
+                        const dx = x2 - x1;
+
+                        const d = dx > 80
+                          ? `M ${x1} ${y1} C ${x1 + dx * 0.45} ${y1}, ${x2 - dx * 0.45} ${y2}, ${x2} ${y2}`
+                          : `M ${x1} ${y1} L ${x2} ${y2}`;
 
                         return (
-                          <>
-                            <path
-                              className="spider-edge-line"
-                              d={`M ${pMerged.x + 55} ${pMerged.y} C ${pMerged.x + 110} ${pMerged.y}, ${pJules.x - 70} ${pJules.y}, ${pJules.x - 55} ${pJules.y}`}
-                              stroke="url(#edge-active)"
-                              strokeWidth="2"
-                              fill="none"
-                              strokeDasharray="4 3"
-                            />
-                            <path
-                              className="spider-edge-line"
-                              d={`M ${pJules.x + 55} ${pJules.y} L ${pPR28.x - 55} ${pPR28.y}`}
-                              stroke="#f97316"
-                              strokeWidth="2"
-                              fill="none"
-                            />
-                            <path
-                              className="spider-edge-line"
-                              d={`M ${pMariposas.x + 55} ${pMariposas.y} C ${pMariposas.x + 110} ${pMariposas.y}, ${pRules.x - 70} ${pRules.y}, ${pRules.x - 55} ${pRules.y}`}
-                              stroke="url(#edge-delivered)"
-                              strokeWidth="2"
-                              fill="none"
-                            />
-                            <path
-                              className="spider-edge-line"
-                              d={`M ${pRules.x + 55} ${pRules.y} L ${pTutor.x - 55} ${pTutor.y}`}
-                              stroke="#f97316"
-                              strokeWidth="2.5"
-                              fill="none"
-                            />
-                            <path
-                              className="spider-edge-line"
-                              d={`M ${pPR28.x + 55} ${pPR28.y} C ${pPR28.x + 110} ${pPR28.y}, ${pVoice.x - 70} ${pVoice.y}, ${pVoice.x - 55} ${pVoice.y}`}
-                              stroke="url(#edge-blocker)"
-                              strokeWidth="2"
-                              fill="none"
-                            />
-                            <path
-                              className="spider-edge-line"
-                              d={`M ${pTutor.x + 55} ${pTutor.y} C ${pTutor.x + 110} ${pTutor.y}, ${pPages.x - 70} ${pPages.y}, ${pPages.x - 55} ${pPages.y}`}
-                              stroke="url(#edge-blocker)"
-                              strokeWidth="2"
-                              fill="none"
-                            />
-                            <path
-                              className="spider-edge-line"
-                              d={`M ${pTutor.x + 55} ${pTutor.y} C ${pTutor.x + 110} ${pTutor.y}, ${pParked.x - 70} ${pParked.y}, ${pParked.x - 55} ${pParked.y}`}
-                              stroke="#64748b"
-                              strokeWidth="1.5"
-                              fill="none"
-                              strokeDasharray="3 3"
-                            />
-                          </>
+                          <path
+                            key={edge.id}
+                            className={
+                              "spider-edge-line" +
+                              (isPathHighlighted ? " is-path-highlighted" : "") +
+                              (isEdgeDimmed ? " is-dimmed" : "")
+                            }
+                            d={d}
+                            stroke={edge.stroke}
+                            strokeWidth={edge.strokeWidth}
+                            fill="none"
+                            strokeDasharray={edge.dashArray}
+                          />
                         );
-                      })()}
+                      })}
                     </g>
 
-                    {/* 9 Interactive Mind Graph Nodes with Hover Tooltips, Drag & Drop, and Click Bounce */}
+                    {/* 9 Interactive Mind Graph Nodes with Hover Tooltips, Drag & Drop, Click Bounce, and Collapse Toggle */}
                     <g className="mind-nodes">
                       {OPTION_C_MIND_NODES.map((node) => {
+                        const isHidden = hiddenNodes.has(node.id);
+                        if (isHidden) return null;
+
                         const isNodeActive = selectedMindNode === node.id;
                         const isNodeStepActive = selectedStep === node.step;
                         const isDragging = draggingNodeId === node.id;
                         const isBouncing = bouncingNodeId === node.id;
                         const pos = getNodePos(node);
+
+                        const isNodeHighlighted = isHoverActive && activeNodes.has(node.id);
+                        const isNodeDimmed = isHoverActive && !activeNodes.has(node.id);
+
+                        const childEdges = OPTION_C_MIND_EDGES.filter((e) => e.from === node.id);
+                        const hasChildren = childEdges.length > 0;
+                        const isCollapsed = collapsedNodes.has(node.id);
 
                         return (
                           <g
@@ -803,9 +874,13 @@ export default function MissionNetwork({
                               "spider-node-inner mind-node-group tone-" + node.tone +
                               (isNodeActive ? " active is-selected" : "") +
                               (isDragging ? " is-dragging" : "") +
-                              (isBouncing ? " is-bouncing" : "")
+                              (isBouncing ? " is-bouncing" : "") +
+                              (isNodeHighlighted ? " is-path-highlighted" : "") +
+                              (isNodeDimmed ? " is-dimmed" : "")
                             }
                             transform={`translate(${pos.x - 55}, ${pos.y - 30})`}
+                            onPointerEnter={() => setHoveredNodeId(node.id)}
+                            onPointerLeave={() => setHoveredNodeId(null)}
                             onPointerDown={(e) => handleNodePointerDown(e, node.id)}
                             onPointerMove={handleNodePointerMove}
                             onPointerUp={handleNodePointerUp}
@@ -832,7 +907,7 @@ export default function MissionNetwork({
                               {node.dateBadge}
                             </text>
                             <text x="6" y="26" className="node-title" fill="#f8fafc" fontSize="9.5" fontWeight="800">
-                              {node.title.length > 17 ? node.title.slice(0, 16) + "…" : node.title}
+                              {node.title.length > 15 ? node.title.slice(0, 14) + "…" : node.title}
                             </text>
                             <text x="6" y="38" className="node-subtitle" fill="#cbd5e1" fontSize="8">
                               {node.subtitle.length > 20 ? node.subtitle.slice(0, 19) + "…" : node.subtitle}
@@ -840,6 +915,41 @@ export default function MissionNetwork({
                             <text x="6" y="52" className="node-agent-badge" fill="#38bdf8" fontSize="7.5" fontWeight="700">
                               {node.agentBadge.length > 18 ? node.agentBadge.slice(0, 17) + "…" : node.agentBadge}
                             </text>
+
+                            {/* Collapse/Expand Toggle Icon for Child Connections */}
+                            {hasChildren && (
+                              <g
+                                className="spider-node-toggle"
+                                transform="translate(98, 12)"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleCollapse(node.id);
+                                }}
+                                role="button"
+                                tabIndex={0}
+                                aria-label={isCollapsed ? `Expand ${childEdges.length} connections` : `Collapse ${childEdges.length} connections`}
+                              >
+                                <circle
+                                  cx="0"
+                                  cy="0"
+                                  r="7.5"
+                                  fill={isCollapsed ? "#e11d48" : "#1e293b"}
+                                  stroke={isCollapsed ? "#fecdd3" : "#475569"}
+                                  strokeWidth="1.2"
+                                />
+                                <text
+                                  x="0"
+                                  y="3"
+                                  textAnchor="middle"
+                                  fill="#ffffff"
+                                  fontSize="9"
+                                  fontWeight="900"
+                                  style={{ userSelect: "none", pointerEvents: "none" }}
+                                >
+                                  {isCollapsed ? "+" : "−"}
+                                </text>
+                              </g>
+                            )}
 
                             {/* Hover Tooltip Card */}
                             <g className="spider-node-tooltip" transform="translate(55, -8)">
