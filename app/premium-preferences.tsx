@@ -6,7 +6,7 @@ export type WorkspaceMode="overview"|"coding"|"review"|"focus";
 const palettes:Palette[]=["blue","purple","teal","mono"];
 const appearances:Appearance[]=["light","dark"];
 const workspaces:WorkspaceMode[]=["overview","coding","review","focus"];
-export const paletteLabels:Record<Palette,string>={blue:"Ocean Blue",purple:"Violet",teal:"Teal",mono:"Monochrome"};
+export const paletteLabels:Record<Palette,string>={blue:"Tokyo Night",purple:"Catppuccin",teal:"Dracula Cyan",mono:"Cursor Carbon"};
 export const workspaceLabels:Record<WorkspaceMode,string>={overview:"Overview",coding:"Coding",review:"Review",focus:"Focus"};
 export function isPalette(v:string):v is Palette{return palettes.includes(v as Palette)}
 export function isAppearance(v:string):v is Appearance{return appearances.includes(v as Appearance)}

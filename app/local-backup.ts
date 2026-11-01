@@ -1,5 +1,5 @@
 import {listDocs,saveDoc} from "./local-docs";
-const keys=["nbo-checks","nbo-custom-prompts","nbo-theme","nbo-auto"];
+const keys=["nbo-checks","nbo-custom-prompts","nbo-project-briefs-v1","nbo-lessons-learned-v1","nbo-lifecycle-web-v1","nbo-palette","nbo-appearance","nbo-workspace","nbo-theme","nbo-auto"];
 function dataUrl(file:File):Promise<string>{return new Promise((ok,fail)=>{const r=new FileReader();r.onload=()=>ok(String(r.result));r.onerror=()=>fail(r.error);r.readAsDataURL(file)})}
 export async function exportBackup(){
  const docs=await listDocs();
