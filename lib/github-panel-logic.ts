@@ -31,7 +31,7 @@ export function groupForWork(work:WorkRow):string{
  return "Uncategorized work";
 }
 export function timelineForCommits(commits:CommitRow[]):Array<{day:string;count:number;sha:string;title:string}>{
- const ascending=[...commits].filter(c=>Number.isFinite(Date.parse(c.date))).sort((a,b)=>a.date.localeCompare(b.date));
+ const ascending=[...commits].filter(c=>Number.isFinite(Date.parse(c.date))).sort((a,b)=>(a.date < b.date ? -1 : (a.date > b.date ? 1 : 0)));
  const frames:Array<{day:string;count:number;sha:string;title:string}>=[];
  ascending.forEach((c,i)=>{
   const day=c.date.slice(0,10);
