@@ -41,13 +41,19 @@ test("API library route loads all 75+ markdown files from /content/ and PromptLi
   assert.match(libUi, /lib-reader-pane/);
 });
 
-test("BestPractices and LifecycleForceGraph provide D3.js force-directed graph with central project hubs, branching tasks, and horizontal Recharts timeline", () => {
+test("BestPractices, RechartsMilestoneTimeline, and LifecycleForceGraph provide horizontal Recharts milestone/status progression timeline and D3.js force-directed graph", () => {
   const bp = read("app/best-practices.tsx");
   const fg = read("app/lifecycle-force-graph.tsx");
+  const rmt = read("app/recharts-milestone-timeline.tsx");
   assert.match(bp, /from "recharts"/);
   assert.match(bp, /layout="vertical"/);
   assert.match(bp, /ComposedChart/);
+  assert.match(bp, /RechartsMilestoneTimeline/);
   assert.match(bp, /LifecycleForceGraph/);
+  assert.match(rmt, /from "recharts"/);
+  assert.match(rmt, /cumulativeProgression/);
+  assert.match(rmt, /statusLabel/);
+  assert.match(rmt, /layout="vertical"/);
   assert.match(fg, /from "d3"/);
   assert.match(fg, /forceSimulation/);
   assert.match(fg, /forceLink/);
@@ -61,3 +67,29 @@ test("BestPractices and LifecycleForceGraph provide D3.js force-directed graph w
   assert.match(bp, /Release Readiness Gate/);
   assert.match(bp, /Lessons Learned &amp; Reusable Rules/);
 });
+
+test("DailyFocusWidget pulls together the next action from each project into a single summary view on Overview", () => {
+  const hq = read("app/plain-english-hq.tsx");
+  const df = read("app/daily-focus-widget.tsx");
+  assert.match(hq, /import DailyFocusWidget from "\.\/daily-focus-widget"/);
+  assert.match(hq, /<DailyFocusWidget/);
+  assert.match(df, /DAILY FOCUS · ONE NEXT ACTION PER PROJECT/);
+  assert.match(df, /Complete Next Action/);
+  assert.match(df, /Copy Next AI Prompt/);
+  assert.match(df, /TUTOR_1073_ONLY/);
+});
+
+test("ProjectProgressBar renders interactive task-based progress bars on project cards in Projects view, Overview, and Project Workspace", () => {
+  const pv = read("app/projects-view.tsx");
+  const pview = read("app/project-view.tsx");
+  const hq = read("app/plain-english-hq.tsx");
+  const ppb = read("app/project-progress-bar.tsx");
+  assert.match(pv, /<ProjectProgressBar slug=\{p\.slug\}/);
+  assert.match(pview, /<ProjectProgressBar slug=\{p\.slug\}/);
+  assert.match(hq, /<ProjectProgressBar slug=\{spec\.slug\}/);
+  assert.match(ppb, /role="progressbar"/);
+  assert.match(ppb, /computeProjectTaskMetrics/);
+});
+
+
+

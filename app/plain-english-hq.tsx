@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
 import type {Project} from "./hub-data";
 import {projectPath} from "./route-paths";
@@ -7,10 +7,16 @@ import {copyText,External} from "./hub-ui";
 import {usePremium,paletteLabels,type Palette} from "./premium-preferences";
 import LifecycleForceGraph, {
  type ForceGraphNode,
- type LifecycleStageSpec,
- type StudioProjectItem
+ type LifecycleStageSpec
 } from "./lifecycle-force-graph";
-import {LIFECYCLE_NODES} from "./best-practices";
+import RechartsMilestoneTimeline from "./recharts-milestone-timeline";
+import DailyFocusWidget from "./daily-focus-widget";
+import ProjectProgressBar, {computeProjectTaskMetrics} from "./project-progress-bar";
+import {
+ LIFECYCLE_NODES,
+ STUDIO_PROJECTS,
+ buildMilestoneTimelineData
+} from "./best-practices";
 
 type MainCardSpec = {
  slug: string;
@@ -33,7 +39,7 @@ const MAIN_SPECS: MainCardSpec[] = [
   title: "La Cartilla de Gretel",
   shortRole: "Spanish Early-Literacy App & AI Tutor",
   stageIndex: 4,
-  stageLabel: "04 · Visual & Mobile QA",
+  stageLabel: "FINISH · 04 Visual & Mobile QA",
   progressPct: 68,
   accentColor: "#7aa2f7",
   sparkline: [32, 45, 52, 60, 64, 68, 72],
@@ -54,7 +60,7 @@ STRICT OWNER RULE (PR #877):
   title: "LANY Books",
   shortRole: "Publishing Storefront & Digital Catalog",
   stageIndex: 3,
-  stageLabel: "03 · Core Build",
+  stageLabel: "BUILD · 03 Core Build",
   progressPct: 52,
   accentColor: "#cba6f7",
   sparkline: [20, 28, 35, 42, 48, 50, 52],
@@ -75,11 +81,11 @@ Inspect the current main branch and summarize in plain English:
   title: "NBO Operations Hub",
   shortRole: "Personal AI Studio Headquarters",
   stageIndex: 6,
-  stageLabel: "06 · Studio Active",
+  stageLabel: "MAINTAIN · 06 Studio Active",
   progressPct: 92,
   accentColor: "#4ade80",
   sparkline: [50, 62, 70, 78, 85, 90, 92],
-  statusLine: "98 prompts indexed · D3 Force Graph & Recharts Timeline active",
+  statusLine: "Daily Focus Widget, Recharts Timeline & D3 Force Graph active",
   scopeRule: "All 8 repositories connected with read-only GitHub verification.",
   nextAiPrompt: `Read AGENTS.md and CLAUDE.md first.
 Keep all status updates for Emilio José in plain English without engineering jargon:
@@ -93,94 +99,6 @@ Keep all status updates for Emilio José in plain English without engineering ja
  }
 ];
 
-const HOME_PROJECTS: StudioProjectItem[] = [
- {
-  slug: "cartilla-de-gretel",
-  shortName: "Cartilla",
-  name: "La Cartilla de Gretel",
-  color: "#7aa2f7",
-  category: "EdTech · Literacy",
-  defaultPct: [100, 100, 100, 67, 33, 0],
-  dueDates: ["Oct 20", "Oct 26", "Nov 02", "Nov 08", "Nov 14", "Nov 20"],
-  milestones: [
-   "Workbook & Game Spec Locked",
-   "Shared Canon & #877 Scope Rule",
-   "8 Phonics Games & Audio Engine",
-   "390px Phone & Art Inventory QA",
-   "Tutor API Key & Privacy Audit",
-   "Parent/Student Production Launch"
-  ]
- },
- {
-  slug: "lany-books-web",
-  shortName: "LANY Books",
-  name: "LANY Books",
-  color: "#cba6f7",
-  category: "Publishing · Commerce",
-  defaultPct: [100, 100, 67, 33, 0, 0],
-  dueDates: ["Oct 24", "Oct 30", "Nov 07", "Nov 15", "Nov 22", "Nov 30"],
-  milestones: [
-   "Catalog & Reader Journey Spec",
-   "Storefront Repo & Brand Rules",
-   "Book Showcase & Checkout Flow",
-   "Mobile Reader & Cover Image QA",
-   "Payment & Customer Data Guard",
-   "Public Catalog Release"
-  ]
- },
- {
-  slug: "Command-Center-",
-  shortName: "NBO Hub",
-  name: "NBO Operations Hub",
-  color: "#4ade80",
-  category: "AI Studio · Control",
-  defaultPct: [100, 100, 100, 100, 100, 67],
-  dueDates: ["Oct 18", "Oct 22", "Oct 28", "Nov 01", "Nov 04", "Nov 06"],
-  milestones: [
-   "Plain-English Studio Architecture",
-   "CLAUDE.md & 98 Library Prompts",
-   "D3 Force Graph & Recharts Timeline",
-   "Desktop IDE Themes & Mobile QA",
-   "Read-Only GitHub & JSON Backup",
-   "Owner Release Sign-Off"
-  ]
- },
- {
-  slug: "otto-crm",
-  shortName: "OTTO CRM",
-  name: "OTTO CRM",
-  color: "#8be9fd",
-  category: "Automation · CRM",
-  defaultPct: [100, 67, 33, 0, 0, 0],
-  dueDates: ["Nov 01", "Nov 09", "Nov 18", "Nov 25", "Dec 02", "Dec 10"],
-  milestones: [
-   "Lead & Pipeline Blueprint",
-   "Diaflow & Repo Architecture",
-   "Contact & Automation Core",
-   "Mobile Pipeline View QA",
-   "Customer Data Encryption Check",
-   "Live CRM Rollout"
-  ]
- },
- {
-  slug: "art-vault",
-  shortName: "Art Vault",
-  name: "Art & Media Vault",
-  color: "#f59e0b",
-  category: "Creative · Assets",
-  defaultPct: [100, 100, 67, 67, 33, 0],
-  dueDates: ["Oct 22", "Oct 29", "Nov 05", "Nov 12", "Nov 19", "Nov 26"],
-  milestones: [
-   "Illustration & Audio Taxonomy",
-   "Canonical Asset Branch Rules",
-   "Visual Inventory & Tagging",
-   "10 Flagged Workbook Subjects QA",
-   "Asset Backup & Checksum Gate",
-   "Production CDN Sync"
-  ]
- }
-];
-
 const PALETTE_SWATCHES: Record<Palette, string> = {
  blue: "#7aa2f7",
  purple: "#cba6f7",
@@ -189,6 +107,7 @@ const PALETTE_SWATCHES: Record<Palette, string> = {
 };
 
 const WEB_STATE_KEY = "nbo-lifecycle-web-v1";
+const SYNC_EVENT = "nbo-lifecycle-sync";
 
 export default function PlainEnglishHQ({
  projects,
@@ -212,25 +131,37 @@ export default function PlainEnglishHQ({
  const [showAllProjects, setShowAllProjects] = useState(false);
 
  useEffect(() => {
-  try {
-   const saved = JSON.parse(localStorage.getItem(WEB_STATE_KEY) || "{}");
-   if (saved && typeof saved === "object") setWebChecks(saved);
-  } catch {}
+  function loadState() {
+   try {
+    const saved = JSON.parse(localStorage.getItem(WEB_STATE_KEY) || "{}");
+    if (saved && typeof saved === "object") setWebChecks(saved);
+   } catch {}
+  }
+  loadState();
+  window.addEventListener(SYNC_EVENT, loadState);
+  window.addEventListener("storage", loadState);
+  return () => {
+   window.removeEventListener(SYNC_EVENT, loadState);
+   window.removeEventListener("storage", loadState);
+  };
  }, []);
 
  const projectMap = new Map(projects.map(p => [p.slug.toLowerCase(), p]));
  const mainSlugs = new Set(MAIN_SPECS.map(s => s.slug.toLowerCase()));
  const otherProjects = projects.filter(p => !mainSlugs.has(p.slug.toLowerCase()));
- const selectedStage = LIFECYCLE_NODES.find(s => s.id === selectedStageId) || LIFECYCLE_NODES[3];
- const activeProjSpec = HOME_PROJECTS.find(p => p.slug === selectedProject) || HOME_PROJECTS[0];
+ const activeProjSpec = STUDIO_PROJECTS.find(p => p.slug === selectedProject) || STUDIO_PROJECTS[0];
 
  function isCheckDoneForProject(projSlug: string, checkId: string, idx: number, stageIdx: number) {
   const key = `${projSlug}:${checkId}`;
   if (key in webChecks) return !!webChecks[key];
-  const proj = HOME_PROJECTS.find(p => p.slug === projSlug) || HOME_PROJECTS[0];
+  const proj = STUDIO_PROJECTS.find(p => p.slug === projSlug) || STUDIO_PROJECTS[0];
   const defaultStagePct = proj.defaultPct[stageIdx] || 0;
   const defaultChecks = Math.round((defaultStagePct / 100) * 3);
   return idx < defaultChecks;
+ }
+
+ function isStageCheckDone(checkId: string, idx: number, stageIdx: number) {
+  return isCheckDoneForProject(selectedProject, checkId, idx, stageIdx);
  }
 
  function getNodeProgressForProject(projSlug: string, stage: LifecycleStageSpec, stageIdx: number) {
@@ -263,6 +194,7 @@ export default function PlainEnglishHQ({
   setWebChecks(next);
   try {
    localStorage.setItem(WEB_STATE_KEY, JSON.stringify(next));
+   window.dispatchEvent(new Event(SYNC_EVENT));
   } catch {}
  }
 
@@ -273,7 +205,13 @@ export default function PlainEnglishHQ({
   }
  }
 
- const activePromptObj = selectedStage.readyPrompts[0];
+ const timelineData = useMemo(() => {
+  return buildMilestoneTimelineData(
+   activeProjSpec,
+   LIFECYCLE_NODES,
+   getNodeProgressForProject
+  );
+ }, [selectedProject, webChecks, activeProjSpec]);
 
  return (
   <section className="hq-studio" aria-label="Minimalist Visual Command Center">
@@ -318,18 +256,53 @@ export default function PlainEnglishHQ({
     </div>
    </div>
 
-   {/* VISUAL GRAPH 1: Interactive D3.js Force-Directed Lifecycle & Business Operations Web */}
+   {/* 1. DAILY FOCUS DASHBOARD WIDGET — Single Summary View of High-Priority Next Actions Across All Projects */}
+   <DailyFocusWidget
+    studioProjects={STUDIO_PROJECTS}
+    stages={LIFECYCLE_NODES}
+    liveProjects={projects}
+    selectedProject={selectedProject}
+    isCheckDoneForProject={isCheckDoneForProject}
+    onSelectProjectStage={(projSlug, stageId) => {
+     setSelectedProject(projSlug);
+     setSelectedStageId(stageId);
+    }}
+    onToggleTask={handleToggleTask}
+    onCopyPrompt={handleCopy}
+    copiedKey={copiedSlug}
+   />
+
+   {/* 2. VISUAL GRAPH 1: Horizontal Recharts Milestone, Due-Date & Status Progression Timeline */}
+   <RechartsMilestoneTimeline
+    project={activeProjSpec}
+    stages={LIFECYCLE_NODES}
+    selectedStageId={selectedStageId}
+    timelineData={timelineData}
+    isStageCheckDone={isStageCheckDone}
+    onSelectStage={stageId => setSelectedStageId(stageId)}
+    onToggleCheck={(stageId, checkId, idx, stageIdx) =>
+     handleToggleTask(selectedProject, stageId, checkId, idx, stageIdx)
+    }
+    onCopyPrompt={handleCopy}
+    copiedKey={copiedSlug}
+   />
+
+   {/* 3. VISUAL GRAPH 2: Interactive D3.js Force-Directed Lifecycle & Business Operations Web */}
    <div className="hq-timeline-card">
     <div className="hq-card-bar">
      <div>
       <span className="hq-stage-code">D3.JS FORCE-DIRECTED LIFECYCLE &amp; OPERATIONS WEB</span>
-      <h2>Projects as central nodes with interconnected stages &amp; tasks branching out</h2>
+      <h2>
+       {inspectedNode
+        ? `${inspectedNode.fullTitle} — ${inspectedNode.subtitle}`
+        : "Projects as central nodes with interconnected stages & tasks branching out"}
+      </h2>
      </div>
-     <Link className="btn" href="/best-practices">Open Full Lifecycle Inspector &amp; Recharts Timeline →</Link>
+     <Link className="btn" href="/best-practices">Open Full Lifecycle Workspace →</Link>
     </div>
 
     <LifecycleForceGraph
-     projects={HOME_PROJECTS}
+     projects={STUDIO_PROJECTS}
      stages={LIFECYCLE_NODES}
      selectedProject={selectedProject}
      selectedNodeId={selectedStageId}
@@ -338,49 +311,24 @@ export default function PlainEnglishHQ({
      onSelectNode={handleSelectGraphNode}
      onToggleTask={handleToggleTask}
     />
-
-    {/* Live Node Details & 1-Click Prompt Bar under D3 Force Graph */}
-    <div className="hq-timeline-promptbar">
-     <div className="hq-timeline-prompt-info">
-      <span className="hq-stage-code">
-       {inspectedNode
-        ? `${inspectedNode.kind.toUpperCase()} SELECTED · ${inspectedNode.fullTitle}`
-        : `${activeProjSpec.name.toUpperCase()} · STAGE ${selectedStage.code} (${selectedStage.title.toUpperCase()})`}
-      </span>
-      <p>
-       {inspectedNode
-        ? `${inspectedNode.subtitle}${inspectedNode.dueDate ? ` · Due ${inspectedNode.dueDate}` : ""}`
-        : selectedStage.plainWhy}
-      </p>
-     </div>
-     <div className="hq-timeline-prompt-actions">
-      <button
-       type="button"
-       className="btn primary"
-       onClick={() => handleCopy("tl-" + selectedStage.code, activePromptObj.prompt)}
-      >
-       {copiedSlug === "tl-" + selectedStage.code
-        ? "✓ Copied Stage Prompt!"
-        : `Copy Stage ${selectedStage.code} Ready-to-Start Prompt`}
-      </button>
-     </div>
-    </div>
    </div>
 
-   {/* VISUAL GRAPH 2: 3 Minimalist Project Cards with Radial Donut Charts & Activity Sparklines */}
+   {/* 4. VISUAL GRAPH 3: 3 Minimalist Project Cards with Live Task-Driven Progress Bars, Radial Donut Charts & Sparklines */}
    <div className="hq-main-grid">
     {MAIN_SPECS.map(spec => {
      const live = projectMap.get(spec.slug.toLowerCase());
      const openPrs = live?.prs ?? "—";
      const openIssues = live?.issues ?? "—";
+     const taskMetrics = computeProjectTaskMetrics(spec.slug, webChecks, spec.accentColor);
+     const livePct = taskMetrics.overallPct;
      const radius = 24;
      const circumference = 2 * Math.PI * radius;
-     const dashOffset = circumference - (spec.progressPct / 100) * circumference;
+     const dashOffset = circumference - (livePct / 100) * circumference;
 
      return (
       <article className="hq-visual-card" key={spec.slug}>
        <div className="hq-visual-top">
-        <div className="hq-radial-wrap" aria-label={`${spec.progressPct}% lifecycle completion`}>
+        <div className="hq-radial-wrap" aria-label={`${livePct}% lifecycle completion`}>
          <svg width="62" height="62" viewBox="0 0 62 62">
           <circle
            cx="31"
@@ -411,14 +359,14 @@ export default function PlainEnglishHQ({
            fontWeight="750"
            fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
           >
-           {spec.progressPct}%
+           {livePct}%
           </text>
          </svg>
         </div>
 
         <div className="hq-visual-titles">
          <span className="hq-stage-code" style={{color: spec.accentColor}}>
-          {spec.stageLabel}
+          {taskMetrics.phaseLabel} · Stage {taskMetrics.activeStage.code}
          </span>
          <h3>{spec.title}</h3>
          <p>{spec.shortRole}</p>
@@ -444,6 +392,9 @@ export default function PlainEnglishHQ({
          <small>{openPrs} PRs · {openIssues} Issues</small>
         </div>
        </div>
+
+       {/* Interactive, Lightweight Task-Driven Progress Bar */}
+       <ProjectProgressBar slug={spec.slug} accentColor={spec.accentColor} />
 
        <div className="hq-visual-status">
         <p>{spec.statusLine}</p>
@@ -484,17 +435,20 @@ export default function PlainEnglishHQ({
      {showAllProjects && (
       <div className="hq-secondary-grid">
        {otherProjects.map(p => (
-        <div className="hq-mini-card" key={p.slug}>
-         <div>
-          <strong>{p.name}</strong>
-          <small>
-           {p.updatedAt ? p.updatedAt.slice(0, 10) : "Unknown"} · {p.prs ?? "—"} PRs
-          </small>
+        <div className="hq-mini-card" key={p.slug} style={{flexDirection: "column", alignItems: "stretch", gap: 10}}>
+         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10}}>
+          <div>
+           <strong>{p.name}</strong>
+           <small style={{display: "block"}}>
+            {p.updatedAt ? p.updatedAt.slice(0, 10) : "Unknown"} · {p.prs ?? "—"} PRs
+           </small>
+          </div>
+          <div className="hq-mini-actions">
+           <Link className="btn" href={projectPath(p.slug)}>Open</Link>
+           <External className="btn" href={p.url}>GitHub</External>
+          </div>
          </div>
-         <div className="hq-mini-actions">
-          <Link className="btn" href={projectPath(p.slug)}>Open</Link>
-          <External className="btn" href={p.url}>GitHub</External>
-         </div>
+         <ProjectProgressBar slug={p.slug} compact={true} />
         </div>
        ))}
       </div>

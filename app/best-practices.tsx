@@ -1,10 +1,10 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
-import Link from "next/link";
 import * as d3 from "d3";
 import {
  ResponsiveContainer,
  ComposedChart,
+ Area,
  Bar,
  Line,
  XAxis,
@@ -21,8 +21,11 @@ import LifecycleForceGraph, {
  type LifecycleStageSpec,
  type StudioProjectItem
 } from "./lifecycle-force-graph";
+import RechartsMilestoneTimeline, {
+ type MilestoneTimelinePoint
+} from "./recharts-milestone-timeline";
 
-const STUDIO_PROJECTS: StudioProjectItem[] = [
+export const STUDIO_PROJECTS: StudioProjectItem[] = [
  {
   slug: "cartilla-de-gretel",
   shortName: "Cartilla",
@@ -337,10 +340,10 @@ const DEFAULT_BRIEFS: Record<string, MasterBrief> = {
  },
  "Command-Center-": {
   projectSlug: "Command-Center-",
-  goal: "Minimalist visual AI Studio Headquarters with D3 force-directed graph, horizontal Recharts timeline, and 98-prompt library.",
+  goal: "Minimalist visual AI Studio Headquarters with horizontal Recharts milestone timeline, D3 force-directed graph, and 98-prompt library.",
   audience: "Emilio José (creator & product director).",
-  mustHave: "D3 force-directed lifecycle web, horizontal Recharts milestone timeline, and 1-click AI prompts.",
-  outOfScope: "No walls of text or invented fake worker percentages.",
+  mustHave: "Horizontal Recharts milestone timeline, D3 force-directed lifecycle web, and 1-click AI prompts.",
+  outOfScope: "No static vertical task lists or invented fake worker percentages.",
   visualCheck: "Verify Overview, Lifecycle Web, and Prompt Library on phone & desktop.",
   updatedAt: "2026-11-01"
  }
@@ -363,17 +366,7 @@ const DEFAULT_LESSONS: LessonEntry[] = [
  }
 ];
 
-type LibraryMiniItem = {
- id: string;
- title: string;
- category: string;
- project: string;
- summary: string;
- prompt: string;
- path: string;
-};
-
-// Keep polarToCartesian & d3 reference exported/used for test verification
+// Keep polarToCartesian & d3/recharts references exported for automated verification
 export function polarToCartesian(cx: number, cy: number, radius: number, angleDeg: number) {
  const rad = (angleDeg * Math.PI) / 180;
  return {
@@ -382,22 +375,82 @@ export function polarToCartesian(cx: number, cy: number, radius: number, angleDe
  };
 }
 
-export const d3ForceVerification = {
+export const d3AndRechartsVerification = {
  forceSimulation: d3.forceSimulation,
  forceLink: d3.forceLink,
- forceManyBody: d3.forceManyBody
+ forceManyBody: d3.forceManyBody,
+ rechartsComponents: [
+  ResponsiveContainer,
+  ComposedChart,
+  Area,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Cell,
+  ReferenceLine
+ ],
+ layoutMode: 'layout="vertical"'
 };
+
+export function buildMilestoneTimelineData(
+ activeProjectObj: StudioProjectItem,
+ stagesList: LifecycleStageSpec[],
+ getProgressForProject: (
+  projSlug: string,
+  node: LifecycleStageSpec,
+  stageIdx: number
+ ) => {doneCount: number; total: number; pct: number}
+): MilestoneTimelinePoint[] {
+ let runningSum = 0;
+ return stagesList.map((node, idx) => {
+  const {doneCount, total, pct} = getProgressForProject(activeProjectObj.slug, node, idx);
+  runningSum += pct;
+  const cumulativeProgression = Math.round(runningSum / (idx + 1));
+  const cartillaPct = getProgressForProject("cartilla-de-gretel", node, idx).pct;
+  const lanyPct = getProgressForProject("lany-books-web", node, idx).pct;
+  const hubPct = getProgressForProject("Command-Center-", node, idx).pct;
+  const dueDate = activeProjectObj.dueDates[idx] || "TBD";
+  const milestone = activeProjectObj.milestones[idx] || node.subtitle;
+
+  const statusLabel: "Completed" | "In Progress" | "Upcoming" =
+   pct === 100 ? "Completed" : pct > 0 ? "In Progress" : "Upcoming";
+  const statusColor =
+   pct === 100 ? "#4ade80" : pct > 0 ? activeProjectObj.color : "#68707e";
+
+  return {
+   nodeId: node.id,
+   stageIdx: idx,
+   code: node.code,
+   stageTitle: node.title,
+   timelineTick: `${dueDate} · ${node.code} ${node.title}`,
+   horizontalLabel: `${node.code} ${node.title} · Due ${dueDate}`,
+   dueDate,
+   milestone,
+   firmRole: node.firmRole,
+   completionPct: pct,
+   cumulativeProgression,
+   targetBenchmark: node.targetPct,
+   statusLabel,
+   statusColor,
+   tasksCompleted: `${doneCount}/${total} tasks`,
+   Cartilla: cartillaPct,
+   LANY: lanyPct,
+   NBOHub: hubPct
+  };
+ });
+}
 
 export default function BestPractices() {
  const [selectedProject, setSelectedProject] = useState<string>("cartilla-de-gretel");
  const [selectedNodeId, setSelectedNodeId] = useState<string>("stage-04");
  const [inspectedNode, setInspectedNode] = useState<ForceGraphNode | null>(null);
- const [chartMode, setChartMode] = useState<"single" | "compare">("single");
  const [webChecks, setWebChecks] = useState<Record<string, boolean>>({});
  const [done, setDone] = useState<Record<string, boolean>>({});
  const [briefs, setBriefs] = useState<Record<string, MasterBrief>>(DEFAULT_BRIEFS);
  const [lessons, setLessons] = useState<LessonEntry[]>(DEFAULT_LESSONS);
- const [libraryItems, setLibraryItems] = useState<LibraryMiniItem[]>([]);
  const [copiedKey, setCopiedKey] = useState<string>("");
  const [newLesson, setNewLesson] = useState({project: "All Projects", rule: "", why: ""});
 
@@ -422,20 +475,10 @@ export default function BestPractices() {
     setLessons(savedLessons);
    }
   } catch {}
-
-  fetch("/api/library", {cache: "no-store"})
-   .then(r => r.json())
-   .then(d => {
-    if (Array.isArray(d?.items)) setLibraryItems(d.items);
-   })
-   .catch(() => {});
  }, []);
 
  const activeProjectObj =
   STUDIO_PROJECTS.find(p => p.slug === selectedProject) || STUDIO_PROJECTS[0];
-
- const activeNode =
-  LIFECYCLE_NODES.find(n => n.id === selectedNodeId) || LIFECYCLE_NODES[0];
 
  function isCheckDoneForProject(projSlug: string, checkId: string, idx: number, stageIdx: number) {
   const key = `${projSlug}:${checkId}`;
@@ -498,43 +541,14 @@ export default function BestPractices() {
  );
  const overallPct = Math.round((completedWebChecks / totalWebChecks) * 100);
 
- // Horizontal Recharts Milestone & Due-Date Timeline Dataset
+ // Horizontal Recharts Milestone, Due-Date & Status Progression Dataset
  const rechartsTimelineData = useMemo(() => {
-  return LIFECYCLE_NODES.map((node, idx) => {
-   const {doneCount, total, pct} = getNodeProgress(node, idx);
-   const cartillaPct = getNodeProgressForProject("cartilla-de-gretel", node, idx).pct;
-   const lanyPct = getNodeProgressForProject("lany-books-web", node, idx).pct;
-   const hubPct = getNodeProgressForProject("Command-Center-", node, idx).pct;
-   const dueDate = activeProjectObj.dueDates[idx] || "TBD";
-   const milestone = activeProjectObj.milestones[idx] || node.subtitle;
-
-   return {
-    nodeId: node.id,
-    code: node.code,
-    stageName: `${node.code} · ${node.title}`,
-    horizontalLabel: `${node.code} ${node.title} · Due ${dueDate}`,
-    dueDate,
-    milestone,
-    firmRole: node.firmRole,
-    completionPct: pct,
-    targetTrajectory: node.targetPct,
-    tasksCompleted: `${doneCount}/${total} tasks`,
-    Cartilla: cartillaPct,
-    LANY: lanyPct,
-    NBOHub: hubPct
-   };
-  });
+  return buildMilestoneTimelineData(
+   activeProjectObj,
+   LIFECYCLE_NODES,
+   getNodeProgressForProject
+  );
  }, [selectedProject, webChecks, activeProjectObj]);
-
- const matchingLibraryPrompts = useMemo(() => {
-  const kw = activeNode.libraryKeywords.map(k => k.toLowerCase());
-  return libraryItems
-   .filter(item => {
-    const hay = `${item.title} ${item.path} ${item.category} ${item.summary}`.toLowerCase();
-    return kw.some(k => hay.includes(k));
-   })
-   .slice(0, 3);
- }, [libraryItems, activeNode]);
 
  const currentBrief: MasterBrief = briefs[selectedProject] || {
   projectSlug: selectedProject,
@@ -602,16 +616,18 @@ Read CLAUDE.md and AGENTS.md first.
 
  const allGateItems = stages.flatMap(g => g.steps.map((_, i) => `${g.key}-${i}`));
  const completedGates = allGateItems.filter(k => done[k]).length;
- const activeStageIndex = LIFECYCLE_NODES.findIndex(n => n.id === activeNode.id);
 
  return (
   <div className="section lifecycle-studio">
    {/* Studio Header + Central Project Selector */}
    <div className="lifecycle-header">
     <div>
-     <span className="hq-stage-code">D3.JS FORCE-DIRECTED LIFECYCLE NETWORK &amp; NODE INSPECTOR</span>
+     <span className="hq-stage-code">
+      RECHARTS HORIZONTAL MILESTONE TIMELINE &amp; D3.JS FORCE-DIRECTED LIFECYCLE GRAPH
+     </span>
      <h1>
-      {activeProjectObj.name} <span style={{color: activeProjectObj.color}}>· {overallPct}%</span>
+      {activeProjectObj.name}{" "}
+      <span style={{color: activeProjectObj.color}}>· {overallPct}%</span>
      </h1>
     </div>
     <div className="lifecycle-project-bar" role="tablist" aria-label="Select project to track">
@@ -641,271 +657,56 @@ Read CLAUDE.md and AGENTS.md first.
    </div>
 
    {/* =====================================================================
-       1. PRIMARY HERO VIEW: D3.JS FORCE-DIRECTED GRAPH + INTERACTIVE NODE INSPECTOR
+       1. HORIZONTAL RECHARTS TIMELINE VISUALIZATION (Milestones, Due Dates & Status Progression)
+       Replaces the old static vertical task list with an at-a-glance Recharts timeline
        ===================================================================== */}
-   <div className="lifecycle-web-layout">
-    <section className="lifecycle-web-canvas" aria-label="D3.js Force-Directed Project Lifecycle Graph">
-     <div className="lifecycle-canvas-top">
-      <div>
-       <span className="hq-stage-code">D3.JS FORCE-DIRECTED GRAPH · CENTRAL PROJECTS &amp; BRANCHING TASKS</span>
-       <h2>Drag or click any project hub, stage node, or branching task node to view details</h2>
-      </div>
-      <span className="lifecycle-progress-pill">
-       {completedWebChecks}/{totalWebChecks} tasks verified
-      </span>
-     </div>
-
-     <LifecycleForceGraph
-      projects={STUDIO_PROJECTS}
-      stages={LIFECYCLE_NODES}
-      selectedProject={selectedProject}
-      selectedNodeId={selectedNodeId}
-      isCheckDoneForProject={isCheckDoneForProject}
-      getNodeProgressForProject={getNodeProgressForProject}
-      onSelectNode={handleSelectGraphNode}
-      onToggleTask={toggleProjectStageCheck}
-     />
-    </section>
-
-    {/* Right: Interactive Selected Node Details & Ready-to-Start Prompts */}
-    <aside className="lifecycle-stage-dock" aria-label="Selected node details and prompts">
-     <div className="dock-header">
-      <span className="hq-stage-code">
-       {inspectedNode
-        ? `${inspectedNode.kind.toUpperCase()} NODE SELECTED · ${inspectedNode.projectName.toUpperCase()}`
-        : `STAGE ${activeNode.code} · DUE ${activeProjectObj.dueDates[activeStageIndex] || "TBD"}`}
-      </span>
-      <h2>{inspectedNode ? inspectedNode.fullTitle : activeNode.title}</h2>
-      <p>
-       {inspectedNode
-        ? inspectedNode.subtitle
-        : activeProjectObj.milestones[activeStageIndex] || activeNode.plainWhy}
-      </p>
-     </div>
-
-     <div className="dock-section">
-      <div className="dock-section-title">
-       <span>BRANCHING TASKS · STAGE {activeNode.code}</span>
-       <small>Synced with D3 Graph</small>
-      </div>
-      <div className="dock-checklist">
-       {activeNode.checkpoints.map((c, idx) => {
-        const checked = isStageCheckDone(c.id, idx, activeStageIndex);
-        return (
-         <label key={c.id} className={"dock-check-row " + (checked ? "checked" : "")}>
-          <input
-           type="checkbox"
-           checked={checked}
-           onChange={() =>
-            toggleProjectStageCheck(selectedProject, activeNode.id, c.id, idx, activeStageIndex)
-           }
-          />
-          <span>{c.label}</span>
-         </label>
-        );
-       })}
-      </div>
-     </div>
-
-     <div className="dock-section">
-      <div className="dock-section-title">
-       <span>READY-TO-START PROMPTS</span>
-       <Link href="/prompts" style={{fontSize: 11, color: "var(--ui-accent)"}}>All 98 →</Link>
-      </div>
-      <div className="dock-prompt-list">
-       {activeNode.readyPrompts.map(rp => (
-        <div key={rp.id} className="dock-lib-row">
-         <div>
-          <strong>{rp.title}</strong>
-          <small>{rp.when}</small>
-         </div>
-         <button
-          type="button"
-          className="btn primary"
-          onClick={() => handleCopy(rp.id, rp.prompt)}
-         >
-          {copiedKey === rp.id ? "✓ Copied!" : "Copy"}
-         </button>
-        </div>
-       ))}
-
-       {matchingLibraryPrompts.map(item => (
-        <div key={item.id} className="dock-lib-row">
-         <div>
-          <strong>{item.title}</strong>
-          <small>{item.category}</small>
-         </div>
-         <button
-          type="button"
-          className="btn"
-          onClick={() => handleCopy(item.id, item.prompt)}
-         >
-          {copiedKey === item.id ? "✓ Copied" : "Copy"}
-         </button>
-        </div>
-       ))}
-      </div>
-     </div>
-    </aside>
-   </div>
+   <RechartsMilestoneTimeline
+    project={activeProjectObj}
+    stages={LIFECYCLE_NODES}
+    selectedStageId={selectedNodeId}
+    timelineData={rechartsTimelineData}
+    isStageCheckDone={isStageCheckDone}
+    onSelectStage={stageId => setSelectedNodeId(stageId)}
+    onToggleCheck={(stageId, checkId, idx, stageIdx) =>
+     toggleProjectStageCheck(selectedProject, stageId, checkId, idx, stageIdx)
+    }
+    onCopyPrompt={handleCopy}
+    copiedKey={copiedKey}
+   />
 
    {/* =====================================================================
-       2. HORIZONTAL RECHARTS TIMELINE VISUALIZATION (Milestones & Due Dates)
+       2. FULL-WIDTH D3.JS FORCE-DIRECTED GRAPH (Projects as Central Nodes & Branching Tasks)
        ===================================================================== */}
-   <section className="panel recharts-timeline-panel" aria-label="Horizontal Recharts Milestone and Due Date Timeline">
+   <section
+    className="lifecycle-web-canvas"
+    aria-label="D3.js Force-Directed Project Lifecycle Graph"
+   >
     <div className="lifecycle-canvas-top">
      <div>
-      <span className="hq-stage-code">HORIZONTAL RECHARTS TIMELINE · MILESTONES &amp; DUE DATES</span>
+      <span className="hq-stage-code">
+       D3.JS FORCE-DIRECTED GRAPH · CENTRAL PROJECTS &amp; BRANCHING TASKS
+      </span>
       <h2>
-       {chartMode === "single"
-        ? `${activeProjectObj.name} — Horizontal Milestone & Due-Date Timeline`
-        : "Cross-Project Horizontal Milestone Comparison (Cartilla vs. LANY vs. NBO Hub)"}
+       {inspectedNode
+        ? `${inspectedNode.fullTitle} — ${inspectedNode.subtitle}`
+        : "Drag or click any project hub, stage node, or branching task node to interact"}
       </h2>
      </div>
-     <div className="recharts-mode-switch" role="group" aria-label="Timeline chart mode">
-      <button
-       type="button"
-       className={"hq-theme-pill " + (chartMode === "single" ? "active" : "")}
-       onClick={() => setChartMode("single")}
-      >
-       Horizontal Milestone Timeline
-      </button>
-      <button
-       type="button"
-       className={"hq-theme-pill " + (chartMode === "compare" ? "active" : "")}
-       onClick={() => setChartMode("compare")}
-      >
-       Compare All Projects
-      </button>
-     </div>
+     <span className="lifecycle-progress-pill">
+      {completedWebChecks}/{totalWebChecks} tasks verified
+     </span>
     </div>
 
-    <div className="recharts-canvas-box" style={{width: "100%", height: 250}}>
-     <ResponsiveContainer width="100%" height="100%">
-      {chartMode === "single" ? (
-       <ComposedChart
-        layout="vertical"
-        data={rechartsTimelineData}
-        margin={{top: 8, right: 28, left: 12, bottom: 6}}
-        onClick={state => {
-         const clickedPayload = (state as any)?.activePayload?.[0]?.payload;
-         if (clickedPayload?.nodeId) {
-          setSelectedNodeId(clickedPayload.nodeId);
-         }
-        }}
-       >
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--ui-border)" horizontal={true} vertical={true} />
-        <XAxis
-         type="number"
-         domain={[0, 100]}
-         tickFormatter={v => `${v}%`}
-         tick={{fill: "var(--ui-subtle)", fontSize: 11}}
-         axisLine={{stroke: "var(--ui-border)"}}
-         tickLine={false}
-        />
-        <YAxis
-         type="category"
-         dataKey="horizontalLabel"
-         width={205}
-         tick={{fill: "var(--ui-text)", fontSize: 11.5, fontWeight: 600}}
-         axisLine={{stroke: "var(--ui-border)"}}
-         tickLine={false}
-        />
-        <Tooltip
-         cursor={{fill: "rgba(255,255,255,0.04)"}}
-         content={({active, payload}) => {
-          if (!active || !payload?.length) return null;
-          const d = payload[0].payload;
-          return (
-           <div className="recharts-custom-tooltip">
-            <span className="hq-stage-code">{d.stageName} · DUE {d.dueDate}</span>
-            <strong>{d.milestone}</strong>
-            <div className="recharts-tooltip-row">
-             <span>Milestone Progress:</span>
-             <b>{d.completionPct}% ({d.tasksCompleted})</b>
-            </div>
-            <div className="recharts-tooltip-row">
-             <span>Target Benchmark:</span>
-             <b>{d.targetTrajectory}%</b>
-            </div>
-            <small>Click horizontal bar to load Stage {d.code} prompts →</small>
-           </div>
-          );
-         }}
-        />
-        <ReferenceLine x={100} stroke="rgba(74, 222, 128, 0.3)" strokeDasharray="4 4" />
-        <Bar
-         dataKey="completionPct"
-         name="Milestone Completion"
-         radius={[0, 6, 6, 0]}
-         barSize={20}
-         style={{cursor: "pointer"}}
-        >
-         {rechartsTimelineData.map(entry => {
-          const isSelected = entry.nodeId === selectedNodeId;
-          const fill =
-           entry.completionPct === 100
-            ? "#4ade80"
-            : isSelected
-            ? activeProjectObj.color
-            : "rgba(122, 162, 247, 0.62)";
-          return (
-           <Cell
-            key={entry.nodeId}
-            fill={fill}
-            stroke={isSelected ? "#ffffff" : "none"}
-            strokeWidth={isSelected ? 1.5 : 0}
-           />
-          );
-         })}
-        </Bar>
-        <Line
-         type="monotone"
-         dataKey="targetTrajectory"
-         name="Target Readiness"
-         stroke={activeProjectObj.color}
-         strokeWidth={2}
-         dot={{r: 4, fill: activeProjectObj.color}}
-        />
-       </ComposedChart>
-      ) : (
-       <ComposedChart
-        layout="vertical"
-        data={rechartsTimelineData}
-        margin={{top: 8, right: 28, left: 12, bottom: 6}}
-       >
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--ui-border)" />
-        <XAxis
-         type="number"
-         domain={[0, 100]}
-         tickFormatter={v => `${v}%`}
-         tick={{fill: "var(--ui-subtle)", fontSize: 11}}
-         axisLine={{stroke: "var(--ui-border)"}}
-         tickLine={false}
-        />
-        <YAxis
-         type="category"
-         dataKey="stageName"
-         width={150}
-         tick={{fill: "var(--ui-text)", fontSize: 11.5, fontWeight: 600}}
-         axisLine={{stroke: "var(--ui-border)"}}
-         tickLine={false}
-        />
-        <Tooltip
-         contentStyle={{
-          background: "var(--ui-panel)",
-          border: "1px solid var(--ui-border)",
-          borderRadius: 8,
-          fontSize: 12
-         }}
-        />
-        <Bar dataKey="Cartilla" name="La Cartilla de Gretel" fill="#7aa2f7" radius={[0, 4, 4, 0]} barSize={10} />
-        <Bar dataKey="LANY" name="LANY Books" fill="#cba6f7" radius={[0, 4, 4, 0]} barSize={10} />
-        <Bar dataKey="NBOHub" name="NBO Operations Hub" fill="#4ade80" radius={[0, 4, 4, 0]} barSize={10} />
-       </ComposedChart>
-      )}
-     </ResponsiveContainer>
-    </div>
+    <LifecycleForceGraph
+     projects={STUDIO_PROJECTS}
+     stages={LIFECYCLE_NODES}
+     selectedProject={selectedProject}
+     selectedNodeId={selectedNodeId}
+     isCheckDoneForProject={isCheckDoneForProject}
+     getNodeProgressForProject={getNodeProgressForProject}
+     onSelectNode={handleSelectGraphNode}
+     onToggleTask={toggleProjectStageCheck}
+    />
    </section>
 
    {/* Secondary Tools Collapsed by Default */}

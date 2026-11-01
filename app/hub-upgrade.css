@@ -1929,3 +1929,488 @@
   user-select: none;
   touch-action: none;
 }
+
+/* Horizontal Recharts Selected Milestone Bar (Replaces Static Vertical Checklist) */
+.recharts-selected-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--ui-inset);
+  border: 1px solid var(--ui-border);
+  border-left: 3px solid var(--ui-accent);
+  border-radius: 7px;
+}
+
+.recharts-selected-meta {
+  display: grid;
+  gap: 2px;
+  min-width: 200px;
+}
+
+.recharts-selected-meta strong {
+  font-size: 13.5px;
+  color: var(--ui-text);
+}
+
+.recharts-task-pills,
+.recharts-prompt-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ==========================================================================
+   DAILY FOCUS DASHBOARD WIDGET (app/daily-focus-widget.tsx)
+   ========================================================================== */
+.daily-focus-widget {
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-panel);
+  border-radius: 8px;
+}
+
+.daily-focus-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.daily-focus-eyebrow-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.daily-focus-badge {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 5px;
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #f59e0b;
+}
+
+.daily-focus-header h2 {
+  margin: 3px 0 0;
+  font-size: 16.5px;
+  color: var(--ui-text);
+}
+
+.daily-focus-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.daily-focus-list {
+  display: grid;
+  gap: 8px;
+}
+
+.daily-focus-row {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--ui-inset);
+  border: 1px solid var(--ui-border);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.daily-focus-row:hover {
+  background: var(--ui-hover);
+  border-color: var(--ui-accent);
+}
+
+.daily-focus-row.focused {
+  background: var(--ui-raised);
+  border-color: var(--ui-accent);
+  border-left: 3px solid var(--ui-accent);
+}
+
+.daily-focus-row.decision {
+  border-left: 3px solid #7aa2f7;
+}
+
+.df-col-project {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.df-project-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.df-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.df-project-top strong {
+  font-size: 13.5px;
+  color: var(--ui-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.df-phase-pill {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-panel);
+  white-space: nowrap;
+}
+
+.df-project-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--ui-muted);
+}
+
+.df-project-sub small {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10.5px;
+  color: var(--ui-subtle);
+}
+
+.df-col-action {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.df-action-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.df-priority-tag {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+
+.df-priority-tag.prio-decision {
+  background: rgba(122, 162, 247, 0.18);
+  border: 1px solid #7aa2f7;
+  color: #7aa2f7;
+}
+
+.df-priority-tag.prio-high {
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  color: #f59e0b;
+}
+
+.df-priority-tag.prio-active {
+  background: var(--ui-panel);
+  border: 1px solid var(--ui-border);
+  color: var(--ui-accent);
+}
+
+.df-priority-tag.prio-maintain {
+  background: rgba(74, 222, 128, 0.15);
+  border: 1px solid #4ade80;
+  color: #4ade80;
+}
+
+.df-scope-tag {
+  font-size: 11px;
+  color: var(--ui-subtle);
+  line-height: 1.35;
+}
+
+.df-next-action-text {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ui-text);
+  line-height: 1.35;
+}
+
+.df-col-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.df-complete-btn {
+  border-color: rgba(74, 222, 128, 0.45);
+  color: #4ade80;
+}
+
+.df-complete-btn:hover {
+  background: rgba(74, 222, 128, 0.14);
+  border-color: #4ade80;
+}
+
+@media (max-width: 1120px) {
+  .daily-focus-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  .df-col-controls {
+    justify-content: flex-start;
+  }
+}
+
+/* ==========================================================================
+   INTERACTIVE LIGHTWEIGHT PROJECT PROGRESS BAR (app/project-progress-bar.tsx)
+   ========================================================================== */
+.project-progress-component {
+  display: grid;
+  gap: 7px;
+  padding: 10px 12px;
+  background: var(--ui-inset);
+  border: 1px solid var(--ui-border);
+  border-radius: 7px;
+  margin: 4px 0;
+}
+
+.project-progress-component.compact {
+  padding: 8px 10px;
+  gap: 5px;
+}
+
+.ppb-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.ppb-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.ppb-phase-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ppb-phase-text {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ui-text);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.ppb-task-count {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  color: var(--ui-subtle);
+  white-space: nowrap;
+}
+
+.ppb-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.ppb-pct-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.ppb-expand-btn {
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-panel);
+  color: var(--ui-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ppb-expand-btn:hover {
+  border-color: var(--ui-accent);
+  color: var(--ui-text);
+}
+
+.ppb-track {
+  width: 100%;
+  height: 7px;
+  background: var(--ui-panel);
+  border: 1px solid var(--ui-border);
+  border-radius: 999px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.ppb-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.ppb-segments {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.ppb-seg-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 5px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
+}
+
+.ppb-seg-btn:hover,
+.ppb-seg-btn.selected {
+  background: var(--ui-panel);
+  border-color: var(--ui-accent);
+}
+
+.ppb-seg-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--ui-panel);
+  border-radius: 2px;
+  overflow: hidden;
+  display: block;
+}
+
+.ppb-seg-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.2s ease;
+}
+
+.ppb-seg-btn small {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9.5px;
+  color: var(--ui-subtle);
+}
+
+.ppb-task-drawer {
+  border-top: 1px solid var(--ui-border);
+  padding-top: 8px;
+  display: grid;
+  gap: 7px;
+}
+
+.ppb-drawer-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ui-subtle);
+}
+
+.ppb-stage-switcher {
+  display: flex;
+  gap: 3px;
+}
+
+.ppb-mini-tab {
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-panel);
+  color: var(--ui-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9.5px;
+  cursor: pointer;
+}
+
+.ppb-mini-tab.active {
+  background: var(--ui-accent-soft);
+  border-color: var(--ui-accent);
+  color: var(--ui-text);
+}
+
+.ppb-task-pills {
+  display: grid;
+  gap: 5px;
+}
+
+.ppb-task-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-panel);
+  color: var(--ui-text);
+  font-size: 11.5px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.ppb-task-pill:hover {
+  border-color: var(--ui-accent);
+}
+
+.ppb-task-pill.done {
+  border-color: rgba(74, 222, 128, 0.45);
+  color: #4ade80;
+}
+
+.ppb-check-icon {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 700;
+  flex-shrink: 0;
+}
