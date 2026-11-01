@@ -41,14 +41,20 @@ test("API library route loads all 75+ markdown files from /content/ and PromptLi
   assert.match(libUi, /lib-reader-pane/);
 });
 
-test("BestPractices provides Recharts Milestone Timeline, Radial Mind-Map Visualization, and Guided Brief/Lessons", () => {
+test("BestPractices and LifecycleForceGraph provide D3.js force-directed graph with central project hubs, branching tasks, and horizontal Recharts timeline", () => {
   const bp = read("app/best-practices.tsx");
+  const fg = read("app/lifecycle-force-graph.tsx");
   assert.match(bp, /from "recharts"/);
+  assert.match(bp, /layout="vertical"/);
   assert.match(bp, /ComposedChart/);
-  assert.match(bp, /polarToCartesian/);
-  assert.match(bp, /radial-orbit-ring/);
+  assert.match(bp, /LifecycleForceGraph/);
+  assert.match(fg, /from "d3"/);
+  assert.match(fg, /forceSimulation/);
+  assert.match(fg, /forceLink/);
+  assert.match(fg, /forceManyBody/);
+  assert.match(fg, /radial-orbit-ring/);
+  assert.match(fg, /lifecycle-svg/);
   assert.match(bp, /nbo-lifecycle-web-v1/);
-  assert.match(bp, /lifecycle-svg/);
   assert.match(bp, /nbo-project-briefs-v1/);
   assert.match(bp, /nbo-lessons-learned-v1/);
   assert.match(bp, /Copy AI Kickoff Prompt/);

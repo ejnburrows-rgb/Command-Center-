@@ -1,10 +1,16 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import Link from "next/link";
 import type {Project} from "./hub-data";
 import {projectPath} from "./route-paths";
 import {copyText,External} from "./hub-ui";
 import {usePremium,paletteLabels,type Palette} from "./premium-preferences";
+import LifecycleForceGraph, {
+ type ForceGraphNode,
+ type LifecycleStageSpec,
+ type StudioProjectItem
+} from "./lifecycle-force-graph";
+import {LIFECYCLE_NODES} from "./best-practices";
 
 type MainCardSpec = {
  slug: string;
@@ -73,7 +79,7 @@ Inspect the current main branch and summarize in plain English:
   progressPct: 92,
   accentColor: "#4ade80",
   sparkline: [50, 62, 70, 78, 85, 90, 92],
-  statusLine: "98 prompts indexed · Visual timeline & lifecycle web active",
+  statusLine: "98 prompts indexed · D3 Force Graph & Recharts Timeline active",
   scopeRule: "All 8 repositories connected with read-only GitHub verification.",
   nextAiPrompt: `Read AGENTS.md and CLAUDE.md first.
 Keep all status updates for Emilio José in plain English without engineering jargon:
@@ -87,48 +93,91 @@ Keep all status updates for Emilio José in plain English without engineering ja
  }
 ];
 
-const TIMELINE_STAGES = [
+const HOME_PROJECTS: StudioProjectItem[] = [
  {
-  step: 1,
-  code: "01",
-  name: "Idea & Spec",
-  desc: "AI interviews you & writes a 1-page plan before any code.",
-  prompt: `Act as my Senior Product Architect. Do NOT write code yet. Ask me up to 4 plain-English questions to clarify my goal, target user, and visual expectations, then write a 1-page implementation spec.`
+  slug: "cartilla-de-gretel",
+  shortName: "Cartilla",
+  name: "La Cartilla de Gretel",
+  color: "#7aa2f7",
+  category: "EdTech · Literacy",
+  defaultPct: [100, 100, 100, 67, 33, 0],
+  dueDates: ["Oct 20", "Oct 26", "Nov 02", "Nov 08", "Nov 14", "Nov 20"],
+  milestones: [
+   "Workbook & Game Spec Locked",
+   "Shared Canon & #877 Scope Rule",
+   "8 Phonics Games & Audio Engine",
+   "390px Phone & Art Inventory QA",
+   "Tutor API Key & Privacy Audit",
+   "Parent/Student Production Launch"
+  ]
  },
  {
-  step: 2,
-  code: "02",
-  name: "Rules & Repo",
-  desc: "Load CLAUDE.md / AGENTS.md & reuse existing repo work.",
-  prompt: `Read CLAUDE.md and AGENTS.md before touching any file. Inspect the existing repository, open PRs, and branches so we reuse existing work and never create duplicate dashboards.`
+  slug: "lany-books-web",
+  shortName: "LANY Books",
+  name: "LANY Books",
+  color: "#cba6f7",
+  category: "Publishing · Commerce",
+  defaultPct: [100, 100, 67, 33, 0, 0],
+  dueDates: ["Oct 24", "Oct 30", "Nov 07", "Nov 15", "Nov 22", "Nov 30"],
+  milestones: [
+   "Catalog & Reader Journey Spec",
+   "Storefront Repo & Brand Rules",
+   "Book Showcase & Checkout Flow",
+   "Mobile Reader & Cover Image QA",
+   "Payment & Customer Data Guard",
+   "Public Catalog Release"
+  ]
  },
  {
-  step: 3,
-  code: "03",
-  name: "Core Build",
-  desc: "Build one bounded feature end-to-end with real data.",
-  prompt: `Complete one bounded, working feature end-to-end. Keep technical complexity hidden, use real connected data, and verify everything compiles cleanly.`
+  slug: "Command-Center-",
+  shortName: "NBO Hub",
+  name: "NBO Operations Hub",
+  color: "#4ade80",
+  category: "AI Studio · Control",
+  defaultPct: [100, 100, 100, 100, 100, 67],
+  dueDates: ["Oct 18", "Oct 22", "Oct 28", "Nov 01", "Nov 04", "Nov 06"],
+  milestones: [
+   "Plain-English Studio Architecture",
+   "CLAUDE.md & 98 Library Prompts",
+   "D3 Force Graph & Recharts Timeline",
+   "Desktop IDE Themes & Mobile QA",
+   "Read-Only GitHub & JSON Backup",
+   "Owner Release Sign-Off"
+  ]
  },
  {
-  step: 4,
-  code: "04",
-  name: "Visual QA",
-  desc: "Verify 390px phone & 1440px desktop screens visually.",
-  prompt: `Run a full Visual & Mobile QA pass on both 390x844 phone and 1440x900 desktop viewports. Check for clipped buttons, horizontal overflow, or broken images.`
+  slug: "otto-crm",
+  shortName: "OTTO CRM",
+  name: "OTTO CRM",
+  color: "#8be9fd",
+  category: "Automation · CRM",
+  defaultPct: [100, 67, 33, 0, 0, 0],
+  dueDates: ["Nov 01", "Nov 09", "Nov 18", "Nov 25", "Dec 02", "Dec 10"],
+  milestones: [
+   "Lead & Pipeline Blueprint",
+   "Diaflow & Repo Architecture",
+   "Contact & Automation Core",
+   "Mobile Pipeline View QA",
+   "Customer Data Encryption Check",
+   "Live CRM Rollout"
+  ]
  },
  {
-  step: 5,
-  code: "05",
-  name: "Security & Backup",
-  desc: "Keep API keys server-side & verify JSON backup export.",
-  prompt: `Audit this change for security and data safety: confirm zero API keys or private notes are exposed in client code, and confirm user data is backed up.`
- },
- {
-  step: 6,
-  code: "06",
-  name: "Launch Gate",
-  desc: "Owner proof checkpoint before merge or live deploy.",
-  prompt: `Prepare the Owner Release Checkpoint in plain English: WORKS (with proof) / DOES NOT WORK / NOT VERIFIED / NEXT (one accountable decision for Emilio José).`
+  slug: "art-vault",
+  shortName: "Art Vault",
+  name: "Art & Media Vault",
+  color: "#f59e0b",
+  category: "Creative · Assets",
+  defaultPct: [100, 100, 67, 67, 33, 0],
+  dueDates: ["Oct 22", "Oct 29", "Nov 05", "Nov 12", "Nov 19", "Nov 26"],
+  milestones: [
+   "Illustration & Audio Taxonomy",
+   "Canonical Asset Branch Rules",
+   "Visual Inventory & Tagging",
+   "10 Flagged Workbook Subjects QA",
+   "Asset Backup & Checksum Gate",
+   "Production CDN Sync"
+  ]
  }
 ];
 
@@ -138,6 +187,8 @@ const PALETTE_SWATCHES: Record<Palette, string> = {
  teal: "#8be9fd",
  mono: "#5ea2ef"
 };
+
+const WEB_STATE_KEY = "nbo-lifecycle-web-v1";
 
 export default function PlainEnglishHQ({
  projects,
@@ -154,13 +205,66 @@ export default function PlainEnglishHQ({
  const isSyncing = Boolean(loading || busy);
  const {palette, setPalette, appearance, setAppearance} = usePremium();
  const [copiedSlug, setCopiedSlug] = useState<string>("");
- const [activeStep, setActiveStep] = useState<number>(4);
+ const [selectedProject, setSelectedProject] = useState<string>("cartilla-de-gretel");
+ const [selectedStageId, setSelectedStageId] = useState<string>("stage-04");
+ const [inspectedNode, setInspectedNode] = useState<ForceGraphNode | null>(null);
+ const [webChecks, setWebChecks] = useState<Record<string, boolean>>({});
  const [showAllProjects, setShowAllProjects] = useState(false);
+
+ useEffect(() => {
+  try {
+   const saved = JSON.parse(localStorage.getItem(WEB_STATE_KEY) || "{}");
+   if (saved && typeof saved === "object") setWebChecks(saved);
+  } catch {}
+ }, []);
 
  const projectMap = new Map(projects.map(p => [p.slug.toLowerCase(), p]));
  const mainSlugs = new Set(MAIN_SPECS.map(s => s.slug.toLowerCase()));
  const otherProjects = projects.filter(p => !mainSlugs.has(p.slug.toLowerCase()));
- const selectedStage = TIMELINE_STAGES.find(s => s.step === activeStep) || TIMELINE_STAGES[3];
+ const selectedStage = LIFECYCLE_NODES.find(s => s.id === selectedStageId) || LIFECYCLE_NODES[3];
+ const activeProjSpec = HOME_PROJECTS.find(p => p.slug === selectedProject) || HOME_PROJECTS[0];
+
+ function isCheckDoneForProject(projSlug: string, checkId: string, idx: number, stageIdx: number) {
+  const key = `${projSlug}:${checkId}`;
+  if (key in webChecks) return !!webChecks[key];
+  const proj = HOME_PROJECTS.find(p => p.slug === projSlug) || HOME_PROJECTS[0];
+  const defaultStagePct = proj.defaultPct[stageIdx] || 0;
+  const defaultChecks = Math.round((defaultStagePct / 100) * 3);
+  return idx < defaultChecks;
+ }
+
+ function getNodeProgressForProject(projSlug: string, stage: LifecycleStageSpec, stageIdx: number) {
+  const doneCount = stage.checkpoints.filter((c, i) =>
+   isCheckDoneForProject(projSlug, c.id, i, stageIdx)
+  ).length;
+  const total = stage.checkpoints.length;
+  const pct = Math.round((doneCount / total) * 100);
+  return {doneCount, total, pct};
+ }
+
+ function handleSelectGraphNode(node: ForceGraphNode) {
+  setInspectedNode(node);
+  if (node.projectSlug) setSelectedProject(node.projectSlug);
+  if (node.stageId) setSelectedStageId(node.stageId);
+ }
+
+ function handleToggleTask(
+  projSlug: string,
+  stageId: string,
+  checkId: string,
+  chkIdx: number,
+  stageIdx: number
+ ) {
+  setSelectedProject(projSlug);
+  setSelectedStageId(stageId);
+  const key = `${projSlug}:${checkId}`;
+  const current = isCheckDoneForProject(projSlug, checkId, chkIdx, stageIdx);
+  const next = {...webChecks, [key]: !current};
+  setWebChecks(next);
+  try {
+   localStorage.setItem(WEB_STATE_KEY, JSON.stringify(next));
+  } catch {}
+ }
 
  async function handleCopy(key: string, text: string) {
   if (await copyText(text)) {
@@ -168,6 +272,8 @@ export default function PlainEnglishHQ({
    setTimeout(() => setCopiedSlug(""), 2000);
   }
  }
+
+ const activePromptObj = selectedStage.readyPrompts[0];
 
  return (
   <section className="hq-studio" aria-label="Minimalist Visual Command Center">
@@ -205,174 +311,53 @@ export default function PlainEnglishHQ({
       </button>
      </div>
      <div className="hq-minimal-nav">
-      <Link className="btn" href="/best-practices">Lifecycle Web</Link>
+      <Link className="btn primary" href="/best-practices">Lifecycle &amp; Timeline</Link>
       <Link className="btn" href="/prompts">Prompts (98)</Link>
       <Link className="btn" href="/art-inventory">Art Inventory</Link>
      </div>
     </div>
    </div>
 
-   {/* VISUAL GRAPH 1: Project Lifecycle Timeline & Swimlane Formation */}
+   {/* VISUAL GRAPH 1: Interactive D3.js Force-Directed Lifecycle & Business Operations Web */}
    <div className="hq-timeline-card">
     <div className="hq-card-bar">
      <div>
-      <span className="hq-stage-code">VISUAL PROJECT TIMELINE &amp; STAGE FORMATION</span>
-      <h2>Where every project stands from Idea (01) to Launch (06)</h2>
+      <span className="hq-stage-code">D3.JS FORCE-DIRECTED LIFECYCLE &amp; OPERATIONS WEB</span>
+      <h2>Projects as central nodes with interconnected stages &amp; tasks branching out</h2>
      </div>
-     <Link className="btn" href="/best-practices">Open Full Mind-Map Web →</Link>
+     <Link className="btn" href="/best-practices">Open Full Lifecycle Inspector &amp; Recharts Timeline →</Link>
     </div>
 
-    {/* Horizontal Interactive SVG Timeline Formation */}
-    <div className="hq-timeline-svg-wrap">
-     <svg
-      viewBox="0 0 960 225"
-      className="hq-timeline-svg"
-      role="img"
-      aria-label="Project lifecycle timeline formation across 6 stages"
-     >
-      {/* Vertical stage guide columns */}
-      {TIMELINE_STAGES.map((s, idx) => {
-       const x = 190 + idx * 142;
-       const isSelected = s.step === activeStep;
-       return (
-        <g
-         key={s.code}
-         className="tl-stage-col"
-         onClick={() => setActiveStep(s.step)}
-         style={{cursor: "pointer"}}
-        >
-         <line
-          x1={x}
-          y1={38}
-          x2={x}
-          y2={205}
-          stroke={isSelected ? "var(--ui-accent)" : "var(--ui-border)"}
-          strokeWidth={isSelected ? "2" : "1"}
-          strokeDasharray={isSelected ? undefined : "3 3"}
-         />
-         <rect
-          x={x - 56}
-          y={6}
-          width={112}
-          height={28}
-          rx={6}
-          fill={isSelected ? "var(--ui-raised)" : "var(--ui-inset)"}
-          stroke={isSelected ? "var(--ui-accent)" : "var(--ui-border)"}
-          strokeWidth={isSelected ? "1.8" : "1"}
-         />
-         <text
-          x={x}
-          y={24}
-          textAnchor="middle"
-          fill={isSelected ? "var(--ui-accent)" : "var(--ui-text)"}
-          fontSize="11"
-          fontWeight="700"
-          fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
-         >
-          {s.code} · {s.name}
-         </text>
-        </g>
-       );
-      })}
+    <LifecycleForceGraph
+     projects={HOME_PROJECTS}
+     stages={LIFECYCLE_NODES}
+     selectedProject={selectedProject}
+     selectedNodeId={selectedStageId}
+     isCheckDoneForProject={isCheckDoneForProject}
+     getNodeProgressForProject={getNodeProgressForProject}
+     onSelectNode={handleSelectGraphNode}
+     onToggleTask={handleToggleTask}
+    />
 
-      {/* Swimlane Tracks for the 3 Core Projects */}
-      {MAIN_SPECS.map((proj, rowIdx) => {
-       const y = 74 + rowIdx * 52;
-       const startX = 190;
-       const endX = 190 + (proj.stageIndex - 1) * 142;
-       const fullEndX = 190 + 5 * 142;
-       return (
-        <g key={proj.slug}>
-         {/* Project Label on Left */}
-         <text
-          x={14}
-          y={y - 4}
-          fill="var(--ui-text)"
-          fontSize="12.5"
-          fontWeight="700"
-         >
-          {proj.title}
-         </text>
-         <text
-          x={14}
-          y={y + 12}
-          fill="var(--ui-muted)"
-          fontSize="10.5"
-          fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
-         >
-          {proj.progressPct}% · Stage 0{proj.stageIndex}
-         </text>
-
-         {/* Background Full Track */}
-         <line
-          x1={startX}
-          y1={y}
-          x2={fullEndX}
-          y2={y}
-          stroke="var(--ui-border)"
-          strokeWidth="6"
-          strokeLinecap="round"
-         />
-
-         {/* Active Filled Timeline Progress Bar */}
-         <line
-          x1={startX}
-          y1={y}
-          x2={endX}
-          y2={y}
-          stroke={proj.accentColor}
-          strokeWidth="6"
-          strokeLinecap="round"
-         />
-
-         {/* Milestone Nodes along the project's timeline */}
-         {TIMELINE_STAGES.map((s, idx) => {
-          const cx = 190 + idx * 142;
-          const reached = s.step <= proj.stageIndex;
-          const isCurrent = s.step === proj.stageIndex;
-          return (
-           <g
-            key={s.code}
-            onClick={() => setActiveStep(s.step)}
-            style={{cursor: "pointer"}}
-           >
-            {isCurrent && (
-             <circle
-              cx={cx}
-              cy={y}
-              r={12}
-              fill={proj.accentColor}
-              opacity={0.22}
-             />
-            )}
-            <circle
-             cx={cx}
-             cy={y}
-             r={isCurrent ? 7 : 4.5}
-             fill={reached ? proj.accentColor : "var(--ui-panel)"}
-             stroke={reached ? proj.accentColor : "var(--ui-border)"}
-             strokeWidth="2"
-            />
-           </g>
-          );
-         })}
-        </g>
-       );
-      })}
-     </svg>
-    </div>
-
-    {/* Compact 1-Line Stage Prompt Bar under Timeline */}
+    {/* Live Node Details & 1-Click Prompt Bar under D3 Force Graph */}
     <div className="hq-timeline-promptbar">
      <div className="hq-timeline-prompt-info">
-      <span className="hq-stage-code">STAGE {selectedStage.code} · {selectedStage.name.toUpperCase()}</span>
-      <p>{selectedStage.desc}</p>
+      <span className="hq-stage-code">
+       {inspectedNode
+        ? `${inspectedNode.kind.toUpperCase()} SELECTED · ${inspectedNode.fullTitle}`
+        : `${activeProjSpec.name.toUpperCase()} · STAGE ${selectedStage.code} (${selectedStage.title.toUpperCase()})`}
+      </span>
+      <p>
+       {inspectedNode
+        ? `${inspectedNode.subtitle}${inspectedNode.dueDate ? ` · Due ${inspectedNode.dueDate}` : ""}`
+        : selectedStage.plainWhy}
+      </p>
      </div>
      <div className="hq-timeline-prompt-actions">
       <button
        type="button"
        className="btn primary"
-       onClick={() => handleCopy("tl-" + selectedStage.code, selectedStage.prompt)}
+       onClick={() => handleCopy("tl-" + selectedStage.code, activePromptObj.prompt)}
       >
        {copiedSlug === "tl-" + selectedStage.code
         ? "✓ Copied Stage Prompt!"
@@ -395,7 +380,6 @@ export default function PlainEnglishHQ({
      return (
       <article className="hq-visual-card" key={spec.slug}>
        <div className="hq-visual-top">
-        {/* Radial Progress Ring Graph */}
         <div className="hq-radial-wrap" aria-label={`${spec.progressPct}% lifecycle completion`}>
          <svg width="62" height="62" viewBox="0 0 62 62">
           <circle
@@ -440,7 +424,6 @@ export default function PlainEnglishHQ({
          <p>{spec.shortRole}</p>
         </div>
 
-        {/* Mini 7-Bar Momentum Sparkline Graph */}
         <div className="hq-sparkline-box" title="Stage progression momentum">
          <svg width="58" height="32" viewBox="0 0 58 32" aria-hidden="true">
           {spec.sparkline.map((val, i) => {
@@ -462,7 +445,6 @@ export default function PlainEnglishHQ({
         </div>
        </div>
 
-       {/* Single concise status line instead of 3 text paragraphs */}
        <div className="hq-visual-status">
         <p>{spec.statusLine}</p>
         <small>{spec.scopeRule}</small>
@@ -487,7 +469,6 @@ export default function PlainEnglishHQ({
     })}
    </div>
 
-   {/* Optional Compact Drawer for Other 5 Repositories */}
    {otherProjects.length > 0 && (
     <div className="hq-more-projects">
      <button

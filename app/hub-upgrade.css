@@ -1903,3 +1903,29 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* D3 Force-Directed Graph Toolbar & Controls */
+.d3-force-container {
+  display: grid;
+  gap: 10px;
+}
+
+.d3-force-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.d3-force-filters,
+.d3-force-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.d3-force-svg {
+  user-select: none;
+  touch-action: none;
+}
