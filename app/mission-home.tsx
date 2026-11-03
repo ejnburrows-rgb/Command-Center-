@@ -96,7 +96,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
     kind:"Owner approval",missing:[],summary:"A source-qualified owner decision is awaiting review.",
     next:"Inspect the visual proof and decision context before granting approval."}));
   const priority:Record<State,number>={owner:5,proof:4,draft:3,active:2,verified:1};
-  return [...approvals,...reports,...work].sort((a,b)=>priority[b.state]-priority[a.state]||String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")));
+  return [...approvals,...reports,...work].sort((a,b)=>priority[b.state]-priority[a.state]||(String(b.updatedAt||"") < String(a.updatedAt||"") ? -1 : (String(b.updatedAt||"") > String(a.updatedAt||"") ? 1 : 0)));
  },[projects,jobs.jobs,jobs.approvals]);
  const visible=all.filter(item=>visibleInWorkspace(workspace,item.state)&&(filter==="all"||item.state===filter)&&(scope==="all"||item.slug===scope)&&[item.title,item.project,item.kind,item.id].join(" ").toLowerCase().includes(query.toLowerCase().trim()));
  const selectedItem=visible.find(x=>x.id===selected)||visible[0]||null;
@@ -184,7 +184,7 @@ export default function MissionHome({projects,busy}:{projects:Project[];busy:boo
      {!projects.length&&<p className="mission-empty">Loading GitHub projects…</p>}
     </section>
     <section className="mission-panel mission-history"><div className="mission-panel-head"><div><p className="mission-eyebrow">03 / RECENT CHANGES</p><h2>Updated work</h2></div></div>
-     {all.filter(i=>i.kind==="Pull request"||i.kind==="Issue").sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt))).slice(0,4).map(x=><article key={x.id}><span className="mission-history-dot"/><div><External href={x.source}>{x.title}</External><p>{x.project} · {fmt(x.updatedAt)}</p></div></article>)}
+     {all.filter(i=>i.kind==="Pull request"||i.kind==="Issue").sort((a,b)=>(String(b.updatedAt) < String(a.updatedAt) ? -1 : (String(b.updatedAt) > String(a.updatedAt) ? 1 : 0))).slice(0,4).map(x=><article key={x.id}><span className="mission-history-dot"/><div><External href={x.source}>{x.title}</External><p>{x.project} · {fmt(x.updatedAt)}</p></div></article>)}
      <Link href="/github" className="mission-history-link">View GitHub activity →</Link>
     </section>
    </div>

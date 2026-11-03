@@ -16,7 +16,7 @@ function formatShort(value?:string){if(!value)return "—";const d=new Date(valu
 function creditKey(slug:string){return "nbo-github-credit:"+slug;}
 function score(w:Work){return priorityForWork(w)}
 function priorityName(w:Work){return score(w)===3?"High priority":score(w)===2?"Needs review":w.kind==="pr"?"Open PR":"Open issue"}
-function sortWork(a:Work,b:Work){return score(b)-score(a)||b.updatedAt.localeCompare(a.updatedAt)}
+function sortWork(a:Work,b:Work){return score(b)-score(a)||((b.updatedAt < a.updatedAt ? -1 : (b.updatedAt > a.updatedAt ? 1 : 0)))}
 function Trend({commits}:{commits:Commit[]}){
  const series=useMemo(()=>{
   const dates=commits.map(c=>Date.parse(c.date)).filter(Number.isFinite);

@@ -49,7 +49,7 @@ export async function buildEvidence(body:string,updatedAt:string,comments:Commen
  const jobs=canonicalJobs(body,updatedAt);const approvals:Approval[]=[];
  const prCache=new Map<number,Promise<GitHubRecord>>();const artifactCache=new Map<string,Promise<boolean>>();
  const latest=new Map<number,Comment>();
- for(const comment of [...comments].sort((a,b)=>a.updated_at.localeCompare(b.updated_at))){
+ for(const comment of [...comments].sort((a,b)=>(a.updated_at < b.updated_at ? -1 : (a.updated_at > b.updated_at ? 1 : 0)))){
   const ids=explicitJobIds(comment.body).filter(id=>jobs.some(job=>job.id===id));
   if(ids.length===1)latest.set(ids[0],comment);
  }
