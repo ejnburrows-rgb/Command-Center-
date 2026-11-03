@@ -14,7 +14,7 @@ export async function GET(req:NextRequest){
  if(sha!==null){
   if(!/^[a-f0-9]{40}$/i.test(sha))return NextResponse.json({error:"Invalid commit identifier."},{status:400,headers});
   try{
-   const {data}=await github(base+"/commits/"+sha);
+   const {data}=await github<{files?: {filename:string;status:string;additions:number;deletions:number}[]}>(base+"/commits/"+sha);
    if(!Array.isArray(data.files))throw new Error("Changed-file list unavailable");
    return NextResponse.json({sha,files:data.files.slice(0,100).map((f:{filename:string;status:string;additions:number;deletions:number})=>({
     name:f.filename,status:f.status,additions:f.additions,deletions:f.deletions
@@ -23,7 +23,7 @@ export async function GET(req:NextRequest){
  }
  try{
   const result=await serverSnapshot("github-panel:"+slug,30*60*1000,async()=>{
-   const {data}=await github(base+"/commits?per_page=100");
+   const {data}=await github<{sha:string;html_url:string;commit:{message:string;author?:{date?:string;name?:string}};author?:{login?:string}}[]>(base+"/commits?per_page=100");
    if(!Array.isArray(data))throw new Error("GitHub did not return a commit history");
    const items=data.map((item:{
     sha:string;html_url:string;commit:{message:string;author?:{date?:string;name?:string}};
