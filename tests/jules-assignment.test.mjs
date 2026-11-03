@@ -22,18 +22,32 @@ test("only the official bot task link proves acceptance and the session remains 
  const result=deriveJulesAssignment({issue,timeline,comments:[accepted],fetchedAt:"2026-10-30T03:40:00Z"});
  assert.equal(result.status,"ACCEPTED — LIVE SESSION STATUS UNKNOWN");
  assert.equal(result.accepted,true);
- assert.equal(result.assignedAgent,"Jules");
+ assert.equal(result.assignedAgent,"Jules · accepted; session UNKNOWN");
  assert.equal(result.taskUrl,"https://jules.google.com/task/10892341679603989202");
  assert.equal(result.sessionStatus,"UNKNOWN");
 });
 
 test("an official later failure is shown without erasing the earlier acceptance",()=>{
- const failure={...accepted,created_at:"2026-10-30T03:36:05Z",body:"I encountered an unexpected error and wasn't able to complete the task."};
+ const failure={...accepted,created_at:"2026-10-30T03:36:05Z",body:"I apologize, but I encountered an unexpected error and wasn't able to complete the [task](https://jules.google.com/task/10892341679603989202)."};
  const result=deriveJulesAssignment({issue,timeline,comments:[accepted,failure],fetchedAt:"2026-10-30T03:40:00Z"});
  assert.equal(result.accepted,true);
- assert.equal(result.status,"ACCEPTED — LIVE SESSION STATUS UNKNOWN");
+ assert.equal(result.status,"FAILED — PROVIDER REPORTED TASK FAILURE");
+ assert.equal(result.assignedAgent,"Jules · accepted earlier; latest outcome FAILED");
+ assert.equal(result.sessionStatus,"UNKNOWN");
  assert.match(result.latestOutcome,/FAILED/);
- assert.match(result.nextAction,/do not dispatch a duplicate/i);
+ assert.match(result.nextAction,/do not resume or dispatch from this Board/i);
+ assert.doesNotMatch(result.nextAction,/resume that same task/i);
+});
+
+test("a failed task stays FAILED even when its task-linked PR is independently verified",()=>{
+ const failure={...accepted,created_at:"2026-10-30T03:36:05Z",body:"I encountered an unexpected error and wasn't able to complete https://jules.google.com/task/10892341679603989202"};
+ const linked={...accepted,created_at:"2026-10-30T03:20:00Z",body:"Task update https://jules.google.com/task/10892341679603989202 and PR https://github.com/ejnburrows-rgb/Command-Center-/pull/31"};
+ const pullRequest={number:31,title:"Task output",html_url:"https://github.com/ejnburrows-rgb/Command-Center-/pull/31",state:"open",draft:false,head:{sha:"d".repeat(40)}};
+ const result=deriveJulesAssignment({issue,timeline,comments:[accepted,linked,failure],pullRequest,fetchedAt:"2026-10-30T03:40:00Z"});
+ assert.equal(result.status,"FAILED — PROVIDER REPORTED TASK FAILURE");
+ assert.equal(result.pullRequest?.number,31);
+ assert.equal(result.sessionStatus,"UNKNOWN");
+ assert.match(result.nextAction,/do not resume or dispatch/i);
 });
 
 test("an unrelated bot cannot establish acceptance",()=>{
@@ -102,4 +116,14 @@ test("the owner panel reads one source and has no assignment or dispatch control
  assert.match(panel,/Live session/);
  assert.match(panel,/UNKNOWN/);
  assert.doesNotMatch(panel,/dispatch|assign now|start agent/i);
+});
+
+test("the assignment panel and task handoff share one evidence contract",()=>{
+ const panel=read("app/jules-assignment.tsx");
+ const handoff=read("app/mission-action-map.tsx");
+ const contract=read("lib/jules-assignment-contract.ts");
+ assert.match(panel,/JulesAssignmentEvidence/);
+ assert.match(handoff,/JulesAssignmentEvidence/);
+ assert.match(contract,/sessionStatus\?: "UNKNOWN" \| "ACTIVE" \| "PAUSED" \| "COMPLETED"/);
+ assert.match(contract,/pullRequest\?:/);
 });

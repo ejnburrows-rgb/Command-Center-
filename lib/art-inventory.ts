@@ -8,9 +8,9 @@ const REPO = "cartilla-de-gretel";
 export const ARCHIVAL_RENDER_REF = process.env.ART_INVENTORY_REF || "art-inventory-live";
 // Canonical branch holding current verified artwork, motion, and code
 export const DEFAULT_MAIN_REF = process.env.CARTILLA_MAIN_REF || "main";
-export const TUTOR_PR_REF = "bb585e1eb467d57731a666f6690546958ab34890";
 export const DEFAULT_REF = "main";
 export const IMAGE_REF = "main";
+import { fetchTutorSource } from "./tutor-source.mjs";
 
 const BASE = "docs/art-inventory";
 
@@ -150,6 +150,16 @@ export type Inventory = {
   base: string;
   mainBase: string;
   tutorBase: string;
+  tutorSource: {
+    freshness: "FRESH" | "UNAVAILABLE";
+    lifecycle: "DRAFT" | "OPEN" | "MERGED" | "CLOSED" | "UNKNOWN";
+    headSha: string | null;
+    headRef: string | null;
+    sourceUpdatedAt: string | null;
+    observedAt: string | null;
+    prUrl: string;
+    error: string | null;
+  };
   tagMeaning: Record<string, string>;
   tagCounts: Record<string, number>;
   slots: Slot[];
@@ -299,7 +309,10 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
   const mcj = await mc.json();
   const mainSha: string = mcj.sha;
   const mainBase = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${mainSha}/`;
-  const tutorBase = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${TUTOR_PR_REF}/`;
+  // Production stays pinned to main. Tutor evidence is fetched from the current PR head
+  // separately, with no old SHA fallback when GitHub cannot refresh the source.
+  const tutorSource = await fetchTutorSource(fetch, headers());
+  const tutorBase = tutorSource.freshness === "FRESH" ? tutorSource.base : "";
 
   const getArchival = async (p: string) => {
     const r = await fetch(base + p, { next: { revalidate: 3600 } });
@@ -1372,7 +1385,9 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
     name: "Tutor Gretel — Lección 1 Vocales (Milestone PR #1073)",
     lessonNumber: 1,
     route: "/tutor",
-    builtStatus: "Built on branch feat/gretel-tutor-l1-3 (Head bb585e1e)",
+    builtStatus: tutorSource.freshness === "FRESH"
+      ? `Built on the current PR #1073 head ${tutorSource.headSha?.slice(0, 10)}.`
+      : "Tutor PR #1073 source unavailable; current branch content was not verified.",
     workingStatus: "IN_PROGRESS_PR",
     reachability: "Student & Teacher",
     correctBehavior:
@@ -1382,10 +1397,10 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
     accessibilityNote: "Verificado en viewport 390×844 sin desborde horizontal, objetivos táctiles ≥44px y subtítulos.",
     missingArtOrAudio:
       "19 palabras de vocabulario con audio aprobado; 71 frases de conversación usan fallback silencioso hasta grabación (#769).",
-    existingPrOrIssue: "PR #1073 (Head bb585e1e) — Prioridad #1 en #877",
-    proofUrl: tutorBase + "docs/proofs/tutor-l1-phone-proof/l1-vowel-a-phone-390x844.webm",
+    existingPrOrIssue: `PR #1073 ${tutorSource.freshness === "FRESH" ? `current head ${tutorSource.headSha?.slice(0, 10)}` : "current head unavailable"} — Prioridad #1 en #877`,
+    proofUrl: tutorBase ? tutorBase + "docs/proofs/tutor-l1-phone-proof/l1-vowel-a-phone-390x844.webm" : undefined,
     exactNextAction:
-      "Obtener revisión material independiente de PR #1073 (bb585e1e). No fusionar ni reemplazar arquitectura sin autorización.",
+      "Obtener revisión material independiente de la revisión actual de PR #1073. No fusionar ni reemplazar arquitectura sin autorización.",
     thumbnailUrl: mainBase + "public/cartilla/images/gretel/gretel-approved-master.png",
   });
 
@@ -1503,6 +1518,7 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
     base,
     mainBase,
     tutorBase,
+    tutorSource,
     tagMeaning: qual.tag_meaning || {},
     tagCounts: qual.per_tag || {},
     slots,
