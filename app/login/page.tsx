@@ -49,6 +49,9 @@ function LoginForm() {
 
       <form onSubmit={submit} className="space-y-3">
         <input
+          aria-label="Passphrase"
+          aria-invalid={error ? "true" : "false"}
+          aria-describedby={error ? "login-error" : undefined}
           type="password"
           value={passphrase}
           onChange={(e) => setPassphrase(e.target.value)}
@@ -56,7 +59,7 @@ function LoginForm() {
           autoFocus
           className="w-full rounded-md border border-edge bg-panel px-3 py-2 text-sm outline-none focus:border-accent"
         />
-        {error ? <p className="text-sm text-red-400">{error}</p> : null}
+        {error ? <p id="login-error" role="alert" className="text-sm text-red-400">{error}</p> : null}
         <button
           type="submit"
           disabled={busy}
