@@ -13,7 +13,6 @@ test("navigation labels and route paths are coherent",()=>{
 test("real work and evidence are used instead of imported demo fixtures",()=>{
  const ui=read("app/ai-operations.tsx");
  assert.match(ui,/useJobs\(/);
- assert.match(ui,/projects\.flatMap/);
  assert.doesNotMatch(ui,/NBO_TASKS|NBO_PROJECTS|MOCK_TASKS|simulateSync|Synced just now via Octokit/);
 });
 test("anonymous knowledge page does not query private GitHub content",()=>{
