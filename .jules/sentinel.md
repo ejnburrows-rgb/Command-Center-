@@ -1,0 +1,4 @@
+## 2026-11-03 - Timing Attack Vulnerability in Authentication Endpoint
+**Vulnerability:** Authentication in `app/api/auth/route.ts` used a standard string comparison (`!==`) for password verification, making it vulnerable to a timing attack where an attacker could theoretically guess the passphrase character by character based on request processing time.
+**Learning:** The simple approach of comparing string lengths or stopping comparison at the first mismatch leaks information about the expected string. In Node.js APIs, any password or token comparison against a fixed secret should use constant-time operations.
+**Prevention:** Use `crypto.timingSafeEqual` to perform constant-time comparisons. To ensure the buffers are equal length (required by `timingSafeEqual`) and prevent leaking the expected password length, hash both the provided and expected strings first.
