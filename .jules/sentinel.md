@@ -1,0 +1,4 @@
+## 2024-11-04 - Timing Attack Vulnerability in Passphrase Verification
+**Vulnerability:** The `/api/auth` endpoint used standard JavaScript string equality (`!==`) to compare the expected and provided passphrases. This is vulnerable to timing attacks because string comparison can return early if characters don't match, allowing an attacker to incrementally guess the passphrase by measuring response times.
+**Learning:** Even internal tool logins using simple passphrases can be vulnerable to side-channel timing attacks if not handled properly. Standard equality checks leak string length and character matches over time.
+**Prevention:** Always use constant-time comparison functions like `crypto.timingSafeEqual` when comparing secrets (passphrases, tokens, API keys). Since `timingSafeEqual` requires identical length buffers, first hash the expected and provided secrets using a one-way algorithm (like SHA-256) to ensure fixed length before comparison.
