@@ -1,0 +1,4 @@
+## 2024-05-18 - [Timing Attack in Auth Route]
+**Vulnerability:** The passphrase comparison logic used simple string comparison (`body.passphrase !== phrase`) without protecting against timing attacks, which could leak the length of the string and allow attackers to determine the passphrase over time.
+**Learning:** This existed because `crypto.timingSafeEqual` was not used. In Next.js Node.js runtime API routes, we need to hash the string variables to ensure identical buffer lengths (required by `timingSafeEqual`) and to conceal the length of the expected payload.
+**Prevention:** For password, token, or passphrase comparisons, always use fixed-length hashes (e.g., `sha256hex`) combined with `crypto.timingSafeEqual(Buffer.from(...), Buffer.from(...))`. The Next.js API route MUST specify `export const runtime = 'nodejs';` because WebCrypto `timingSafeEqual` is not always available in Edge runtime, while `node:crypto` works consistently in the Node runtime.
