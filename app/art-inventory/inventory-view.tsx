@@ -169,6 +169,200 @@ function Tags({ s, inv }: { s: Slot; inv: Inventory }) {
   );
 }
 
+
+function ArtworkIntakeSection({ s, inv }: { s: Slot; inv: Inventory }) {
+  const [candidateFile, setCandidateFile] = React.useState<File | null>(null);
+  const [candidateUrl, setCandidateUrl] = React.useState<string | null>(null);
+  const [candidateDim, setCandidateDim] = React.useState<{ w: number; h: number } | null>(null);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [uploadStatus, setUploadStatus] = React.useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const cartillaLiveUrl = "https://cartilla-de-gretel-ejn.vercel.app";
+  const cartillaPageUrl = `${cartillaLiveUrl}/cartilla?book=${encodeURIComponent(s.book)}&page=${s.page}`;
+
+  const processFile = (file: File) => {
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+      alert("Supported formats: PNG, JPEG, or WebP.");
+      return;
+    }
+    setCandidateFile(file);
+    const url = URL.createObjectURL(file);
+    setCandidateUrl(url);
+    const img = new Image();
+    img.onload = () => setCandidateDim({ w: img.width, h: img.height });
+    img.src = url;
+    setUploadStatus(null);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleApprove = async () => {
+    if (!candidateFile) return;
+    setIsSubmitting(true);
+    setUploadStatus("Validating and staging canonical candidate...");
+    try {
+      const res = await fetch("/api/artwork-intake", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slotId: s.id,
+          artworkId: s.artwork_id,
+          destinationPath: s.canonicalDestinationPath,
+          fileName: candidateFile.name,
+          mimeType: candidateFile.type,
+          sizeBytes: candidateFile.size,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to stage candidate");
+      setUploadStatus("APPROVED: Staged for canonical GitHub import. Safe snapshot preserved.");
+    } catch (err: any) {
+      setUploadStatus("Error: " + err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleReject = () => {
+    setCandidateFile(null);
+    if (candidateUrl) URL.revokeObjectURL(candidateUrl);
+    setCandidateUrl(null);
+    setCandidateDim(null);
+    setUploadStatus("Candidate rejected. Original canonical master preserved unchanged.");
+  };
+
+  return (
+    <div style={{ background: "#fff", padding: 14, borderRadius: 10, border: "2px solid #2e7d32", marginTop: 14, fontSize: 13 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 10 }}>
+        <div>
+          <span style={{ fontSize: 10, fontWeight: 900, background: "#2e7d32", color: "#fff", padding: "3px 8px", borderRadius: 4, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            Owner Artwork Intake & Approval Suite
+          </span>
+          <h3 style={{ margin: "4px 0 0", fontSize: 16 }}>{s.artwork_id} ({s.id})</h3>
+        </div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <a href={cartillaPageUrl} target="_blank" rel="noreferrer" style={{ display: "inline-block", padding: "6px 12px", background: "#fbf6e8", border: "1px solid #d8cfae", borderRadius: 6, color: "#1c1a14", textDecoration: "none", fontWeight: 700, fontSize: 12 }}>
+            Open Cartilla {s.book} p. {s.page} ↗
+          </a>
+          <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 8px", borderRadius: 4, background: s.canonicalExactMatchVerified ? "#e8f5e9" : "#fff3e0", color: s.canonicalExactMatchVerified ? "#2e7d32" : "#e65100" }}>
+            {s.canonicalExactMatchVerified ? "SYNCED WITH MAIN" : "AWAITING APPROVAL"}
+          </span>
+        </div>
+      </div>
+
+      <p style={{ margin: "0 0 10px", color: "#4a4536", fontSize: 12 }}>
+        <b>Physical Reference:</b> {s.book}, Page {s.page} (Label: <i>{s.label}</i>) · <b>Drawing Group:</b> <code>{s.canonicalDrawingGroup || "—"}</code> · <b>Canonical Target:</b> <code>{s.canonicalDestinationPath || "—"}</code>
+      </p>
+
+      {/* Upload Dropzone */}
+      <div
+        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={handleDrop}
+        style={{
+          border: isDragging ? "2px dashed #2e7d32" : "2px dashed #b0bec5",
+          background: isDragging ? "#e8f5e9" : "#fafafa",
+          borderRadius: 8,
+          padding: 16,
+          textAlign: "center",
+          cursor: "pointer",
+          marginBottom: 12,
+        }}
+        onClick={() => document.getElementById("art-intake-file-" + s.id)?.click()}
+      >
+        <input
+          id={"art-intake-file-" + s.id}
+          type="file"
+          accept="image/png, image/jpeg, image/webp"
+          style={{ display: "none" }}
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              processFile(e.target.files[0]);
+            }
+          }}
+        />
+        <div style={{ fontSize: 14, fontWeight: 700, color: "#1c1a14" }}>
+          Drop artwork replacement here, or tap to choose file
+        </div>
+        <div style={{ fontSize: 11, color: "#666", marginTop: 4 }}>
+          Supports iPhone/Android photo selection and desktop drag-and-drop (PNG, JPEG, WebP)
+        </div>
+      </div>
+
+      {/* Side-by-Side Comparison */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 12, marginBottom: 12 }}>
+        <div style={{ border: "1px solid #d8cfae", borderRadius: 8, padding: 10, background: "#fdfcf9" }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: "#555", marginBottom: 6 }}>
+            CURRENT CANONICAL MASTER
+          </div>
+          <div style={{ height: 180, background: "#fbf6e8", display: "grid", placeItems: "center", borderRadius: 6, overflow: "hidden", border: "1px solid #eee" }}>
+            <img src={s.canonicalImageUrl} alt="Current Master" style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain" }} />
+          </div>
+          <div style={{ fontSize: 11, color: "#666", marginTop: 6, wordBreak: "break-all" }}>
+            Source: <code>{s.canonicalDestinationPath || "Canonical Master"}</code>
+          </div>
+        </div>
+
+        <div style={{ border: candidateUrl ? "2px solid #2e7d32" : "1px dashed #ccc", borderRadius: 8, padding: 10, background: candidateUrl ? "#fff" : "#fafafa" }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: candidateUrl ? "#2e7d32" : "#888", marginBottom: 6 }}>
+            CANDIDATE REPLACEMENT {candidateUrl ? "(READY FOR REVIEW)" : "(NO FILE CHOSEN)"}
+          </div>
+          <div style={{ height: 180, background: "#fbf6e8", display: "grid", placeItems: "center", borderRadius: 6, overflow: "hidden", border: "1px solid #eee" }}>
+            {candidateUrl ? (
+              <img src={candidateUrl} alt="Candidate" style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain" }} />
+            ) : (
+              <div style={{ color: "#aaa", fontSize: 12 }}>Upload a picture above to compare</div>
+            )}
+          </div>
+          {candidateFile && candidateDim && (
+            <div style={{ fontSize: 11, color: "#333", marginTop: 6, display: "flex", flexWrap: "wrap", gap: 6 }}>
+              <span><b>Size:</b> {(candidateFile.size / 1024).toFixed(1)} KB</span>
+              <span><b>Dimensions:</b> {candidateDim.w} × {candidateDim.h} px</span>
+              <span><b>Format:</b> {candidateFile.type}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Decision Buttons & Status */}
+      {candidateUrl && (
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, padding: "10px", background: "#f1f8e9", borderRadius: 8, border: "1px solid #c8e6c9" }}>
+          <button
+            onClick={handleApprove}
+            disabled={isSubmitting}
+            style={{ padding: "8px 16px", background: "#2e7d32", color: "#fff", border: "none", borderRadius: 6, fontWeight: 700, cursor: isSubmitting ? "not-allowed" : "pointer" }}
+          >
+            {isSubmitting ? "Staging..." : "Approve as Canonical Master"}
+          </button>
+          <button
+            onClick={handleReject}
+            disabled={isSubmitting}
+            style={{ padding: "8px 16px", background: "#d32f2f", color: "#fff", border: "none", borderRadius: 6, fontWeight: 700, cursor: "pointer" }}
+          >
+            Reject Candidate
+          </button>
+          <span style={{ fontSize: 11, color: "#555" }}>
+            Approving prepares the canonical Git commit and updates Cartilla. Previous source is preserved in history.
+          </span>
+        </div>
+      )}
+
+      {uploadStatus && (
+        <div style={{ marginTop: 8, padding: "8px 12px", borderRadius: 6, background: uploadStatus.startsWith("Error") ? "#ffebee" : "#e8f5e9", color: uploadStatus.startsWith("Error") ? "#c62828" : "#2e7d32", fontWeight: 700, fontSize: 12 }}>
+          {uploadStatus}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Viewer({ s, inv, onClose }: { s: Slot; inv: Inventory; onClose: () => void }) {
   const pageUrl = s.book_page.src.startsWith("public/") ? inv.mainBase + s.book_page.src : inv.base + s.book_page.src;
   const [pw, ph] = s.book_page.size;
@@ -252,6 +446,9 @@ function Viewer({ s, inv, onClose }: { s: Slot; inv: Inventory; onClose: () => v
           </p>
         </div>
       </div>
+
+      {/* Owner Artwork Upload & Verification Suite */}
+      <ArtworkIntakeSection s={s} inv={inv} />
 
       {/* All 11 Required Part 4 Inspection Fields */}
       <div style={{ background: "#fff", padding: 12, borderRadius: 10, border: "2px solid #d8cfae", marginTop: 14, fontSize: 13 }}>

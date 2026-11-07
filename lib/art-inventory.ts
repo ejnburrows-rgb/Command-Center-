@@ -1245,8 +1245,8 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
     },
     "cow-game-m": {
       name: "Juego de las Vacas (cow-game-m)",
-      builtStatus: "Built in CowGame.tsx (PR #1081)",
-      workingStatus: "IN_PROGRESS_PR",
+      builtStatus: "Built & Merged on main (CowGame.tsx, PR #1081)",
+      workingStatus: "WORKS_ON_MAIN",
       route: "/cartilla/juego/cow-game-m",
       reachability: "Student & Teacher",
       correctBehavior:
@@ -1256,7 +1256,7 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
       accessibilityNote: "Arrastre táctil y soporte de teclado.",
       missingArtOrAudio:
         "28 recortes WebP/PNG en public/cartilla/art/games/cow/ presentes. Audio vacío esperando grabaciones (#769).",
-      existingPrOrIssue: "PR #1081",
+      existingPrOrIssue: "PR #1081 (Merged to main)",
       exactNextAction: "Revisión técnica independiente de PR #1081 y captura de video en móvil (390×844).",
       thumbnailUrl: mainBase + "public/cartilla/art/games/cow/scene.webp",
     },
