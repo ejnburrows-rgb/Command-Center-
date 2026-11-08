@@ -95,31 +95,31 @@ STRICT OWNER RULE (PR #877):
    {label: "Art Inventory", href: "/art-inventory"},
    {label: "Project View", href: projectPath("cartilla-de-gretel")}
   ],
-  liveUrl: "https://cartilla-de-gretel.vercel.app",
+  liveUrl: "https://cartilla-de-gretel-ejn.vercel.app",
   repoUrl: "https://github.com/ejnburrows-rgb/cartilla-de-gretel",
-  lastVerified: "2026-11-08 14:07 UTC",
+  lastVerified: "2026-11-08 20:00 UTC",
   statusBreakdown: {
    completed: {
-    text: "Pencil & eraser unification (PR #1287), El Libro Vivo Option A (#1290), 24 lessons layout, and permanent rejected pencil regression lock (PR #1291 merged).",
-    proofUrl: "https://github.com/ejnburrows-rgb/cartilla-de-gretel/commit/c151d487",
-    proofLabel: "Commit c151d487 (Pencil regression suite)"
+    text: "Pencil & eraser unification (PR #1287), El Libro Vivo Option A (#1290), 24 lessons layout, permanent rejected pencil regression lock (PR #1291 merged), and production release deployment (dpl_7ULi6oiQYPiexTDVLYTpdnhSHCAj).",
+    proofUrl: "https://cartilla-de-gretel-ejn.vercel.app",
+    proofLabel: "Production Deployment (c151d487 Live)"
    },
    inProgress: {
-    text: "PR #1291 merged to main; PR #1073 AI Tutor isolation under Issue #877."
+    text: "PR #1073 AI Tutor isolation under Issue #877."
    },
    remains: {
     text: "Remaining authentic audio recordings from owner (rec_gretel_* placeholders forbidden) and final teacher flip-chart turn sign-off. Flagged artwork replacements: 10 legacy subjects in Art Inventory."
    },
    needsApproval: {
-    text: "Owner deployment authorization for release candidate: 'deploy it' required prior to production publication."
+    text: "No pending deployment gates; release candidate deployed under owner authorization 'deploy it'."
    },
    savedNotPublished: {
-    text: "Commits c151d48 (PR #1291), b6e64cd (PR #1290) & def8009 (PR #1289) are saved and tested on GitHub main, awaiting explicit owner release deployment."
+    text: "None. All verified release candidate commits on GitHub main are built, tested, and published to Vercel production."
    },
    websiteStatus: {
-    isCurrent: false,
-    label: "Website Behind GitHub main",
-    note: "Public URL running Sat Nov 7 build (commit 41cf194); GitHub main contains verified pencil unification, Libro Vivo docs, and regression locks (c151d48). Safe owner release gating active ('deploy it' required)."
+    isCurrent: true,
+    label: "Website Up to Date with GitHub main",
+    note: "Production live on Vercel (dpl_7ULi6oiQYPiexTDVLYTpdnhSHCAj) serving release candidate c151d487; classic wooden pencil, Libro Vivo docs, and regression locks verified live (HTTP 200)."
    }
   },
   miniMap: [
