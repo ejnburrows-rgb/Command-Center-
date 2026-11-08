@@ -100,26 +100,26 @@ STRICT OWNER RULE (PR #877):
   lastVerified: "2026-11-08 14:07 UTC",
   statusBreakdown: {
    completed: {
-    text: "Pencil & eraser unification (PR #1287), El Libro Vivo Option A (#1290), 24 lessons layout, and 108 interaction test suites.",
-    proofUrl: "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/1291",
-    proofLabel: "PR #1291 (Pencil regression suite)"
+    text: "Pencil & eraser unification (PR #1287), El Libro Vivo Option A (#1290), 24 lessons layout, and permanent rejected pencil regression lock (PR #1291 merged).",
+    proofUrl: "https://github.com/ejnburrows-rgb/cartilla-de-gretel/commit/c151d487",
+    proofLabel: "Commit c151d487 (Pencil regression suite)"
    },
    inProgress: {
-    text: "Owner approved PR #1291 test locks; PR #1073 AI Tutor isolation under Issue #877."
+    text: "PR #1291 merged to main; PR #1073 AI Tutor isolation under Issue #877."
    },
    remains: {
-    text: "Remaining authentic audio recordings from owner (rec_gretel_* placeholders forbidden) and final teacher flip-chart turn sign-off."
+    text: "Remaining authentic audio recordings from owner (rec_gretel_* placeholders forbidden) and final teacher flip-chart turn sign-off. Flagged artwork replacements: 10 legacy subjects in Art Inventory."
    },
    needsApproval: {
     text: "Owner deployment authorization for release candidate: 'deploy it' required prior to production publication."
    },
    savedNotPublished: {
-    text: "Commits b6e64cd & PR #1287 are saved and tested on GitHub main, awaiting explicit owner release deployment."
+    text: "Commits c151d48 (PR #1291), b6e64cd (PR #1290) & def8009 (PR #1289) are saved and tested on GitHub main, awaiting explicit owner release deployment."
    },
    websiteStatus: {
     isCurrent: false,
     label: "Website Behind GitHub main",
-    note: "Public URL running Sat Nov 7 build; GitHub main contains verified pencil unification and Libro Vivo docs. Safe owner release gating active."
+    note: "Public URL running Sat Nov 7 build (commit 41cf194); GitHub main contains verified pencil unification, Libro Vivo docs, and regression locks (c151d48). Safe owner release gating active ('deploy it' required)."
    }
   },
   miniMap: [
@@ -152,8 +152,8 @@ STRICT OWNER RULE (PR #877):
      whatNow: "Enforced by automated regression tests in vitest (108 tests passing).",
      whatMissing: "Pages 86–87 are intentionally preserved physical blanks (never invented).",
      whatNeedsMe: "No owner action needed.",
-     proofUrl: "https://github.com/ejnburrows-rgb/cartilla-de-gretel/pull/1291",
-     proofLabel: "Vitest Workbook Suite",
+     proofUrl: "https://github.com/ejnburrows-rgb/cartilla-de-gretel/commit/c151d487",
+     proofLabel: "Commit c151d487 (Vitest Workbook Suite)",
      githubUrl: "https://github.com/ejnburrows-rgb/cartilla-de-gretel/blob/main/src/cartilla/interactions/__tests__/owner-approved-pencil-only.test.ts"
     }
    },
@@ -468,7 +468,7 @@ Keep all status updates for Emilio José in plain English without engineering ja
     proofLabel: "Live Operations Hub"
    },
    inProgress: {
-    text: "Automatic PR & branch cleanliness monitoring; 8 merged branches safely deleted from remote."
+    text: "Automatic PR & branch cleanliness monitoring; 9 merged branches safely deleted from remote."
    },
    remains: {
     text: "Routine Dependabot dependency bumps on secondary libraries."
@@ -477,7 +477,7 @@ Keep all status updates for Emilio José in plain English without engineering ja
     text: "Approval of the unified mobile dashboard layout and branch cleanup summary."
    },
    savedNotPublished: {
-    text: "Branch and UI upgrades saved locally and ready for GitHub synchronization."
+    text: "All branch cleanups, phone-first cards, and mobile sheets synchronized to GitHub main."
    },
    websiteStatus: {
     isCurrent: true,
