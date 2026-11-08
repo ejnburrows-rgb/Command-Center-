@@ -67,7 +67,7 @@ type MainCardSpec = {
   inProgress: { text: string };
   remains: { text: string };
   needsApproval: { text: string };
-  savedNotPublished: { text: string };
+  savedNotPublished: { text: string; proofUrl?: string; proofLabel?: string };
   websiteStatus: { isCurrent: boolean; label: string; note: string };
  };
  miniMap: MapNode[];
@@ -876,7 +876,14 @@ export default function PlainEnglishHQ({
 
         <div className="hq-breakdown-item">
          <span className="hq-breakdown-label">💾 Saved But Not Published</span>
-         <span className="hq-breakdown-val">{spec.statusBreakdown.savedNotPublished.text}</span>
+         <span className="hq-breakdown-val">
+          {spec.statusBreakdown.savedNotPublished.text}{" "}
+          {spec.statusBreakdown.savedNotPublished.proofUrl && (
+           <External href={spec.statusBreakdown.savedNotPublished.proofUrl} style={{color: spec.accentColor, textDecoration: "underline"}}>
+            [{spec.statusBreakdown.savedNotPublished.proofLabel || "View Proof"}]
+           </External>
+          )}
+         </span>
         </div>
 
         <div className="hq-breakdown-item">

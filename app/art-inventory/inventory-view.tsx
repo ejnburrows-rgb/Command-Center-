@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import type { Inventory, Slot, MotionItem } from "../../lib/art-inventory";
 
 const CREAM = "#fbf6e8";
