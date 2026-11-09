@@ -3,8 +3,8 @@
 **Repository:** `https://github.com/ejnburrows-rgb/Command-Center-`  
 **Production URL:** [https://nbo-operations-hub.vercel.app](https://nbo-operations-hub.vercel.app)  
 **Art Inventory URL:** [https://nbo-operations-hub.vercel.app/art-inventory](https://nbo-operations-hub.vercel.app/art-inventory)  
-**Last Checked Date:** 2026-11-09 00:35 UTC  
-**Official Main Revision:** `c7d4ae2` (fix(types): resolve TypeScript build errors and verify Vercel production deployment)  
+**Last Checked Date:** 2026-11-09 00:45 UTC  
+**Official Main Revision:** `2cb6033` (docs: update OWNER-VISUAL-STATUS with Cartilla 25 PR queue cleanup and branch metrics)  
 **Active Production Revision:** Live and verified (HTTP 200)  
 **Production Status:** 🟢 **Synchronized with official main & live verified.**
 
@@ -14,7 +14,7 @@
 
 ```mermaid
 flowchart TD
-    MAIN["Official Main Branch (c7d4ae2)"]
+    MAIN["Official Main Branch (2cb6033)"]
     AREAS["Operations Hub Areas:<br/>• Minimalist Phone-First 3 Project Cards<br/>• Interactive Miniature Status Maps<br/>• Clickable Item Exploration Modal<br/>• Authoritative Source Navigation (AGENTS.md, Rules, Locks)<br/>• Dynamic Art & Activity Inventory (Cartilla source)<br/>• Interactive Mind Map (D3 force-directed)<br/>• Authenticated Management Routes"]
     BRANCHES["Remote Branches (39 total):<br/>• 9 safe merged branches deleted<br/>• Active PRs: 26 open PRs (Sentinel, Dependabot, Jules)<br/>• Closed unmerged PR branches: 12 preserved<br/>• Unique redesign branch: 1 preserved"]
     VERCEL["Vercel Production Deployment<br/>Target: nbo-operations-hub.vercel.app"]
@@ -45,7 +45,7 @@ flowchart LR
 ---
 
 ## 3. Branch and Merge Status
-- **Official Source:** `main` (`c7d4ae2`)
+- **Official Source:** `main` (`2cb6033`)
 - **Remote Branches Audited:** 39 branches remain (26 open PRs, 9 previously pruned safe merged branches, 12 closed unmerged PR branches, 1 redesign branch preserved).
 - **Deleted Safe Merged Branches:**
   - `art-inventory-filter`
@@ -64,6 +64,6 @@ flowchart LR
 ## 4. Current Approved Work & Hub Overview
 - **Project Overview:** `DONE and live` (Upgraded with 3 project cards, 7-point verified breakdown, and miniature maps).
 - **Interactive Exploration Modal:** `DONE and live` (Tapping any map node or source pill displays What is this, What done, What now, What missing, What needs me, Proof, and GitHub links).
-- **Cartilla Production Release:** `DONE and live` (Release candidate `c151d487` deployed to Vercel production under owner authorization 'deploy it'; official main advanced cleanly to `b16055d3` with 25 zero-conflict PRs merged, 2 conflicting PRs closed, and 238 vitest suites passing).
+- **Cartilla Production Release:** `DONE and live` (Release candidate `c151d487` deployed to Vercel production under owner authorization 'deploy it'; official main advanced cleanly to `0cc93c0b` with 25 zero-conflict PRs merged, 2 conflicting PRs closed, and 238 vitest suites passing).
 - **Art Inventory Viewer & Upload Suite:** `DONE and live` (Reads directly from canonical Cartilla repository).
 - **Interactive Mind Map & Operations Suite:** `DONE and live` (98 operations tests passing 100%).
