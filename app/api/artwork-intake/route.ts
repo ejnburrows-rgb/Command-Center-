@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { COOKIE_NAME, expectedToken } from "@/lib/auth";
+import crypto from "node:crypto";
 
 export const runtime = "nodejs";
 
@@ -25,11 +26,13 @@ export async function POST(req: Request) {
     const expected = await expectedToken();
 
     // If a passphrase is configured on the server, require valid session
-    if (expected && sessionToken !== expected) {
-      return NextResponse.json(
-        { error: "Unauthorized: Owner session required to upload canonical artwork." },
-        { status: 401 },
-      );
+    if (expected) {
+      if (!sessionToken || sessionToken.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(sessionToken), Buffer.from(expected))) {
+        return NextResponse.json(
+          { error: "Unauthorized: Owner session required to upload canonical artwork." },
+          { status: 401 },
+        );
+      }
     }
 
     // 2. Parse request
