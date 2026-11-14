@@ -2,6 +2,7 @@
 import {useEffect,useMemo,useRef,useState} from "react";
 import Link from "next/link";
 import ZenzapRoom from "./zenzap-room";
+import {mergeHistory,sanitizeHistory,type StudioHistory} from "@/lib/studio-history";
 import {trimHistoryForRequest} from "@/lib/history-budget.mjs";
 
 type ProviderId="zai"|"zai-coding"|"openai"|"gemini";
@@ -41,6 +42,11 @@ export default function AgentStudio(){
  const [panel,setPanel]=useState<"chat"|"connections"|"projects"|"zenzap">("chat");
  const [navOpen,setNavOpen]=useState(false);
  const [appearance,setAppearance]=useState<"dark"|"light">("dark");
+ const [cloudReady,setCloudReady]=useState(false);
+ const [cloudStatus,setCloudStatus]=useState("Checking private cloud history…");
+ const revisionRef=useRef("0");
+ const latestRef=useRef<StudioHistory>({threads:starter,current:"team"});
+ const localRef=useRef<StudioHistory|null>(null);
  const bottom=useRef<HTMLDivElement>(null);
  const controller=useRef<AbortController|null>(null);
  const active=threads.find(t=>t.id===current)||threads[0];
@@ -48,19 +54,54 @@ export default function AgentStudio(){
  const selected=active.recipients.filter(id=>configured.some(p=>p.id===id));
  useEffect(()=>{
    try{
-     const data=JSON.parse(localStorage.getItem("nbo-studio-threads-v1")||"null");
-     if(Array.isArray(data?.threads) && data.threads.length<=80){
-       const cleaned=data.threads.filter((t:Thread)=>typeof t.id==="string" && Array.isArray(t.entries) && Array.isArray(t.recipients));
-       if(cleaned.length){setThreads(cleaned);setCurrent(cleaned.some((t:Thread)=>t.id===data.current)?data.current:cleaned[0].id);}
-     }
+     const data=sanitizeHistory(JSON.parse(localStorage.getItem("nbo-studio-threads-v1")||"null"));
+     if(data?.threads.length){localRef.current=data;setThreads(data.threads);setCurrent(data.current);}
      if(localStorage.getItem("nbo-studio-appearance")==="light")setAppearance("light");
    }catch{}
    setReady(true);
    fetch("/api/studio/providers",{cache:"no-store"}).then(r=>{if(r.status===401){window.location.assign("/login?from=/");return null;}return r.ok?r.json():null;}).then(data=>{if(data?.providers){setProviders(data.providers);setZenzapReady(Boolean(data.zenzapConnected));const ids:ProviderId[]=data.providers.filter((p:Provider)=>p.configured).map((p:Provider)=>p.id);if(ids.length)setThreads(ts=>ts.map(t=>t.id==="team"&&t.entries.length===0?{...t,recipients:ids.slice(0,3)}:t));}else setNotice("Connection status is unavailable.");}).catch(()=>setNotice("Connection status is unavailable."));
    fetch("/api/hub",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(data=>{if(Array.isArray(data?.projects))setProjects(data.projects.slice(0,8));}).catch(()=>{});
+   fetch("/api/studio/history",{cache:"no-store"})
+    .then(async r=>({ok:r.ok,data:await r.json().catch(()=>null)}))
+    .then(({ok,data})=>{
+      if(!ok||!data?.available){setCloudStatus("Local backup only · cloud sync unavailable");return;}
+      const remote=sanitizeHistory(data.history);
+      if(!remote){setCloudStatus("Cloud history could not be verified");return;}
+      revisionRef.current=data.revision||"0";
+      const local=localRef.current;
+      const merged=remote.threads.length?(local?.threads.length?mergeHistory(local,remote):remote):(local||{threads:starter,current:"team"});
+      const next=merged.threads.length?merged:{threads:starter,current:"team"};
+      latestRef.current=next;
+      setThreads(next.threads);setCurrent(next.current);
+      setCloudReady(true);setCloudStatus("Private cross-device sync enabled");
+    }).catch(()=>setCloudStatus("Local backup only · cloud sync unavailable"));
  },[]);
  useEffect(()=>{if(!ready)return;try{localStorage.setItem("nbo-studio-threads-v1",JSON.stringify({threads:threads.slice(0,80),current}));}catch{setNotice("This browser could not save your conversations.");}},[threads,current,ready]);
  useEffect(()=>{if(!ready)return;localStorage.setItem("nbo-studio-appearance",appearance);},[appearance,ready]);
+ latestRef.current={threads,current};
+ useEffect(()=>{
+  if(!ready||!cloudReady)return;
+  const timer=setTimeout(async()=>{
+   const snapshot=latestRef.current;
+   try{
+    const res=await fetch("/api/studio/history",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({revision:revisionRef.current,history:snapshot})});
+    const data=await res.json().catch(()=>null);
+    if(res.status===409&&data){
+     const remote=sanitizeHistory(data.history);
+     if(remote){
+      revisionRef.current=data.revision;
+      const merged=mergeHistory(latestRef.current,remote);
+      setThreads(merged.threads);setCurrent(merged.current);
+      setCloudStatus("Merging newer conversation changes…");
+      return;
+     }
+    }
+    if(res.ok&&data?.saved){revisionRef.current=data.revision;setCloudStatus("Synced privately across devices");return;}
+    setCloudStatus("Cloud sync paused · local copy preserved");
+   }catch{setCloudStatus("Cloud sync unavailable · local copy preserved");}
+  },850);
+  return ()=>clearTimeout(timer);
+ },[threads,current,ready,cloudReady]);
  useEffect(()=>{bottom.current?.scrollIntoView({block:"end",behavior:"smooth"});},[active.entries.length,busy,current]);
  const sorted=useMemo(()=>[...threads].sort((a,b)=>b.updated-a.updated),[threads]);
  const updateThread=(id:string,change:(t:Thread)=>Thread)=>setThreads(ts=>ts.map(t=>t.id===id?change(t):t));
@@ -176,7 +217,7 @@ export default function AgentStudio(){
          <div className="studio-recipient-heading"><span>MESSAGE</span><strong>{active.recipients.length>1?"Agent team":"Selected agent"}</strong></div>
          <div className="studio-recipient-row">{(Object.keys(palette) as ProviderId[]).map(id=>{const configured=providers.some(p=>p.id===id&&p.configured);const checked=active.recipients.includes(id);return <button key={id} disabled={busy} className={"studio-pill"+(checked?" selected":"")+(configured?" connected":" disconnected")} aria-pressed={checked} onClick={()=>toggleRecipient(id)}><span className="studio-pill-dot"/>{palette[id].label}{!configured?" · unavailable":""}</button>})}</div>
          <div className="studio-composer"><textarea aria-label="Write a message to your agents" rows={2} placeholder={configured.length?"Message configured providers…":"Configure a provider to start messaging…"} value={draft} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}/><div className="studio-composer-bottom"><label className="studio-cost-check"><input type="checkbox" checked={allowCharges} onChange={e=>setAllowCharges(e.target.checked)}/> Allow provider API usage and applicable charges</label>{busy?<button className="studio-send" onClick={stop}>Stop</button>:<button className="studio-send" onClick={()=>void send()} disabled={!draft.trim()}>Send ↑</button>}</div></div>
-         <p className="studio-storage">History stays in this browser unless exported and imported. Cloud sync is not configured. No simulated replies.</p>
+         <p className="studio-storage">{cloudStatus} · Browser backup remains available. No simulated replies.</p>
        </div>
      </>}
      {panel==="connections"&&<div className="studio-directory"><span className="studio-kicker">CONNECTED WORKSPACE</span><h1>Agents & connections</h1><p>Only authenticated and configured services can receive messages. Your existing web subscriptions are not interchangeable with API access.</p><div className="studio-directory-grid">{(Object.keys(palette) as ProviderId[]).map(id=>{const p=providers.find(v=>v.id===id);return <article key={id} className="studio-provider-card"><span className="studio-provider-avatar">{palette[id].initial}</span><div><h3>{palette[id].label}</h3><p>{p?.mode||"Server-side API key"}</p></div><span className={"studio-provider-status"+(p?.configured?" ready":"")}>{p?.configured?"Configured":"Not configured"}</span><p className="studio-provider-help">{p?.configured?"A server-side key is present. Live access has not yet been verified.":"Requires an authorized server-side credential in Vercel; web subscriptions are separate."}</p><a href={p?.page||(id==="zai"?"https://chat.z.ai/":id==="openai"?"https://chatgpt.com/":"https://gemini.google.com/")} target="_blank" rel="noreferrer">Open provider website ↗</a></article>})}</div><h2>Zenzap team messaging</h2><p>{zenzapReady?"Zenzap bot credentials are configured. Open Messages to check channel access and send real messages.":"Not connected. Server-side Zenzap API key and secret or OAuth bot credentials are required."}</p><button className="studio-z-open" onClick={()=>setPanel("zenzap")}>Open Zenzap conversations →</button><h2>Other accounts</h2><div className="studio-web-list">{websites.map(w=><a key={w.label} href={w.url} target="_blank" rel="noreferrer"><strong>{w.label}</strong><small>{w.detail}</small><span>↗</span></a>)}</div><p className="studio-directory-note">Connecting a browser account to a separate product requires an official supported login or integration. These external links are not agent connections.</p></div>}

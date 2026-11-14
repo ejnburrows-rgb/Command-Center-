@@ -17,7 +17,7 @@ Next.js (App Router) + TypeScript + Tailwind + Octokit. Deploys on Vercel Hobby
 
 Current `proxy.ts` protects `/`, `/studio`, and `/api/studio/*` with the existing owner passphrase. `/login` and `/api/auth` are enabled for sign-in. The old overview remains public at `/overview`; `/crm-core` stays blocked. Public evidence requests in `lib/public-github.ts` do not use authenticated content tokens. Do not treat the historical passphrase helper as an active access gate or put private owner material in this public repository/client bundle.
 
-Studio conversation drafts are stored on the current browser only; there is no cross-device chat storage. Only server-configured API providers can respond; links to consumer web accounts are not connections. Provider calls require an explicit usage/charge acknowledgment in the composer. Never put account secrets into browser storage or the repository.
+Studio conversations are stored privately in Vercel Blob when the private store is connected; otherwise, history stays on the current browser. Only server-configured API providers can respond; links to consumer web accounts are not connections. Provider calls require an explicit usage/charge acknowledgment in the composer. Never put account secrets into browser storage or the repository.
 
 ## Environment variables
 
@@ -94,4 +94,8 @@ The private Agent Studio opens at `/`, while the public GitHub overview remains 
 - `ZENZAP_API_KEY` and `ZENZAP_API_SECRET`: optional static bot credentials for browsing real Zenzap channels and sending messages. Both are required.
 - Alternatively, `ZENZAP_CLIENT_ID` and `ZENZAP_CLIENT_SECRET`: OAuth bot client credentials. Use the scopes `channel:list`, `message:read`, and `message:send`.
 
-Zenzap bot access is limited to channels the bot belongs to; browser account login is not the same as bot API authorization. Zenzap messages persist in Zenzap. Model conversations currently persist **only in this browser**. Users can download and import a JSON history backup for another device; this is not automatic cross-device syncing. No coding-agent execution runtime is included. No API provider will be shown as connected solely because a web subscription exists.
+Zenzap bot access is limited to channels the bot belongs to; browser account login is not the same as bot API authorization. Zenzap messages persist in Zenzap. Model conversations sync automatically across devices using a private Vercel Blob store when available, with on-device backup and conflict merging. Users can still export and import JSON backups. No coding-agent execution runtime is included. No API provider will be shown as connected solely because a web subscription exists.
+
+## Private cloud conversation history
+
+The existing Vercel project owns the private Blob store `nbo-agent-history-private`. The owner-authenticated `/api/studio/history` route stores a JSON snapshot at `nbo/owner-agent-history.json`. The private store's `BLOB_READ_WRITE_TOKEN` is server-side and never exposed to the browser. When storage cannot be reached, the studio reports that status and preserves the browser copy. Concurrent saves use revision checks; the client merges distinct messages before retrying. This does not make consumer web subscriptions usable via an API.
