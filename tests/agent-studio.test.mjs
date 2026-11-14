@@ -16,8 +16,8 @@ test("Jules is absent from active UI and navigation", () => {
 });
 test("private chat uses server-side authentication, never browser API keys", () => {
   assert.match(read("proxy.ts"), /api\/studio/);
-  assert.match(read("app/api/studio/chat/route.ts"), /COOKIE_NAME/);
-  assert.match(read("app/api/studio/chat/route.ts"), /PORTAL_PASSPHRASE/);
+  assert.match(read("lib/studio-auth.ts"), /COOKIE_NAME/);
+  assert.match(read("lib/auth.ts"), /PORTAL_PASSPHRASE/);
   assert.doesNotMatch(read("app/agent-studio.tsx"), /NEXT_PUBLIC_.*KEY|localStorage\.setItem\([^)]*key/i);
 });
 test("provider responses are real, not simulated", () => {

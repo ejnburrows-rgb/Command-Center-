@@ -21,7 +21,7 @@ function taskPrompt(task:Task,sourceFresh:boolean,authority:string):string{
   "",
   "REQUIRED EXECUTION:",
   "1. "+warning,
-  "2. Recover the existing branch, task/session owner and applicable AGENTS.md. Continue the existing work; no new duplicate branch, agent or controller.",
+  "2. Recover the existing branch, task/session owner and applicable AGENTS.md. Continue the existing work; do not dispatch another agent; no new duplicate branch, agent or controller.",
   "3. Inspect only the files and behavior needed for this specific outcome. Reuse verified earlier work and do not repeat broad audits.",
   "4. Make and test the smallest eligible fix, document real device/browser proof when visual, and obtain independent review where required.",
   "5. Preserve unrelated Cartilla, LANY and NBO functionality. Do not auto-merge, deploy production, spend money, weaken security or launch additional workers.",
