@@ -132,3 +132,4 @@ export default function AgentStudio(){
    </section>
    <nav className="studio-mobile-nav" aria-label="Workspace navigation"><button className={panel==="chat"?"active":""} onClick={()=>setPanel("chat")}>◉ <span>Chat</span></button><button className={panel==="connections"?"active":""} onClick={()=>setPanel("connections")}>◎ <span>Agents</span></button><button className={panel==="projects"?"active":""} onClick={()=>setPanel("projects")}>▦ <span>Projects</span></button><Link href="/overview">≡ <span>Overview</span></Link></nav>
  </div>;
+}
