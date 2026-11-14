@@ -92,6 +92,43 @@ export default function AgentStudio(){
    finally{controller.current=null;setBusy(false);}
  }
  function stop(){controller.current?.abort();setBusy(false);setNotice("Request canceled in this browser. The provider may already have processed it.");}
+
+ function downloadHistory(){
+   const value=JSON.stringify({version:1,exportedAt:new Date().toISOString(),threads});
+   const url=URL.createObjectURL(new Blob([value],{type:"application/json"}));
+   const link=document.createElement("a");
+   link.href=url;link.download="nbo-studio-history.json";
+   document.body.appendChild(link);link.click();link.remove();
+   URL.revokeObjectURL(url);
+   setNotice("Backup downloaded. It contains private conversations; store the file securely.");
+ }
+ async function importHistory(file?:File){
+   if(!file)return;
+   if(file.size>2000000){setNotice("Backup exceeds the 2 MB file size limit.");return;}
+   try{
+     const data=JSON.parse(await file.text());
+     if(!Array.isArray(data?.threads))throw new Error("This is not an NBO history backup.");
+     const imported:Thread[]=data.threads.slice(0,80)
+       .filter((t:unknown):t is Thread=>Boolean(t)&&typeof t==="object"&&typeof (t as Thread).id==="string"&&typeof (t as Thread).name==="string"&&Array.isArray((t as Thread).entries)&&Array.isArray((t as Thread).recipients))
+       .map((t:Thread)=>({
+         id:t.id.slice(0,100),
+         name:t.name.slice(0,120),
+         updated:Number.isFinite(t.updated)?t.updated:0,
+         recipients:t.recipients.filter((id:unknown):id is ProviderId=>typeof id==="string"&&Object.prototype.hasOwnProperty.call(palette,id)).slice(0,3),
+         entries:t.entries.slice(-150)
+           .filter((m:unknown):m is Entry=>Boolean(m)&&typeof m==="object"&&typeof (m as Entry).text==="string"&&["user","assistant","error"].includes((m as Entry).role))
+           .map(m=>({
+             id:String(m.id).slice(0,100),role:m.role,
+             text:m.text.slice(0,16000),
+             provider:m.provider&&Object.prototype.hasOwnProperty.call(palette,m.provider)?m.provider:undefined,
+             time:Number.isFinite(m.time)?m.time:0
+           }))
+       }));
+     if(!imported.length)throw new Error("No valid conversations were found.");
+     setThreads(old=>{const ids=new Set(old.map(t=>t.id));return [...old,...imported.filter(t=>!ids.has(t.id))].slice(0,80);});
+     setNotice("Imported conversations. Existing history was preserved.");
+   }catch(e){setNotice(e instanceof Error?e.message:"Could not import this backup.");}
+ }
  async function signOut(){await fetch("/api/auth",{method:"DELETE"});window.location.assign("/login");}
  return <div className={"agent-studio studio-"+appearance}>
    {navOpen&&<button className="studio-overlay" aria-label="Close navigation" onClick={()=>setNavOpen(false)}/>}
@@ -105,7 +142,13 @@ export default function AgentStudio(){
      <button className={"studio-side-action"+(panel==="projects"?" is-current":"")} onClick={()=>{setPanel("projects");setNavOpen(false);}}>▦ &nbsp; Projects</button>
      <p className="studio-side-heading">RECENT CONVERSATIONS</p>
      <div className="studio-threads">{sorted.map(t=><button key={t.id} className={"studio-thread"+(t.id===current&&panel==="chat"?" is-current":"")} onClick={()=>{setCurrent(t.id);setPanel("chat");setNavOpen(false);}}><span>{t.recipients.length>1?"◉":"○"}</span><span>{t.name}</span></button>)}</div>
-     <div className="studio-side-footer"><Link href="/overview">Project operations & evidence <span>↗</span></Link><span>GitHub-backed overview retained</span></div>
+     <div className="studio-side-footer">
+      <div className="studio-history-actions">
+       <button type="button" onClick={downloadHistory}>Download history</button>
+       <button type="button" onClick={()=>importInput.current?.click()}>Import history</button>
+       <input aria-label="Import conversation history" type="file" accept=".json,application/json" ref={importInput} style={{display:"none"}} onChange={e=>{void importHistory(e.target.files?.[0]);e.target.value="";}}/>
+      </div>
+      <Link href="/overview">Project operations & evidence <span>↗</span></Link><span>GitHub-backed overview retained</span></div>
    </aside>
    <section className="studio-main">
      <header className="studio-topbar">
