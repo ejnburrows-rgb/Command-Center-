@@ -82,3 +82,15 @@ exact fields.
 ├── lib/              # Core utilities (auth, GitHub API, content parsing)
 └── proxy.ts          # Public hub routing; legacy CRM/auth paths blocked
 ```
+
+## Owner agent studio integrations
+
+The private Agent Studio opens at `/`, while the public GitHub overview remains at `/overview`. The studio only calls providers whose credentials have been configured on the Vercel server. No API keys are stored in the browser.
+
+- `ZAI_API_KEY`: optional model chat through the official Z.ai general API using the GLM Flash model. Coding Plan subscriptions are **not** automatically interchangeable with the general API.
+- `OPENAI_API_KEY`: optional paid OpenAI API chat; separate from a ChatGPT subscription.
+- `GEMINI_API_KEY`: optional Google Gemini API chat; separate from a web login.
+- `ZENZAP_API_KEY` and `ZENZAP_API_SECRET`: optional static bot credentials for browsing real Zenzap channels and sending messages. Both are required.
+- Alternatively, `ZENZAP_CLIENT_ID` and `ZENZAP_CLIENT_SECRET`: OAuth bot client credentials. Use the scopes `channel:list`, `message:read`, and `message:send`.
+
+Zenzap bot access is limited to channels the bot belongs to; browser account login is not the same as bot API authorization. Zenzap messages persist in Zenzap. Model conversations currently persist **only in this browser** and are not cross-device synced. No coding-agent execution runtime is included. No API provider will be shown as connected solely because a web subscription exists.

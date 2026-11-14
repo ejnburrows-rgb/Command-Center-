@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useMemo,useRef,useState} from "react";
 import Link from "next/link";
+import ZenzapRoom from "./zenzap-room";
 
 type ProviderId="zai"|"openai"|"gemini";
 type Entry={id:string;role:"user"|"assistant"|"error";text:string;provider?:ProviderId;time:number};
@@ -28,12 +29,13 @@ export default function AgentStudio(){
  const [current,setCurrent]=useState("team");
  const [draft,setDraft]=useState("");
  const [providers,setProviders]=useState<Provider[]>([]);
+ const [zenzapReady,setZenzapReady]=useState(false);
  const [projects,setProjects]=useState<Project[]>([]);
  const [ready,setReady]=useState(false);
  const [busy,setBusy]=useState(false);
  const [notice,setNotice]=useState("");
  const [allowCharges,setAllowCharges]=useState(false);
- const [panel,setPanel]=useState<"chat"|"connections"|"projects">("chat");
+ const [panel,setPanel]=useState<"chat"|"connections"|"projects"|"zenzap">("chat");
  const [navOpen,setNavOpen]=useState(false);
  const [appearance,setAppearance]=useState<"dark"|"light">("dark");
  const bottom=useRef<HTMLDivElement>(null);
@@ -51,7 +53,7 @@ export default function AgentStudio(){
      if(localStorage.getItem("nbo-studio-appearance")==="light")setAppearance("light");
    }catch{}
    setReady(true);
-   fetch("/api/studio/providers",{cache:"no-store"}).then(r=>{if(r.status===401){window.location.assign("/login?from=/");return null;}return r.ok?r.json():null;}).then(data=>{if(data?.providers)setProviders(data.providers);else setNotice("Connection status is unavailable.");}).catch(()=>setNotice("Connection status is unavailable."));
+   fetch("/api/studio/providers",{cache:"no-store"}).then(r=>{if(r.status===401){window.location.assign("/login?from=/");return null;}return r.ok?r.json():null;}).then(data=>{if(data?.providers){setProviders(data.providers);setZenzapReady(Boolean(data.zenzapConnected));}else setNotice("Connection status is unavailable.");}).catch(()=>setNotice("Connection status is unavailable."));
    fetch("/api/hub",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(data=>{if(Array.isArray(data?.projects))setProjects(data.projects.slice(0,8));}).catch(()=>{});
  },[]);
  useEffect(()=>{if(!ready)return;try{localStorage.setItem("nbo-studio-threads-v1",JSON.stringify({threads:threads.slice(0,80),current}));}catch{setNotice("This browser could not save your conversations.");}},[threads,current,ready]);
@@ -96,6 +98,7 @@ export default function AgentStudio(){
      <p className="studio-side-heading">WORKSPACE</p>
      <button className={"studio-side-action"+(panel==="chat"?" is-current":"")} onClick={()=>{setPanel("chat");setNavOpen(false);}}>◈ &nbsp; Conversations</button>
      <button className={"studio-side-action"+(panel==="connections"?" is-current":"")} onClick={()=>{setPanel("connections");setNavOpen(false);}}>◎ &nbsp; Agents & connections <span>{connected.length}</span></button>
+     <button className={"studio-side-action"+(panel==="zenzap"?" is-current":"")} onClick={()=>{setPanel("zenzap");setNavOpen(false);}}>◌ &nbsp; Zenzap messages <span>{zenzapReady?"Ready":"—"}</span></button>
      <button className={"studio-side-action"+(panel==="projects"?" is-current":"")} onClick={()=>{setPanel("projects");setNavOpen(false);}}>▦ &nbsp; Projects</button>
      <p className="studio-side-heading">RECENT CONVERSATIONS</p>
      <div className="studio-threads">{sorted.map(t=><button key={t.id} className={"studio-thread"+(t.id===current&&panel==="chat"?" is-current":"")} onClick={()=>{setCurrent(t.id);setPanel("chat");setNavOpen(false);}}><span>{t.recipients.length>1?"◉":"○"}</span><span>{t.name}</span></button>)}</div>
@@ -103,7 +106,7 @@ export default function AgentStudio(){
    </aside>
    <section className="studio-main">
      <header className="studio-topbar">
-       <div className="studio-top-left"><button className="studio-hamburger" aria-label="Open navigation" onClick={()=>setNavOpen(true)}>☰</button><div><strong>{panel==="chat"?active.name:panel==="connections"?"Agents & connections":"Projects"}</strong><small>{panel==="chat"?"Private owner workspace":"NBO Studio"}</small></div></div>
+       <div className="studio-top-left"><button className="studio-hamburger" aria-label="Open navigation" onClick={()=>setNavOpen(true)}>☰</button><div><strong>{panel==="chat"?active.name:panel==="connections"?"Agents & connections":panel==="zenzap"?"Zenzap messages":"Projects"}</strong><small>{panel==="chat"?"Private owner workspace":"NBO Studio"}</small></div></div>
        <div className="studio-top-actions"><span className="studio-live"><i/> {connected.length} API {connected.length===1?"provider":"providers"} ready</span><button title="Toggle appearance" aria-label="Toggle light or dark mode" onClick={()=>setAppearance(v=>v==="dark"?"light":"dark")}>{appearance==="dark"?"☼":"☾"}</button><button title="Sign out" onClick={()=>void signOut()}>Sign out</button></div>
      </header>
      {panel==="chat"&&<>
@@ -127,9 +130,10 @@ export default function AgentStudio(){
          <p className="studio-storage">Conversation history is stored on this browser only. Cross-device sync is not yet connected. No simulated agent replies.</p>
        </div>
      </>}
-     {panel==="connections"&&<div className="studio-directory"><span className="studio-kicker">CONNECTED WORKSPACE</span><h1>Agents & connections</h1><p>Only authenticated and configured services can receive messages. Your existing web subscriptions are not interchangeable with API access.</p><div className="studio-directory-grid">{(Object.keys(palette) as ProviderId[]).map(id=>{const p=providers.find(v=>v.id===id);return <article key={id} className="studio-provider-card"><span className="studio-provider-avatar">{palette[id].initial}</span><div><h3>{palette[id].label}</h3><p>{p?.mode||"Server-side API key"}</p></div><span className={"studio-provider-status"+(p?.connected?" ready":"")}>{p?.connected?"Connected":"Not connected"}</span><p className="studio-provider-help">{p?.connected?"Provider credential is configured on the server. Live chat still requires a successful request.":"Requires an authorized credential configured securely in Vercel. No browser credential is collected."}</p><a href={p?.page||(id==="zai"?"https://chat.z.ai/":id==="openai"?"https://chatgpt.com/":"https://gemini.google.com/")} target="_blank" rel="noreferrer">Open provider website ↗</a></article>})}</div><h2>Other accounts</h2><div className="studio-web-list">{websites.map(w=><a key={w.label} href={w.url} target="_blank" rel="noreferrer"><strong>{w.label}</strong><small>{w.detail}</small><span>↗</span></a>)}</div><p className="studio-directory-note">Connecting a browser account to a separate product requires an official supported login or integration. These external links are not agent connections.</p></div>}
+     {panel==="connections"&&<div className="studio-directory"><span className="studio-kicker">CONNECTED WORKSPACE</span><h1>Agents & connections</h1><p>Only authenticated and configured services can receive messages. Your existing web subscriptions are not interchangeable with API access.</p><div className="studio-directory-grid">{(Object.keys(palette) as ProviderId[]).map(id=>{const p=providers.find(v=>v.id===id);return <article key={id} className="studio-provider-card"><span className="studio-provider-avatar">{palette[id].initial}</span><div><h3>{palette[id].label}</h3><p>{p?.mode||"Server-side API key"}</p></div><span className={"studio-provider-status"+(p?.connected?" ready":"")}>{p?.connected?"Connected":"Not connected"}</span><p className="studio-provider-help">{p?.connected?"Provider credential is configured on the server. Live chat still requires a successful request.":"Requires an authorized credential configured securely in Vercel. No browser credential is collected."}</p><a href={p?.page||(id==="zai"?"https://chat.z.ai/":id==="openai"?"https://chatgpt.com/":"https://gemini.google.com/")} target="_blank" rel="noreferrer">Open provider website ↗</a></article>})}</div><h2>Zenzap team messaging</h2><p>{zenzapReady?"Zenzap bot credentials are configured. Open Messages to check channel access and send real messages.":"Not connected. Server-side Zenzap API key and secret or OAuth bot credentials are required."}</p><button className="studio-z-open" onClick={()=>setPanel("zenzap")}>Open Zenzap conversations →</button><h2>Other accounts</h2><div className="studio-web-list">{websites.map(w=><a key={w.label} href={w.url} target="_blank" rel="noreferrer"><strong>{w.label}</strong><small>{w.detail}</small><span>↗</span></a>)}</div><p className="studio-directory-note">Connecting a browser account to a separate product requires an official supported login or integration. These external links are not agent connections.</p></div>}
+     {panel==="zenzap"&&<ZenzapRoom enabled={zenzapReady}/>}
      {panel==="projects"&&<div className="studio-directory"><span className="studio-kicker">LIVE GITHUB SOURCES</span><h1>Your projects</h1><p>Project statuses come from the existing NBO GitHub evidence feed. Open the full operations view for details.</p><div className="studio-project-grid">{projects.length?projects.map(p=><a href={p.url} key={p.slug} target="_blank" rel="noreferrer" className="studio-project"><span>▦</span><strong>{p.name}</strong><small>{p.stale?"Source stale":p.issues===null?"Source unavailable":p.issues+" open issues · "+(p.prs??"—")+" PRs"}</small><b>↗</b></a>):<p>Project feed is unavailable. <Link href="/overview">Open project overview</Link></p>}</div><Link href="/overview" className="studio-project-link">Open full GitHub operations and evidence ↗</Link></div>}
    </section>
-   <nav className="studio-mobile-nav" aria-label="Workspace navigation"><button className={panel==="chat"?"active":""} onClick={()=>setPanel("chat")}>◉ <span>Chat</span></button><button className={panel==="connections"?"active":""} onClick={()=>setPanel("connections")}>◎ <span>Agents</span></button><button className={panel==="projects"?"active":""} onClick={()=>setPanel("projects")}>▦ <span>Projects</span></button><Link href="/overview">≡ <span>Overview</span></Link></nav>
+   <nav className="studio-mobile-nav" aria-label="Workspace navigation"><button className={panel==="chat"?"active":""} onClick={()=>setPanel("chat")}>◉ <span>Chat</span></button><button className={panel==="connections"?"active":""} onClick={()=>setPanel("connections")}>◎ <span>Agents</span></button><button className={panel==="zenzap"?"active":""} onClick={()=>setPanel("zenzap")}>◌ <span>Zenzap</span></button><button className={panel==="projects"?"active":""} onClick={()=>setPanel("projects")}>▦ <span>Projects</span></button><Link href="/overview">≡ <span>Overview</span></Link></nav>
  </div>;
 }
