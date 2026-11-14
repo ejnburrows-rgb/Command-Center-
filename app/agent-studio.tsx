@@ -2,6 +2,7 @@
 import {useEffect,useMemo,useRef,useState} from "react";
 import Link from "next/link";
 import ZenzapRoom from "./zenzap-room";
+import {trimHistoryForRequest} from "@/lib/history-budget.mjs";
 
 type ProviderId="zai"|"zai-coding"|"openai"|"gemini";
 type Entry={id:string;role:"user"|"assistant"|"error";text:string;provider?:ProviderId;time:number};
@@ -78,7 +79,9 @@ export default function AgentStudio(){
    if(!allowCharges){setNotice("Confirm provider API usage and any applicable charges before sending.");return;}
    const thread=active;
    const message=entryFor("user",text);
-   const history=thread.entries.filter(m=>m.role==="user"||m.role==="assistant").slice(-12).map(m=>({role:m.role,content:m.role==="assistant"&&m.provider?palette[m.provider].label+": "+m.text:m.text}));
+   const rawHistory=thread.entries.filter(m=>m.role==="user"||m.role==="assistant").slice(-12).map(m=>({role:m.role as "user"|"assistant",content:m.role==="assistant"&&m.provider?palette[m.provider].label+": "+m.text:m.text}));
+   let history;
+   try{history=trimHistoryForRequest(text,selected,rawHistory);}catch(e){setNotice(e instanceof Error?e.message:"Message is too long.");return;}
    updateThread(thread.id,t=>({...t,name:t.entries.length?t.name:text.slice(0,44),entries:[...t.entries,message].slice(-150),updated:Date.now()}));
    setDraft("");setNotice("");setBusy(true);
    const abort=new AbortController();controller.current=abort;
