@@ -40,9 +40,10 @@ export async function requestZenzap(method:"GET"|"POST",uri:string,data?:{topicI
   if (!zenzapConfigured()) throw new Error("Zenzap is not connected.");
   if (!/^\/v2\/(topics|messages)(\/|\?|$)/.test(uri)) throw new Error("Invalid Zenzap resource.");
   const body = data?JSON.stringify(data):"";
-  const headers = await authHeaders(method,uri,body);
+  const headers = new Headers({"Content-Type":"application/json"});
+  for(const [name,value] of Object.entries(await authHeaders(method,uri,body))) if(value) headers.set(name,value);
   const res=await fetch(base+uri,{
-    method,headers:{...headers,"Content-Type":"application/json"},
+    method,headers,
     ...(method==="POST"?{body}:{}),signal:AbortSignal.timeout(15000),cache:"no-store"
   });
   if (!res.ok) throw new Error("Zenzap request failed (HTTP "+res.status+").");
