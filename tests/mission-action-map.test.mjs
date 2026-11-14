@@ -27,13 +27,13 @@ test("next tasks have real source records, copy-ready prompts and inspectable fu
  assert.match(view,/Copy full agent prompt/);
  assert.match(view,/tasks?\b|cards\.slice\(0,3\)/);
 });
-test("existing Tutor permission and Jules duplicate guard prevent blind dispatch",()=>{
+test("existing Tutor permission and duplicate task guard prevent blind dispatch",()=>{
  const view=read("app/mission-action-map.tsx");
  assert.match(view,/jobs\.execution\?\.productWorkAuthorized/);
  assert.match(view,/do not dispatch another/i);
  assert.match(view,/SOURCE NOT VERIFIED FRESH/);
  assert.match(view,/Copying a prompt does not assign work or start an agent/);
- assert.doesNotMatch(view,/api\/dispatch|api\/jules\/start/);
+ assert.doesNotMatch(view,/api\/dispatch|api\/retired-agent\/start/);
 });
 test("interactive map is phone-accessible and reduced-motion safe",()=>{
  const css=read("app/mission-network.css");
