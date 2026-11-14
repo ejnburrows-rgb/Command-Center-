@@ -67,3 +67,20 @@ flowchart LR
 - **Cartilla Production Release:** `DONE and live` (Release candidate `c151d487` deployed to Vercel production under owner authorization 'deploy it'; official main advanced cleanly to `0cc93c0b` with 25 zero-conflict PRs merged, 2 conflicting PRs closed, and 238 vitest suites passing).
 - **Art Inventory Viewer & Upload Suite:** `DONE and live` (Reads directly from canonical Cartilla repository).
 - **Interactive Mind Map & Operations Suite:** `DONE and live` (98 operations tests passing 100%).
+
+
+---
+
+## Agent Studio update — November 14, 2026
+
+This section supersedes the older references to active external coding agents in the historic status above.
+
+**Repository source:** proposed branch `feat/nbo-agent-studio-no-jules-20261114`, PR #63. Production `main` remains at `c919e60c` until approved merge and release.
+
+**Changes in review:** Jules removed from the active dashboard, suggested task cards, and assignment API; new owner-protected NBO Studio messaging workspace and existing public GitHub overview retained; Zenzap bot conversation integration; optional API model message fan-out; Z.ai coding-plan endpoint; owner login redesign; browser-local history backup/import.
+
+**Important gates:** Vercel currently holds only the owner passphrase. Zenzap and AI provider credentials are not configured; live conversation tests with external services are blocked by account authorization. Other web accounts are not automatically linked. No autonomous coding-agent worker or cloud-synchronized AI chat database exists. These must not be presented as working features.
+
+**Release path:** current GitHub main → PR #63 (review and proof) → independently approved merge → explicitly authorized production Vercel deployment → real phone/desktop smoke test.
+
+**Preserved:** prior source history, issue/PR evidence, project inventory, and original public hub at `/overview`.

@@ -87,10 +87,11 @@ exact fields.
 
 The private Agent Studio opens at `/`, while the public GitHub overview remains at `/overview`. The studio only calls providers whose credentials have been configured on the Vercel server. No API keys are stored in the browser.
 
-- `ZAI_API_KEY`: optional model chat through the official Z.ai general API using the GLM Flash model. Coding Plan subscriptions are **not** automatically interchangeable with the general API.
+- `ZAI_API_KEY`: optional model chat through the official Z.ai general API using the GLM-5.3-Flash model. Coding Plan subscriptions are **not** automatically interchangeable with the general API.
+- `ZAI_CODING_PLAN_KEY`: optional **coding-only** model requests through `https://api.z.ai/api/coding/paas/v4`; do not use this for general conversations. Separate from the general Z.ai API key.
 - `OPENAI_API_KEY`: optional paid OpenAI API chat; separate from a ChatGPT subscription.
 - `GEMINI_API_KEY`: optional Google Gemini API chat; separate from a web login.
 - `ZENZAP_API_KEY` and `ZENZAP_API_SECRET`: optional static bot credentials for browsing real Zenzap channels and sending messages. Both are required.
 - Alternatively, `ZENZAP_CLIENT_ID` and `ZENZAP_CLIENT_SECRET`: OAuth bot client credentials. Use the scopes `channel:list`, `message:read`, and `message:send`.
 
-Zenzap bot access is limited to channels the bot belongs to; browser account login is not the same as bot API authorization. Zenzap messages persist in Zenzap. Model conversations currently persist **only in this browser** and are not cross-device synced. No coding-agent execution runtime is included. No API provider will be shown as connected solely because a web subscription exists.
+Zenzap bot access is limited to channels the bot belongs to; browser account login is not the same as bot API authorization. Zenzap messages persist in Zenzap. Model conversations currently persist **only in this browser**. Users can download and import a JSON history backup for another device; this is not automatic cross-device syncing. No coding-agent execution runtime is included. No API provider will be shown as connected solely because a web subscription exists.
