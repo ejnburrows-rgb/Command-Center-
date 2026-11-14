@@ -10,8 +10,8 @@ export async function GET() {
     providers: studioProviderIds.map(id => ({
       id,
       label: studioProviders[id].label,
-      connected: providerReady(id),
-      mode: "Server-side API key",
+      configured: providerReady(id),
+      mode: id === "zai-coding" ? "Coding Plan API key · coding tasks only" : "Server-side API key",
       page: studioProviders[id].page
     })),
     zenzapConnected: zenzapConfigured(),

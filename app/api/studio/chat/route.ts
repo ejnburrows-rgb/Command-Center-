@@ -18,11 +18,13 @@ async function talk(id: StudioProviderId, messages: ChatMessage[]) {
   if (!key) return { id, error: "Not connected. No message was sent." };
   try {
     const url = id === "zai" ? "https://api.z.ai/api/paas/v4/chat/completions" :
+      id === "zai-coding" ? "https://api.z.ai/api/coding/paas/v4/chat/completions" :
       id === "openai" ? "https://api.openai.com/v1/chat/completions" :
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+    const codingMessages = id === "zai-coding" ? [{role:"system",content:"You are a software coding assistant. Respond only to coding and programming tasks; do not use this plan for general chat."},...messages] : messages;
     const body = id === "gemini" ?
       {contents: messages.map(m => ({role:m.role==="assistant"?"model":"user",parts:[{text:m.content}]})),generationConfig:{maxOutputTokens:1000}} :
-      {model:provider.model,messages,max_tokens:1000,...(id==="zai"?{thinking:{type:"disabled"}}:{})};
+      {model:provider.model,messages:codingMessages,max_tokens:1000};
     const response = await fetch(url,{
       method:"POST",
       headers:{"Content-Type":"application/json",...(id==="gemini"?{"x-goog-api-key":key}:{"Authorization":"Bearer "+key})},

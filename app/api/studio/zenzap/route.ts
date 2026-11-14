@@ -11,10 +11,10 @@ export async function GET(request:NextRequest) {
   if (!zenzapConfigured()) return NextResponse.json({error:"Zenzap is not connected."},{status:503,headers});
   const topic=request.nextUrl.searchParams.get("topic");
   if (topic && !uuid.test(topic)) return NextResponse.json({error:"Invalid topic."},{status:400,headers});
-  const uri=topic?"/v2/topics/"+topic+"/messages?limit=50&order=asc":"/v2/topics?limit=50";
+  const uri=topic?"/v2/topics/"+topic+"/messages?limit=50&order=desc":"/v2/topics?limit=50";
   try{
     const data=await requestZenzap("GET",uri);
-    return NextResponse.json(topic?{messages:data.messages||[]}:{topics:data.topics||[]},{headers});
+    return NextResponse.json(topic?{messages:Array.isArray(data.messages)?data.messages.reverse():[]}:{topics:data.topics||[]},{headers});
   }catch(e){return NextResponse.json({error:e instanceof Error?e.message:"Zenzap unavailable."},{status:502,headers});}
 }
 

@@ -1,78 +1,39 @@
 "use client";
-
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-
-function LoginForm() {
-  const router = useRouter();
-  const params = useSearchParams();
-  const setup = params.get("setup") === "1";
-  const from = params.get("from") || "/";
-  const [passphrase, setPassphrase] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setError(null);
-    const res = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ passphrase }),
-    });
-    setBusy(false);
-    if (res.ok) {
-      router.replace(from);
-      router.refresh();
-    } else {
-      const body = await res.json().catch(() => ({}));
-      setError(body.error || "Incorrect passphrase.");
-    }
-  }
-
-  return (
-    <div className="mx-auto mt-24 max-w-sm">
-      <h1 className="mb-1 text-lg font-semibold">
-        <span className="text-accent">◆</span> Command Center
-      </h1>
-      <p className="mb-6 text-sm text-slate-400">Enter your passphrase.</p>
-
-      {setup ? (
-        <p className="mb-4 rounded-md border border-amber-700/50 bg-amber-950/40 p-3 text-sm text-amber-200">
-          No passphrase is configured yet. Set the{" "}
-          <code className="text-amber-100">PORTAL_PASSPHRASE</code> environment
-          variable, then reload.
-        </p>
-      ) : null}
-
-      <form onSubmit={submit} className="space-y-3">
-        <input
-          type="password"
-          value={passphrase}
-          onChange={(e) => setPassphrase(e.target.value)}
-          placeholder="Passphrase"
-          autoFocus
-          className="w-full rounded-md border border-edge bg-panel px-3 py-2 text-sm outline-none focus:border-accent"
-        />
-        {error ? <p className="text-sm text-red-400">{error}</p> : null}
-        <button
-          type="submit"
-          disabled={busy}
-          className="w-full rounded-md bg-accent px-3 py-2 text-sm font-medium text-ink disabled:opacity-50"
-        >
-          {busy ? "Checking…" : "Enter"}
-        </button>
-      </form>
-    </div>
-  );
+import {useState,Suspense} from "react";
+import {useRouter,useSearchParams} from "next/navigation";
+function LoginForm(){
+ const router=useRouter(),params=useSearchParams();
+ const safeFrom=params.get("from")==="/studio"?"/studio":"/";
+ const setup=params.get("setup")==="1";
+ const [passphrase,setPassphrase]=useState("");
+ const [error,setError]=useState("");
+ const [busy,setBusy]=useState(false);
+ async function submit(e:React.FormEvent){
+  e.preventDefault();setBusy(true);setError("");
+  try{
+   const response=await fetch("/api/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({passphrase})});
+   if(!response.ok){const body=await response.json().catch(()=>({}));setError(body.error||"Sign-in failed.");return;}
+   setPassphrase("");router.replace(safeFrom);router.refresh();
+  }catch{setError("Unable to reach the server. Try again.");}
+  finally{setBusy(false);}
+ }
+ return <main className="studio-login-page">
+  <div className="studio-login-glow" aria-hidden="true"/>
+  <section className="studio-login-card" aria-label="NBO owner sign in">
+   <div className="studio-login-logo">N</div>
+   <p className="studio-login-kicker">NBO STUDIO · PRIVATE WORKSPACE</p>
+   <h1>Welcome back.</h1>
+   <p className="studio-login-subtitle">Sign in to your agent workspace and connected project conversations.</p>
+   {setup&&<p role="alert" className="studio-login-warning">The owner passphrase is not configured in Vercel. Set PORTAL_PASSPHRASE in the project's private environment settings before signing in.</p>}
+   <form onSubmit={submit}>
+    <label htmlFor="studio-password">Owner passphrase</label>
+    <input id="studio-password" type="password" value={passphrase} onChange={e=>setPassphrase(e.target.value)} autoComplete="current-password" required placeholder="Enter your passphrase" />
+    {error&&<p className="studio-login-warning" role="alert">{error}</p>}
+    <button type="submit" disabled={busy||!passphrase}>{busy?"Signing in…":"Enter workspace"} <span aria-hidden="true">→</span></button>
+   </form>
+   <a className="studio-login-public" href="/overview">Open public project overview ↗</a>
+   <p className="studio-login-note">Your account credentials and model API keys are never requested on this screen.</p>
+  </section>
+ </main>;
 }
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={null}>
-      <LoginForm />
-    </Suspense>
-  );
-}
+export default function LoginPage(){return <Suspense fallback={<main className="studio-login-page"/>}><LoginForm/></Suspense>;}
