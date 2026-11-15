@@ -169,7 +169,7 @@ export default function AgentStudio(){
            }))
        }));
      if(!imported.length)throw new Error("No valid conversations were found.");
-     setThreads(old=>{const ids=new Set(old.map(t=>t.id));return [...old,...imported.filter(t=>!ids.has(t.id))].slice(0,80);});
+     setThreads(old=>mergeHistory({threads:old,current},{threads:imported,current:imported[0].id}).threads);
      setNotice("Imported conversations. Existing history was preserved.");
    }catch(e){setNotice(e instanceof Error?e.message:"Could not import this backup.");}
  }
