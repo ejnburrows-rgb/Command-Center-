@@ -18,3 +18,12 @@ test("redirect after login cannot escape origin",()=>{
  assert.equal(keepSafePath("/studio?tab=agents"),"/studio?tab=agents");
  for(const p of ["https://evil.test","//evil.test","\\evil","/%5c%5cevil","javascript:alert(1)"])assert.equal(keepSafePath(p),"/");
 });
+
+test("importing the starter Agent team backup preserves its original messages",()=>{
+ const initial={threads:[thread("team",[],0)],current:"team"};
+ const backedUp={threads:[thread("team",[msg("saved","A saved conversation",123)],123)],current:"team"};
+ const restored=mergeHistory(initial,backedUp);
+ assert.equal(restored.threads.length,1);
+ assert.equal(restored.threads[0].entries[0].text,"A saved conversation");
+ assert.equal(restored.current,"team");
+});
