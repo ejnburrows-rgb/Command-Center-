@@ -15,11 +15,18 @@ function entries(projects:Project[]){return projects.flatMap(p=>p.items.map(w=>(
 
 export function OperationsBrief({projects,loading}:{projects:Project[];loading:boolean}){
  const jobs=useJobs();
- const fresh=projects.filter(p=>p.accessible&&!p.stale&&!p.limited&&p.issues!==null&&p.prs!==null);
+ const fresh:Project[]=[];
+ let issues=0,prs=0,draft=0;
+ for(let i=0;i<projects.length;i++){
+  const p=projects[i];
+  if(p.accessible&&!p.stale&&!p.limited&&p.issues!==null&&p.prs!==null){
+   fresh.push(p);
+   issues+=p.issues??0;
+   prs+=p.prs??0;
+   draft+=p.drafts??0;
+  }
+ }
  const complete=fresh.length===projects.length&&projects.length>0&&!loading;
- const issues=fresh.reduce((n,p)=>n+(p.issues??0),0);
- const prs=fresh.reduce((n,p)=>n+(p.prs??0),0);
- const draft=fresh.reduce((n,p)=>n+(p.drafts??0),0);
  const knownApprovals=!jobs.loading&&!jobs.error&&!jobs.stale;
  return <section className="aop-overview" aria-label="Software operations snapshot">
   <div className="aop-hero"><p className="aop-eyebrow">AI-FIRST SOFTWARE OPERATIONS</p><h2>Make the work visible.<br/><span>Verify the result.</span></h2><p>Real GitHub work, evidence and owner decisions. An AI completion claim is not proof.</p><Link className="aop-primary" href="/ai-operations">Open AI operations <span aria-hidden="true">→</span></Link></div>
