@@ -10,8 +10,7 @@ export async function GET(request:NextRequest){
   try{
    // Repository metadata is validated BEFORE reading work; no authenticated/private data source.
    const result=await serverSnapshot(`public-v2:${slug}`,slug==='cartilla-de-gretel'?15*60*1000:45*60*1000,async()=>{
-    const {data:meta}=await github(base);
-    const [issues,pulls]=await Promise.all([allPages<GitHubRecord>(base+'/issues?state=open&sort=created&direction=asc'),allPages<GitHubRecord>(base+'/pulls?state=open&sort=created&direction=asc')]);
+    const [{data:meta},issues,pulls]=await Promise.all([github(base),allPages<GitHubRecord>(base+'/issues?state=open&sort=created&direction=asc'),allPages<GitHubRecord>(base+'/pulls?state=open&sort=created&direction=asc')]);
     const counts=summarize(issues,pulls);
     if(typeof meta.open_issues_count==='number'&&counts.issues+counts.prs!==meta.open_issues_count)throw new Error('GitHub totals changed during pagination; preserving last successful counts');
     const items=[...issues.filter(i=>!i.pull_request).map(i=>({...i,kind:'issue'})),...pulls.map(i=>({...i,kind:'pr'}))].map(i=>({number:i.number,title:i.title,url:i.html_url,updatedAt:i.updated_at,kind:i.kind,draft:i.kind==='pr'?Boolean(i.draft):undefined,labels:(i.labels||[]).map(l=>typeof l==='string'?l:l.name||'')}));
