@@ -1,20 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-
-type Assignment = {
-  issueUrl?: string; title?: string; status?: string; sessionStatus?: string; assignedAgent?: string; assignedBy?: string;
-  assignmentSource?: string; assignmentUrl?: string; assignmentAt?: string | null; assignedThrough?: string; requestedBy?: string; accepted?: boolean; taskUrl?: string | null;
-  acceptedAt?: string | null; acceptanceUrl?: string | null; latestOutcome?: string; latestEventAt?: string | null;
-  latestEventUrl?: string | null; pullRequest?: { number: number; title: string; url: string; state: string; headSha?: string | null } | null;
-  fetchedAt?: string; stale?: boolean; error?: string | null; nextAction?: string;
-};
+import type { JulesAssignmentEvidence } from "@/lib/jules-assignment-contract";
 
 function when(value?: string | null) {
   return value ? new Date(value).toLocaleString() : "UNKNOWN";
 }
 
 export default function JulesAssignment() {
-  const [data, setData] = useState<Assignment | null>(null);
+  const [data, setData] = useState<JulesAssignmentEvidence | null>(null);
   const [busy, setBusy] = useState(true);
   async function refresh() {
     setBusy(true);
