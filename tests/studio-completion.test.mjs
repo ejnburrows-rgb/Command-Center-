@@ -34,3 +34,12 @@ test("sign-in redirects only to validated internal studio routes",()=>{
   assert.match(login,/safeFrom/);
   assert.match(login,/router\.replace\(safeFrom\)/);
 });
+
+test("importing a backup merges the starter team conversation instead of discarding its messages",()=>{
+  const studio=read("app/agent-studio.tsx");
+  assert.match(studio,/setThreads\(old=>mergeHistory\(\{threads:old,current\},\{threads:imported,current:imported\[0\]\.id\}\)\.threads\)/);
+});
+test("clicking the already selected Zenzap channel does not invalidate an in-flight request",()=>{
+  const room=read("app/zenzap-room.tsx");
+  assert.match(room,/if\(chosenRef\.current===t\.id\)return;/);
+});
