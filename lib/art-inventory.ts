@@ -14,6 +14,25 @@ export const IMAGE_REF = "main";
 
 const BASE = "docs/art-inventory";
 
+export type ArchivalRenderItem = {
+  id: string;
+  artwork_id: string;
+  book: "workbook" | "flip_chart" | "cover";
+  page: number;
+  label: string;
+  role: string;
+  live: string;
+  his: boolean;
+  was_flagged: boolean;
+  flag_reason: string;
+  orig: Orig;
+  book_page?: {
+    src: string;
+    size: [number, number];
+    circle: { box: [number, number, number, number]; method: string; score: number | null } | null;
+  };
+};
+
 export type Orig =
   | { kind: "scan"; src: string; sw: number; box: [number, number, number, number] }
   | { kind: "image"; src: string; whole_page?: boolean }
@@ -524,7 +543,7 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
 
   // Build Slots by joining render (327 slots) with MASTER-MAPPING.csv via normalized artwork_id
   const matchedCanonicalIds = new Set<string>();
-  const slots: Slot[] = render.map((x: any) => {
+  const slots: Slot[] = render.map((x: ArchivalRenderItem) => {
     let rawKey = String(x.artwork_id || x.id).split(" ")[0];
     if (!matchedCanonicalIds.has(rawKey) && rawKey.endsWith("-2")) {
       const objNum = String(x.id).split("-").pop();
@@ -551,7 +570,7 @@ export async function loadInventory(refIn?: string): Promise<Inventory> {
         ? still[x.id]
         : x.was_flagged
         ? cnotes[x.id] || `Was: ${x.flag_reason}`
-        : x.flag_reason || (x.orig?.whole_page ? "WHOLE BOOK PAGE (no crop on file)" : "");
+        : x.flag_reason || (x.orig?.kind === "image" && x.orig.whole_page ? "WHOLE BOOK PAGE (no crop on file)" : "");
     const a = appl.slots?.[x.id] || {},
       q = qual.slots?.[x.id] || { tags: [], metrics: {} };
     const app: string = a.app_loads || x.live;
