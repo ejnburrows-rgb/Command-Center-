@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { COOKIE_NAME, sha256hex } from "@/lib/auth";
+import crypto from "node:crypto";
 
 export const runtime = "nodejs";
 
@@ -19,7 +20,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Bad request." }, { status: 400 });
   }
 
-  if (!body.passphrase || body.passphrase !== phrase) {
+  if (!body.passphrase) {
+    return NextResponse.json({ error: "Incorrect passphrase." }, { status: 401 });
+  }
+
+  const expectedHash = await sha256hex(phrase);
+  const providedHash = await sha256hex(body.passphrase);
+
+  if (!crypto.timingSafeEqual(Buffer.from(expectedHash), Buffer.from(providedHash))) {
     return NextResponse.json({ error: "Incorrect passphrase." }, { status: 401 });
   }
 
