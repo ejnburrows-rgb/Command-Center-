@@ -27,3 +27,8 @@ test("importing the starter Agent team backup preserves its original messages",(
  assert.equal(restored.threads[0].entries[0].text,"A saved conversation");
  assert.equal(restored.current,"team");
 });
+
+test("public GitHub desk conversations survive local/cloud history sanitization",()=>{
+ const original={threads:[{id:"desk",name:"Project Desk",recipients:["github"],entries:[{id:"e1",role:"assistant",provider:"github",text:"Read-only GitHub evidence",time:42}],updated:42}],current:"desk"};
+ assert.deepEqual(sanitizeHistory(original),original);
+});
