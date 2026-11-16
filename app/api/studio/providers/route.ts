@@ -7,13 +7,13 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   if (!(await studioAuthorized())) return NextResponse.json({error:"Sign in required"},{status:401});
   return NextResponse.json({
-    providers: studioProviderIds.map(id => ({
+    providers: [...studioProviderIds.map(id => ({
       id,
       label: studioProviders[id].label,
       configured: providerReady(id),
       mode: id === "zai-coding" ? "Coding Plan API key · coding tasks only" : "Server-side API key",
       page: studioProviders[id].page
-    })),
+    })), { id:"github",label:"Project Desk · GitHub",configured:true,mode:"Public GitHub project feed · read only · no API charges",page:"/overview" }],
     zenzapConnected: zenzapConfigured(),
     history: "Saved on this browser only; cross-device syncing is not available.",
     accountLogin: "External web accounts are not connected to NBO; use official integrations where supported."
