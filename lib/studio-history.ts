@@ -1,7 +1,7 @@
-export type StudioEntry={id:string;role:"user"|"assistant"|"error";text:string;provider?:"zai"|"zai-coding"|"openai"|"gemini";time:number};
-export type StudioThread={id:string;name:string;recipients:("zai"|"zai-coding"|"openai"|"gemini")[];entries:StudioEntry[];updated:number};
+export type StudioEntry={id:string;role:"user"|"assistant"|"error";text:string;provider?:"github"|"zai"|"zai-coding"|"openai"|"gemini";time:number};
+export type StudioThread={id:string;name:string;recipients:("github"|"zai"|"zai-coding"|"openai"|"gemini")[];entries:StudioEntry[];updated:number};
 export type StudioHistory={threads:StudioThread[];current:string};
-const ids=new Set(["zai","zai-coding","openai","gemini"]);
+const ids=new Set(["github","zai","zai-coding","openai","gemini"]);
 const validId=(v:unknown)=>typeof v==="string"&&/^[A-Za-z0-9_-]{1,90}$/.test(v);
 const record=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==="object"&&!Array.isArray(v);
 export function sanitizeHistory(v:unknown):StudioHistory|null{
