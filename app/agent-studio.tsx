@@ -2,21 +2,23 @@
 import {useEffect,useMemo,useRef,useState} from "react";
 import Link from "next/link";
 import ZenzapRoom from "./zenzap-room";
+import {summarizeOps} from "@/lib/studio-ops.mjs";
 import {mergeHistory,sanitizeHistory,type StudioHistory} from "@/lib/studio-history";
 import {trimHistoryForRequest} from "@/lib/history-budget.mjs";
 
-type ProviderId="zai"|"zai-coding"|"openai"|"gemini";
+type ProviderId="github"|"zai"|"zai-coding"|"openai"|"gemini";
 type Entry={id:string;role:"user"|"assistant"|"error";text:string;provider?:ProviderId;time:number};
 type Thread={id:string;name:string;recipients:ProviderId[];entries:Entry[];updated:number};
 type Provider={id:ProviderId;label:string;configured:boolean;mode:string;page:string};
 type Project={slug:string;name:string;issues:number|null;prs:number|null;stale?:boolean;url:string};
 const palette:Record<ProviderId,{initial:string;label:string}> = {
+ github:{initial:"G",label:"Project Desk · GitHub"},
  zai:{initial:"Z",label:"Z.ai · GLM"},
  "zai-coding":{initial:"C",label:"Z.ai Coding Plan"},
  openai:{initial:"O",label:"OpenAI API"},
  gemini:{initial:"G",label:"Gemini API"}
 };
-const starter:Thread[]=[{id:"team",name:"Agent team",recipients:["zai","openai","gemini"],entries:[],updated:0}];
+const starter:Thread[]=[{id:"desk",name:"Project Desk",recipients:["github"],entries:[],updated:0},{id:"team",name:"Team Room",recipients:["zai","openai","gemini"],entries:[],updated:0}];
 const websites=[
  {label:"ChatGPT account",url:"https://chatgpt.com/",detail:"Web session — not directly connected"},
  {label:"Z.ai account",url:"https://chat.z.ai/",detail:"Web session — not directly connected"},
@@ -29,7 +31,7 @@ const fmt=(n:number)=>n?new Date(n).toLocaleTimeString([],{hour:"numeric",minute
 function entryFor(role:Entry["role"],text:string,provider?:ProviderId):Entry{return {id:newId(),role,text,provider,time:Date.now()};}
 export default function AgentStudio(){
  const [threads,setThreads]=useState<Thread[]>(starter);
- const [current,setCurrent]=useState("team");
+ const [current,setCurrent]=useState("desk");
  const [draft,setDraft]=useState("");
  const [providers,setProviders]=useState<Provider[]>([]);
  const importInput=useRef<HTMLInputElement>(null);
@@ -45,7 +47,7 @@ export default function AgentStudio(){
  const [cloudReady,setCloudReady]=useState(false);
  const [cloudStatus,setCloudStatus]=useState("Checking private cloud history…");
  const revisionRef=useRef("0");
- const latestRef=useRef<StudioHistory>({threads:starter,current:"team"});
+ const latestRef=useRef<StudioHistory>({threads:starter,current:"desk"});
  const localRef=useRef<StudioHistory|null>(null);
  const bottom=useRef<HTMLDivElement>(null);
  const controller=useRef<AbortController|null>(null);
@@ -59,7 +61,7 @@ export default function AgentStudio(){
      if(localStorage.getItem("nbo-studio-appearance")==="light")setAppearance("light");
    }catch{}
    setReady(true);
-   fetch("/api/studio/providers",{cache:"no-store"}).then(r=>{if(r.status===401){window.location.assign("/login?from=/");return null;}return r.ok?r.json():null;}).then(data=>{if(data?.providers){setProviders(data.providers);setZenzapReady(Boolean(data.zenzapConnected));const ids:ProviderId[]=data.providers.filter((p:Provider)=>p.configured).map((p:Provider)=>p.id);if(ids.length)setThreads(ts=>ts.map(t=>t.id==="team"&&t.entries.length===0?{...t,recipients:ids.slice(0,3)}:t));}else setNotice("Connection status is unavailable.");}).catch(()=>setNotice("Connection status is unavailable."));
+   fetch("/api/studio/providers",{cache:"no-store"}).then(r=>{if(r.status===401){window.location.assign("/login?from=/");return null;}return r.ok?r.json():null;}).then(data=>{if(data?.providers){setProviders(data.providers);setZenzapReady(Boolean(data.zenzapConnected));const ids:ProviderId[]=data.providers.filter((p:Provider)=>p.configured).map((p:Provider)=>p.id);if(ids.includes("github"))setThreads(ts=>ts.map(t=>t.id==="desk"&&t.entries.length===0?{...t,recipients:["github"]}:t));}else setNotice("Connection status is unavailable.");}).catch(()=>setNotice("Connection status is unavailable."));
    fetch("/api/hub",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(data=>{if(Array.isArray(data?.projects))setProjects(data.projects.slice(0,8));}).catch(()=>{});
    fetch("/api/studio/history",{cache:"no-store"})
     .then(async r=>({ok:r.ok,data:await r.json().catch(()=>null)}))
@@ -70,7 +72,9 @@ export default function AgentStudio(){
       revisionRef.current=data.revision||"0";
       const local=localRef.current;
       const merged=remote.threads.length?(local?.threads.length?mergeHistory(local,remote):remote):(local||{threads:starter,current:"team"});
-      const next=merged.threads.length?merged:{threads:starter,current:"team"};
+      const next=merged.threads.length?merged:{threads:starter,current:"desk"};
+       if(!next.threads.some(t=>t.id==="desk"))next.threads.unshift(starter[0]);
+       if(next.current==="team"&&!next.threads.find(t=>t.id==="team")?.entries.length)next.current="desk";
       latestRef.current=next;
       setThreads(next.threads);setCurrent(next.current);
       setCloudReady(true);setCloudStatus("Private cross-device sync enabled");
@@ -105,7 +109,7 @@ export default function AgentStudio(){
  useEffect(()=>{bottom.current?.scrollIntoView({block:"end",behavior:"smooth"});},[active.entries.length,busy,current]);
  const sorted=useMemo(()=>[...threads].sort((a,b)=>b.updated-a.updated),[threads]);
  const updateThread=(id:string,change:(t:Thread)=>Thread)=>setThreads(ts=>ts.map(t=>t.id===id?change(t):t));
- function startThread(name="New conversation",recipients:ProviderId[]=["zai-coding","zai","openai"]){
+ function startThread(name="New conversation",recipients:ProviderId[]=["github"]){
    const id=newId();setThreads(ts=>[{id,name,recipients,entries:[],updated:Date.now()},...ts]);setCurrent(id);setPanel("chat");setNavOpen(false);setNotice("");setDraft("");
  }
  function toggleRecipient(id:ProviderId){
@@ -117,7 +121,7 @@ export default function AgentStudio(){
    const text=draft.trim();
    if(busy||!text)return;
    if(!selected.length){setNotice("No selected API provider is configured. Open Agents to see available services.");setPanel("connections");return;}
-   if(!allowCharges){setNotice("Confirm provider API usage and any applicable charges before sending.");return;}
+   if(!allowCharges&&selected.some(id=>id!=="github")){setNotice("Confirm provider API usage and any applicable charges before sending.");return;}
    const thread=active;
    const message=entryFor("user",text);
    const rawHistory=thread.entries.filter(m=>m.role==="user"||m.role==="assistant").slice(-12).map(m=>({role:m.role as "user"|"assistant",content:m.role==="assistant"&&m.provider?palette[m.provider].label+": "+m.text:m.text}));
@@ -127,10 +131,25 @@ export default function AgentStudio(){
    setDraft("");setNotice("");setBusy(true);
    const abort=new AbortController();controller.current=abort;
    try{
-     const res=await fetch("/api/studio/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text,recipients:selected,history,allowProviderCharges:true}),signal:abort.signal});
-     const data=await res.json().catch(()=>({error:"Response was not readable."}));
-     if(!res.ok)throw new Error(data.error||"Request failed.");
-     const answers:Entry[]=Array.isArray(data.results)?data.results.map((r:{id:ProviderId;content?:string;error?:string})=>entryFor(r.content?"assistant":"error",r.content||r.error||"No response",r.id)):[entryFor("error","No provider response was returned.")];
+     const answers:Entry[]=[];
+     if(selected.includes("github")){
+       try{
+         const evidence=await fetch("/api/hub",{cache:"no-store",signal:abort.signal});
+         if(!evidence.ok)throw new Error("GitHub evidence returned HTTP "+evidence.status);
+         const snapshot=await evidence.json();
+         answers.push(entryFor("assistant",summarizeOps(text,snapshot.projects),"github"));
+       }catch(e){
+         if(abort.signal.aborted)throw e;
+         answers.push(entryFor("error",e instanceof Error?e.message:"GitHub project feed is unavailable.","github"));
+       }
+     }
+     const apiRecipients=selected.filter((id):id is Exclude<ProviderId,"github">=>id!=="github");
+     if(apiRecipients.length){
+       const res=await fetch("/api/studio/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text,recipients:apiRecipients,history,allowProviderCharges:true}),signal:abort.signal});
+       const data=await res.json().catch(()=>({error:"Response was not readable."}));
+       if(!res.ok)throw new Error(data.error||"Request failed.");
+       answers.push(...(Array.isArray(data.results)?data.results.map((r:{id:ProviderId;content?:string;error?:string})=>entryFor(r.content?"assistant":"error",r.content||r.error||"No response",r.id)):[entryFor("error","No provider response was returned.")]));
+     }
      updateThread(thread.id,t=>({...t,entries:[...t.entries,...answers].slice(-150),updated:Date.now()}));
    }catch(e){if(!abort.signal.aborted)updateThread(thread.id,t=>({...t,entries:[...t.entries,entryFor("error",e instanceof Error?e.message:"Connection failed.")].slice(-150),updated:Date.now()}));}
    finally{controller.current=null;setBusy(false);}
