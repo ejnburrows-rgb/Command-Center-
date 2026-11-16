@@ -43,7 +43,7 @@ export default function AgentStudio(){
  const [allowCharges,setAllowCharges]=useState(false);
  const [panel,setPanel]=useState<"chat"|"connections"|"projects"|"zenzap">("chat");
  const [navOpen,setNavOpen]=useState(false);
- const [appearance,setAppearance]=useState<"dark"|"light">("dark");
+ const [appearance,setAppearance]=useState<"dark"|"light">("light");
  const [cloudReady,setCloudReady]=useState(false);
  const [cloudStatus,setCloudStatus]=useState("Checking private cloud history…");
  const revisionRef=useRef("0");
@@ -57,8 +57,9 @@ export default function AgentStudio(){
  useEffect(()=>{
    try{
      const data=sanitizeHistory(JSON.parse(localStorage.getItem("nbo-studio-threads-v1")||"null"));
-     if(data?.threads.length){localRef.current=data;setThreads(data.threads);setCurrent(data.current);}
-     if(localStorage.getItem("nbo-studio-appearance")==="light")setAppearance("light");
+     if(data?.threads.length){localRef.current=data;setThreads(data.threads.some(t=>t.id==="desk")?data.threads:[starter[0],...data.threads].slice(0,80));setCurrent(data.current==="team"&&!data.threads.find(t=>t.id==="team")?.entries.length?"desk":data.current);}
+     const theme=localStorage.getItem("nbo-studio-appearance-v2");
+      if(theme==="dark"||theme==="light")setAppearance(theme);
    }catch{}
    setReady(true);
    fetch("/api/studio/providers",{cache:"no-store"}).then(r=>{if(r.status===401){window.location.assign("/login?from=/");return null;}return r.ok?r.json():null;}).then(data=>{if(data?.providers){setProviders(data.providers);setZenzapReady(Boolean(data.zenzapConnected));const ids:ProviderId[]=data.providers.filter((p:Provider)=>p.configured).map((p:Provider)=>p.id);if(ids.includes("github"))setThreads(ts=>ts.map(t=>t.id==="desk"&&t.entries.length===0?{...t,recipients:["github"]}:t));}else setNotice("Connection status is unavailable.");}).catch(()=>setNotice("Connection status is unavailable."));
@@ -73,7 +74,7 @@ export default function AgentStudio(){
       const local=localRef.current;
       const merged=remote.threads.length?(local?.threads.length?mergeHistory(local,remote):remote):(local||{threads:starter,current:"team"});
       const next=merged.threads.length?merged:{threads:starter,current:"desk"};
-       if(!next.threads.some(t=>t.id==="desk"))next.threads.unshift(starter[0]);
+       if(!next.threads.some(t=>t.id==="desk"))next.threads=[starter[0],...next.threads].slice(0,80);
        if(next.current==="team"&&!next.threads.find(t=>t.id==="team")?.entries.length)next.current="desk";
       latestRef.current=next;
       setThreads(next.threads);setCurrent(next.current);
@@ -81,7 +82,7 @@ export default function AgentStudio(){
     }).catch(()=>setCloudStatus("Local backup only · cloud sync unavailable"));
  },[]);
  useEffect(()=>{if(!ready)return;try{localStorage.setItem("nbo-studio-threads-v1",JSON.stringify({threads:threads.slice(0,80),current}));}catch{setNotice("This browser could not save your conversations.");}},[threads,current,ready]);
- useEffect(()=>{if(!ready)return;localStorage.setItem("nbo-studio-appearance",appearance);},[appearance,ready]);
+ useEffect(()=>{if(!ready)return;localStorage.setItem("nbo-studio-appearance-v2",appearance);},[appearance,ready]);
  latestRef.current={threads,current};
  useEffect(()=>{
   if(!ready||!cloudReady)return;
@@ -200,7 +201,7 @@ export default function AgentStudio(){
      <button className="studio-new" onClick={()=>startThread("Project Desk",["github"])}><span>＋</span> New conversation</button>
      <p className="studio-side-heading">YOUR BOTS</p>
       <div className="studio-bot-roster">
-        <button onClick={()=>{const t=threads.find(t=>t.recipients.length===1&&t.recipients[0]==="github");if(t){setCurrent(t.id);setPanel("chat");setNavOpen(false);}else startThread("Project Desk",["github"]);}} className={"studio-bot-item"+(panel==="chat"&&active.recipients.length===1&&active.recipients[0]==="github"?" is-current":"")}><span className="studio-bot-portrait">G</span><span className="studio-bot-copy"><strong>Project Desk</strong><small>GitHub evidence · read only</small></span><i className="studio-status-dot"/></button>
+        <button onClick={()=>{const t=threads.find(t=>t.recipients.length===1&&t.recipients[0]==="github");if(t){setCurrent(t.id);setPanel("chat");setNavOpen(false);}else startThread("Project Desk",["github"]);}} className={"studio-bot-item"+(panel==="chat"&&active.recipients.length===1&&active.recipients[0]==="github"?" is-current":"")}><span className="studio-bot-portrait">G</span><span className="studio-bot-copy"><strong>Project Desk</strong><small>{projects.some(p=>p.issues!==null&&!p.stale)?"GitHub evidence · available":"GitHub evidence · status unknown"}</small></span><i className={"studio-status-dot"+(projects.some(p=>p.issues!==null&&!p.stale)?"":" is-idle")}/></button>
         <button onClick={()=>{const t=threads.find(t=>t.id==="team");if(t){setCurrent(t.id);setPanel("chat");setNavOpen(false);}else startThread("Team Room",["zai","openai","gemini"]);}} className={"studio-bot-item"+(panel==="chat"&&active.id==="team"?" is-current":"")}><span className="studio-bot-portrait studio-bot-muted">T</span><span className="studio-bot-copy"><strong>Model Team</strong><small>{configured.filter(p=>p.id!=="github").length?configured.filter(p=>p.id!=="github").length+" APIs configured":"Needs account connection"}</small></span><i className={"studio-status-dot"+(configured.some(p=>p.id!=="github")?"":" is-idle")}/></button>
       </div>
       <p className="studio-side-heading">WORKSPACE</p>
@@ -244,7 +245,7 @@ export default function AgentStudio(){
          <p className="studio-storage">{cloudStatus} · Browser backup remains available. No simulated replies.</p>
        </div>
      </>}
-     {panel==="connections"&&<div className="studio-directory"><span className="studio-kicker">CONNECTED WORKSPACE</span><h1>Connections & capabilities</h1><p>The existing public GitHub project feed is available at no cost. Paid model APIs and external account access require separate authorization.</p><div className="studio-directory-grid">{(Object.keys(palette) as ProviderId[]).map(id=>{const p=providers.find(v=>v.id===id);return <article key={id} className="studio-provider-card"><span className="studio-provider-avatar">{palette[id].initial}</span><div><h3>{palette[id].label}</h3><p>{p?.mode||"Server-side API key"}</p></div><span className={"studio-provider-status"+(p?.configured?" ready":"")}>{p?.configured?"Configured":"Not configured"}</span><p className="studio-provider-help">{id==="github"?"Connected to existing public GitHub evidence. Read-only summaries; not an autonomous coding agent.":p?.configured?"A server-side key is present. Live access has not yet been verified.":"Requires an authorized server-side credential in Vercel; web subscriptions are separate."}</p><a href={p?.page||(id==="zai"?"https://chat.z.ai/":id==="openai"?"https://chatgpt.com/":"https://gemini.google.com/")} target="_blank" rel="noreferrer">Open service ↗</a></article>})}</div><h2>Zenzap team messaging</h2><p>{zenzapReady?"Zenzap bot credentials are configured. Open Messages to check channel access and send real messages.":"Not connected. Server-side Zenzap API key and secret or OAuth bot credentials are required."}</p><button className="studio-z-open" onClick={()=>setPanel("zenzap")}>Open Zenzap conversations →</button><h2>Other accounts</h2><div className="studio-web-list">{websites.map(w=><a key={w.label} href={w.url} target="_blank" rel="noreferrer"><strong>{w.label}</strong><small>{w.detail}</small><span>↗</span></a>)}</div><p className="studio-directory-note">Connecting a browser account to a separate product requires an official supported login or integration. These external links are not agent connections.</p></div>}
+     {panel==="connections"&&<div className="studio-directory"><span className="studio-kicker">CONNECTED WORKSPACE</span><h1>Connections & capabilities</h1><p>The existing public GitHub project feed is available at no cost. Paid model APIs and external account access require separate authorization.</p><div className="studio-directory-grid">{(Object.keys(palette) as ProviderId[]).map(id=>{const p=providers.find(v=>v.id===id);return <article key={id} className="studio-provider-card"><span className="studio-provider-avatar">{palette[id].initial}</span><div><h3>{palette[id].label}</h3><p>{p?.mode||"Server-side API key"}</p></div><span className={"studio-provider-status"+(p?.configured?" ready":"")}>{id==="github"?"Read-only feed":p?.configured?"Configured":"Not configured"}</span><p className="studio-provider-help">{id==="github"?"Connected to existing public GitHub evidence. Read-only summaries; not an autonomous coding agent.":p?.configured?"A server-side key is present. Live access has not yet been verified.":"Requires an authorized server-side credential in Vercel; web subscriptions are separate."}</p><a href={p?.page||(id==="zai"?"https://chat.z.ai/":id==="openai"?"https://chatgpt.com/":"https://gemini.google.com/")} target="_blank" rel="noreferrer">Open service ↗</a></article>})}</div><h2>Zenzap team messaging</h2><p>{zenzapReady?"Zenzap bot credentials are configured. Open Messages to check channel access and send real messages.":"Not connected. Server-side Zenzap API key and secret or OAuth bot credentials are required."}</p><button className="studio-z-open" onClick={()=>setPanel("zenzap")}>Open Zenzap conversations →</button><h2>Other accounts</h2><div className="studio-web-list">{websites.map(w=><a key={w.label} href={w.url} target="_blank" rel="noreferrer"><strong>{w.label}</strong><small>{w.detail}</small><span>↗</span></a>)}</div><p className="studio-directory-note">Connecting a browser account to a separate product requires an official supported login or integration. These external links are not agent connections.</p></div>}
      {panel==="zenzap"&&<ZenzapRoom enabled={zenzapReady}/>}
      {panel==="projects"&&<div className="studio-directory"><span className="studio-kicker">LIVE GITHUB SOURCES</span><h1>Your projects</h1><p>Project statuses come from the existing NBO GitHub evidence feed. Open the full operations view for details.</p><div className="studio-project-grid">{projects.length?projects.map(p=><a href={p.url} key={p.slug} target="_blank" rel="noreferrer" className="studio-project"><span>▦</span><strong>{p.name}</strong><small>{p.stale?"Source stale":p.issues===null?"Source unavailable":p.issues+" open issues · "+(p.prs??"—")+" PRs"}</small><b>↗</b></a>):<p>Project feed is unavailable. <Link href="/overview">Open project overview</Link></p>}</div><Link href="/overview" className="studio-project-link">Open full GitHub operations and evidence ↗</Link></div>}
    </section>
