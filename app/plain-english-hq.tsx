@@ -589,7 +589,7 @@ Keep all status updates for Emilio José in plain English without engineering ja
    },
    {
     label: "Execution Authority",
-    purpose: "Jules and Codex bot dispatch policy and duplicate task guard.",
+    purpose: "Historical agent assignment rules and duplicate task guard.",
     authoritative: true,
     githubUrl: "https://github.com/ejnburrows-rgb/Command-Center-/blob/main/lib/execution-authority.mjs",
     ruleSummary: "Prevents duplicate agent dispatch and verifies token scopes."

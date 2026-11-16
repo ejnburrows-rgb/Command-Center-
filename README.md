@@ -1,6 +1,6 @@
 # Command Center
 
-The existing public NBO project hub. **GitHub supplies project evidence**; there is no new database. Repository code and the public read routes define current behavior. Follow `AGENTS.md` for execution and approval rules.
+The existing NBO project hub, now with a separate private agent studio at `/` and the public GitHub overview at `/overview`. **GitHub supplies project evidence**; there is no new database. Repository code and the public read routes define current behavior. Follow `AGENTS.md` for execution and approval rules.
 
 - **Dev status** comes from public GitHub API snapshots. Source timestamps and stale/error indicators matter; a browser refresh does not guarantee a new GitHub fetch.
 - **Portal content** (prompts, research, decisions, checklists, readiness) lives
@@ -15,9 +15,9 @@ Next.js (App Router) + TypeScript + Tailwind + Octokit. Deploys on Vercel Hobby
 
 ## Public access and private data
 
-Current `proxy.ts` allows the hub without a site password, redirects `/login` to `/`, and blocks the legacy `/crm-core` and `/api/auth` routes. Public evidence requests in `lib/public-github.ts` do not use authenticated content tokens. Do not treat the historical passphrase helper as an active access gate or put private owner material in this public repository/client bundle.
+Current `proxy.ts` protects `/`, `/studio`, and `/api/studio/*` with the existing owner passphrase. `/login` and `/api/auth` are enabled for sign-in. The old overview remains public at `/overview`; `/crm-core` stays blocked. Public evidence requests in `lib/public-github.ts` do not use authenticated content tokens. Do not treat the historical passphrase helper as an active access gate or put private owner material in this public repository/client bundle.
 
-Legacy content clients and environment-variable helpers below are implementation references, not proof that public pages are authenticated. Adding private data requires separately authorized and verified server-side protection.
+Studio conversations are stored privately in Vercel Blob when the private store is connected; otherwise, history stays on the current browser. Only server-configured API providers can respond; links to consumer web accounts are not connections. Provider calls require an explicit usage/charge acknowledgment in the composer. Never put account secrets into browser storage or the repository.
 
 ## Environment variables
 
@@ -82,3 +82,20 @@ exact fields.
 ├── lib/              # Core utilities (auth, GitHub API, content parsing)
 └── proxy.ts          # Public hub routing; legacy CRM/auth paths blocked
 ```
+
+## Owner agent studio integrations
+
+The private Agent Studio opens at `/`, while the public GitHub overview remains at `/overview`. The studio only calls providers whose credentials have been configured on the Vercel server. No API keys are stored in the browser.
+
+- `ZAI_API_KEY`: optional model chat through the official Z.ai general API using the GLM-5.3-Flash model. Coding Plan subscriptions are **not** automatically interchangeable with the general API.
+- `ZAI_CODING_PLAN_KEY`: optional **coding-only** model requests through `https://api.z.ai/api/coding/paas/v4`; do not use this for general conversations. Separate from the general Z.ai API key.
+- `OPENAI_API_KEY`: optional paid OpenAI API chat; separate from a ChatGPT subscription.
+- `GEMINI_API_KEY`: optional Google Gemini API chat; separate from a web login.
+- `ZENZAP_API_KEY` and `ZENZAP_API_SECRET`: optional static bot credentials for browsing real Zenzap channels and sending messages. Both are required.
+- Alternatively, `ZENZAP_CLIENT_ID` and `ZENZAP_CLIENT_SECRET`: OAuth bot client credentials. Use the scopes `channel:list`, `message:read`, and `message:send`.
+
+Zenzap bot access is limited to channels the bot belongs to; browser account login is not the same as bot API authorization. Zenzap messages persist in Zenzap. Model conversations sync automatically across devices using a private Vercel Blob store when available, with on-device backup and conflict merging. Users can still export and import JSON backups. No coding-agent execution runtime is included. No API provider will be shown as connected solely because a web subscription exists.
+
+## Private cloud conversation history
+
+The existing Vercel project owns the private Blob store `nbo-agent-history-private`. The owner-authenticated `/api/studio/history` route stores a JSON snapshot at `nbo/owner-agent-history.json`. The private store's `BLOB_READ_WRITE_TOKEN` is server-side and never exposed to the browser. When storage cannot be reached, the studio reports that status and preserves the browser copy. Concurrent saves use revision checks; the client merges distinct messages before retrying. This does not make consumer web subscriptions usable via an API.
